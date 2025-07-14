@@ -331,4 +331,11 @@ UserSchema.statics.findByUsername = function(username: string) {
   return this.findOne({ username: username });
 };
 
-export default mongoose.model<IUser>('User', UserSchema);
+// Extend the model interface
+interface IUserModel extends mongoose.Model<IUser> {
+  findByFirebaseUid(uid: string): Promise<IUser | null>;
+  findByEmail(email: string): Promise<IUser | null>;
+  findByUsername(username: string): Promise<IUser | null>;
+}
+
+export default mongoose.model<IUser, IUserModel>('User', UserSchema);

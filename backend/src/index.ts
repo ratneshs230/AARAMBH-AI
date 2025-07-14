@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import DatabaseConfig from './config/database';
+import FirebaseConfig from './config/firebase';
+import apiRoutes from './routes/index-simple';
 
 dotenv.config();
 
@@ -53,6 +55,9 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/', limiter);
+
+// API Routes
+app.use('/api', apiRoutes);
 
 app.get('/health', async (_req, res) => {
   try {
@@ -146,6 +151,9 @@ async function startServer() {
     const dbConfig = DatabaseConfig.getInstance();
     await dbConfig.connectMongoDB();
     await dbConfig.connectCosmosDB();
+    
+    const firebaseConfig = FirebaseConfig.getInstance();
+    await firebaseConfig.initialize();
     
     server.listen(PORT, () => {
       console.log(`✅ Server is running on port ${PORT}`);

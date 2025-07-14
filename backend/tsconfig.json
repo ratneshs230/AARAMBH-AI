@@ -32,6 +32,17 @@
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "src/controllers/authController.ts",
+    "src/controllers/courseController.ts",
+    "src/controllers/userController.ts",
+    "src/middleware/auth.ts",
+    "src/middleware/validation.ts",
+    "src/routes/auth.ts",
+    "src/routes/users.ts",
+    "src/routes/courses.ts",
+    "src/routes/index.ts",
+    "src/models/Course.ts",
+    "src/utils/helpers.ts"
   ]
 }
