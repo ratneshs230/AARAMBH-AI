@@ -1,0 +1,106 @@
+{
+  "expo": {
+    "name": "AARAMBH AI",
+    "slug": "aarambh-ai-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.aarambhai.mobile",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to capture images for AI-powered learning assistance.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone for voice-based AI interactions.",
+        "NSLocationWhenInUseUsageDescription": "This app uses location to provide location-based educational content.",
+        "NSPhotoLibraryUsageDescription": "This app accesses your photo library to help with AI-powered learning.",
+        "NSUserTrackingUsageDescription": "This app uses tracking to provide personalized learning experiences."
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "resizeMode": "contain",
+        "tabletImage": "./assets/splash-tablet.png"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.aarambhai.mobile",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ],
+      "splash": {
+        "backgroundColor": "#ffffff",
+        "resizeMode": "contain",
+        "mdpi": "./assets/splash-mdpi.png",
+        "hdpi": "./assets/splash-hdpi.png",
+        "xhdpi": "./assets/splash-xhdpi.png",
+        "xxhdpi": "./assets/splash-xxhdpi.png",
+        "xxxhdpi": "./assets/splash-xxxhdpi.png"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-media-library",
+      "expo-av",
+      "expo-notifications",
+      "expo-location",
+      "expo-file-system",
+      "expo-secure-store",
+      "expo-device",
+      "expo-constants",
+      "expo-updates",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "minSdkVersion": 21
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "aarambh-ai-mobile"
+      }
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "runtimeVersion": "exposdk:49.0.0"
+  }
+}

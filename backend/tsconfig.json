@@ -36,13 +36,24 @@
     "src/controllers/authController.ts",
     "src/controllers/courseController.ts",
     "src/controllers/userController.ts",
+    "src/controllers/aiController.ts",
     "src/middleware/auth.ts",
     "src/middleware/validation.ts",
     "src/routes/auth.ts",
     "src/routes/users.ts",
     "src/routes/courses.ts",
     "src/routes/index.ts",
+    "src/routes/ai.ts",
     "src/models/Course.ts",
-    "src/utils/helpers.ts"
+    "src/utils/helpers.ts",
+    "src/agents/TutorAgent.ts",
+    "src/agents/ContentCreatorAgent.ts",
+    "src/agents/AssessmentAgent.ts",
+    "src/agents/AnalyticsAgent.ts",
+    "src/agents/MentorAgent.ts",
+    "src/agents/StudyPlannerAgent.ts",
+    "src/agents/DoubtSolverAgent.ts",
+    "src/agents/AgentManager.ts",
+    "src/index-ai.ts"
   ]
 }
