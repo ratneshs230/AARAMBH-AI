@@ -23,7 +23,9 @@ const handleValidationErrors = (req: Request, res: Response, next: NextFunction)
 // Generic AI request validation
 const baseAIValidation = [
   body('prompt').notEmpty().withMessage('Prompt is required'),
-  body('prompt').isLength({ min: 5, max: 2000 }).withMessage('Prompt must be between 5 and 2000 characters'),
+  body('prompt')
+    .isLength({ min: 5, max: 2000 })
+    .withMessage('Prompt must be between 5 and 2000 characters'),
 ];
 
 // AI Services Health Check
@@ -33,10 +35,21 @@ router.get('/health', aiController.getAIServicesHealth.bind(aiController));
 router.get('/agents/status', aiController.getAgentStatus.bind(aiController));
 
 // Generic AI Request Router
-router.post('/request', 
+router.post(
+  '/request',
   [
     ...baseAIValidation,
-    body('agentType').optional().isIn(['tutor', 'content_creator', 'assessment', 'analytics', 'mentor', 'study_planner', 'doubt_solver']),
+    body('agentType')
+      .optional()
+      .isIn([
+        'tutor',
+        'content_creator',
+        'assessment',
+        'analytics',
+        'mentor',
+        'study_planner',
+        'doubt_solver',
+      ]),
     body('sessionId').optional().isString(),
     handleValidationErrors,
   ],
@@ -44,7 +57,8 @@ router.post('/request',
 );
 
 // Tutor Agent Endpoints
-router.post('/tutor/ask',
+router.post(
+  '/tutor/ask',
   [
     ...baseAIValidation,
     body('subject').optional().isString(),
@@ -56,7 +70,8 @@ router.post('/tutor/ask',
 );
 
 // Content Creator Agent Endpoints
-router.post('/content/create',
+router.post(
+  '/content/create',
   [
     ...baseAIValidation,
     body('subject').optional().isString(),
@@ -68,7 +83,8 @@ router.post('/content/create',
 );
 
 // Assessment Agent Endpoints
-router.post('/assessment/create',
+router.post(
+  '/assessment/create',
   [
     ...baseAIValidation,
     body('subject').optional().isString(),
@@ -80,7 +96,8 @@ router.post('/assessment/create',
 );
 
 // Doubt Solver Agent Endpoints
-router.post('/doubt/solve',
+router.post(
+  '/doubt/solve',
   [
     ...baseAIValidation,
     body('subject').optional().isString(),
@@ -91,7 +108,8 @@ router.post('/doubt/solve',
 );
 
 // Study Planner Agent Endpoints
-router.post('/study/plan',
+router.post(
+  '/study/plan',
   [
     ...baseAIValidation,
     body('subjects').optional().isArray(),
@@ -103,7 +121,8 @@ router.post('/study/plan',
 );
 
 // Mentor Agent Endpoints
-router.post('/mentor/guidance',
+router.post(
+  '/mentor/guidance',
   [
     ...baseAIValidation,
     body('interests').optional().isArray(),
@@ -114,7 +133,8 @@ router.post('/mentor/guidance',
 );
 
 // Analytics Agent Endpoints
-router.post('/analytics/insights',
+router.post(
+  '/analytics/insights',
   [
     ...baseAIValidation,
     body('timeRange').optional().isString(),
@@ -125,18 +145,31 @@ router.post('/analytics/insights',
 );
 
 // Batch Processing Endpoint
-router.post('/batch',
+router.post(
+  '/batch',
   [
-    body('requests').isArray({ min: 1, max: 10 }).withMessage('Requests array must contain 1-10 items'),
+    body('requests')
+      .isArray({ min: 1, max: 10 })
+      .withMessage('Requests array must contain 1-10 items'),
     body('requests.*.prompt').notEmpty().withMessage('Each request must have a prompt'),
-    body('requests.*.agentType').optional().isIn(['tutor', 'content_creator', 'assessment', 'analytics', 'mentor', 'study_planner', 'doubt_solver']),
+    body('requests.*.agentType')
+      .optional()
+      .isIn([
+        'tutor',
+        'content_creator',
+        'assessment',
+        'analytics',
+        'mentor',
+        'study_planner',
+        'doubt_solver',
+      ]),
     handleValidationErrors,
   ],
   async (req: Request, res: Response) => {
     try {
       const { requests } = req.body;
       const userId = req.user?.uid || 'anonymous';
-      
+
       const responses = await Promise.allSettled(
         requests.map(async (request: any) => {
           const aiRequest = {
@@ -145,7 +178,7 @@ router.post('/batch',
             metadata: request.metadata,
             context: { agentType: request.agentType || null },
           };
-          
+
           const agentManager = (aiController as any).agentManager;
           return await agentManager.routeRequest(aiRequest);
         })
@@ -175,16 +208,25 @@ router.post('/batch',
 );
 
 // Conversation Management
-router.post('/conversation/start',
+router.post(
+  '/conversation/start',
   [
-    body('agentType').isIn(['tutor', 'content_creator', 'assessment', 'analytics', 'mentor', 'study_planner', 'doubt_solver']),
+    body('agentType').isIn([
+      'tutor',
+      'content_creator',
+      'assessment',
+      'analytics',
+      'mentor',
+      'study_planner',
+      'doubt_solver',
+    ]),
     body('subject').optional().isString(),
     body('level').optional().isString(),
     handleValidationErrors,
   ],
   (req: Request, res: Response) => {
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     res.json({
       success: true,
       data: {
@@ -202,59 +244,57 @@ router.post('/conversation/start',
 );
 
 // Export available agents and their capabilities
-router.get('/agents',
-  (_req: Request, res: Response) => {
-    const agents = {
-      tutor: {
-        name: 'AI Tutor',
-        description: 'Personalized learning assistance and explanations',
-        capabilities: ['concept_explanation', 'step_by_step_guidance', 'learning_support'],
-        subjects: 'all',
-      },
-      content_creator: {
-        name: 'Content Creator',
-        description: 'Educational content and lesson creation',
-        capabilities: ['lesson_creation', 'activity_design', 'curriculum_alignment'],
-        subjects: 'all',
-      },
-      assessment: {
-        name: 'Assessment Generator',
-        description: 'Quiz and test creation with various question types',
-        capabilities: ['quiz_creation', 'test_generation', 'rubric_design'],
-        subjects: 'all',
-      },
-      doubt_solver: {
-        name: 'Doubt Solver',
-        description: 'Instant problem solving and question answering',
-        capabilities: ['problem_solving', 'homework_help', 'concept_clarification'],
-        subjects: 'all',
-      },
-      study_planner: {
-        name: 'Study Planner',
-        description: 'Personalized study schedules and planning',
-        capabilities: ['schedule_creation', 'exam_planning', 'time_management'],
-        subjects: 'all',
-      },
-      mentor: {
-        name: 'Career Mentor',
-        description: 'Career guidance and educational counseling',
-        capabilities: ['career_guidance', 'educational_planning', 'skill_development'],
-        subjects: 'career_counseling',
-      },
-      analytics: {
-        name: 'Learning Analytics',
-        description: 'Performance insights and learning recommendations',
-        capabilities: ['progress_analysis', 'performance_insights', 'recommendations'],
-        subjects: 'data_analysis',
-      },
-    };
+router.get('/agents', (_req: Request, res: Response) => {
+  const agents = {
+    tutor: {
+      name: 'AI Tutor',
+      description: 'Personalized learning assistance and explanations',
+      capabilities: ['concept_explanation', 'step_by_step_guidance', 'learning_support'],
+      subjects: 'all',
+    },
+    content_creator: {
+      name: 'Content Creator',
+      description: 'Educational content and lesson creation',
+      capabilities: ['lesson_creation', 'activity_design', 'curriculum_alignment'],
+      subjects: 'all',
+    },
+    assessment: {
+      name: 'Assessment Generator',
+      description: 'Quiz and test creation with various question types',
+      capabilities: ['quiz_creation', 'test_generation', 'rubric_design'],
+      subjects: 'all',
+    },
+    doubt_solver: {
+      name: 'Doubt Solver',
+      description: 'Instant problem solving and question answering',
+      capabilities: ['problem_solving', 'homework_help', 'concept_clarification'],
+      subjects: 'all',
+    },
+    study_planner: {
+      name: 'Study Planner',
+      description: 'Personalized study schedules and planning',
+      capabilities: ['schedule_creation', 'exam_planning', 'time_management'],
+      subjects: 'all',
+    },
+    mentor: {
+      name: 'Career Mentor',
+      description: 'Career guidance and educational counseling',
+      capabilities: ['career_guidance', 'educational_planning', 'skill_development'],
+      subjects: 'career_counseling',
+    },
+    analytics: {
+      name: 'Learning Analytics',
+      description: 'Performance insights and learning recommendations',
+      capabilities: ['progress_analysis', 'performance_insights', 'recommendations'],
+      subjects: 'data_analysis',
+    },
+  };
 
-    res.json({
-      success: true,
-      data: agents,
-      timestamp: new Date().toISOString(),
-    });
-  }
-);
+  res.json({
+    success: true,
+    data: agents,
+    timestamp: new Date().toISOString(),
+  });
+});
 
 export default router;

@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
         verifyEmail: 'POST /api/auth/verify-email',
         requestPasswordReset: 'POST /api/auth/request-password-reset',
         changePassword: 'POST /api/auth/change-password',
-        deleteAccount: 'DELETE /api/auth/delete-account'
+        deleteAccount: 'DELETE /api/auth/delete-account',
       },
       users: {
         profile: 'GET /api/users/profile',
@@ -36,7 +36,7 @@ router.get('/', (req, res) => {
         search: 'GET /api/users/search',
         getById: 'GET /api/users/:id',
         deactivate: 'PUT /api/users/deactivate',
-        reactivate: 'PUT /api/users/reactivate'
+        reactivate: 'PUT /api/users/reactivate',
       },
       courses: {
         create: 'POST /api/courses',
@@ -47,11 +47,11 @@ router.get('/', (req, res) => {
         update: 'PUT /api/courses/:id',
         delete: 'DELETE /api/courses/:id',
         publish: 'POST /api/courses/:id/publish',
-        unpublish: 'POST /api/courses/:id/unpublish'
-      }
+        unpublish: 'POST /api/courses/:id/unpublish',
+      },
     },
     documentation: 'https://docs.aarambh-ai.com/api',
-    support: 'support@aarambh-ai.com'
+    support: 'support@aarambh-ai.com',
   });
 });
 

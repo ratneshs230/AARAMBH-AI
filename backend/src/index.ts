@@ -16,12 +16,13 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://aitutor-frontend-123.azurestaticapps.net'] 
-      : ['http://localhost:3000'],
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? ['https://aitutor-frontend-123.azurestaticapps.net']
+        : ['http://localhost:3000'],
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 const PORT = process.env.PORT || 5000;
@@ -31,25 +32,30 @@ const limiter = rateLimit({
   max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
   message: {
     error: 'Too many requests from this IP, please try again later.',
-    retryAfter: Math.ceil(parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000') / 1000)
+    retryAfter: Math.ceil(parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000') / 1000),
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-app.use(helmet({
-  contentSecurityPolicy: process.env.NODE_ENV === 'production',
-  crossOriginEmbedderPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production',
+    crossOriginEmbedderPolicy: false,
+  })
+);
 
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://aitutor-frontend-123.azurestaticapps.net'] 
-    : ['http://localhost:3000'],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with']
-}));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? ['https://aitutor-frontend-123.azurestaticapps.net']
+        : ['http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-requested-with'],
+  })
+);
 
 app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
@@ -62,7 +68,7 @@ app.use('/api', apiRoutes);
 app.get('/health', async (_req, res) => {
   try {
     const dbHealth = await DatabaseConfig.getInstance().healthCheck();
-    
+
     const healthStatus = {
       status: 'OK',
       timestamp: new Date().toISOString(),
@@ -73,18 +79,18 @@ app.get('/health', async (_req, res) => {
       memory: {
         used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
         total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
-        rss: Math.round(process.memoryUsage().rss / 1024 / 1024)
-      }
+        rss: Math.round(process.memoryUsage().rss / 1024 / 1024),
+      },
     };
 
     const isHealthy = dbHealth.mongodb && dbHealth.cosmosdb;
-    
+
     res.status(isHealthy ? 200 : 503).json(healthStatus);
   } catch (error) {
     res.status(503).json({
       status: 'ERROR',
       timestamp: new Date().toISOString(),
-      error: 'Health check failed'
+      error: 'Health check failed',
     });
   }
 });
@@ -94,7 +100,7 @@ app.get('/api/status', (_req, res) => {
     message: 'AARAMBH AI Backend is running',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -104,13 +110,13 @@ app.get('/', (_req, res) => {
     version: '1.0.0',
     documentation: '/api/docs',
     health: '/health',
-    status: '/api/status'
+    status: '/api/status',
   });
 });
 
 io.on('connection', (socket) => {
   console.log(`🔌 User connected: ${socket.id}`);
-  
+
   socket.on('disconnect', () => {
     console.log(`🔌 User disconnected: ${socket.id}`);
   });
@@ -126,35 +132,35 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use('*', (req, res) => {
+app.use((req, res) => {
   res.status(404).json({
     error: 'Route not found',
     message: `Cannot ${req.method} ${req.originalUrl}`,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
 app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('❌ Unhandled error:', error);
-  
+
   res.status(error.status || 500).json({
     error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
     timestamp: new Date().toISOString(),
-    ...(process.env.NODE_ENV !== 'production' && { stack: error.stack })
+    ...(process.env.NODE_ENV !== 'production' && { stack: error.stack }),
   });
 });
 
 async function startServer() {
   try {
     console.log('🚀 Starting AARAMBH AI Backend Server...');
-    
+
     const dbConfig = DatabaseConfig.getInstance();
     await dbConfig.connectMongoDB();
     await dbConfig.connectCosmosDB();
-    
+
     const firebaseConfig = FirebaseConfig.getInstance();
     await firebaseConfig.initialize();
-    
+
     server.listen(PORT, () => {
       console.log(`✅ Server is running on port ${PORT}`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
@@ -165,7 +171,6 @@ async function startServer() {
 
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
-
   } catch (error) {
     console.error('❌ Failed to start server:', error);
     process.exit(1);
@@ -174,10 +179,10 @@ async function startServer() {
 
 async function gracefulShutdown(signal: string) {
   console.log(`\n🔄 Received ${signal}. Starting graceful shutdown...`);
-  
+
   server.close(async () => {
     console.log('🔌 HTTP server closed');
-    
+
     try {
       await DatabaseConfig.getInstance().disconnectMongoDB();
       console.log('✅ Graceful shutdown completed');

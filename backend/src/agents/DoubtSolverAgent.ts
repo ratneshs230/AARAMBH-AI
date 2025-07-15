@@ -1,4 +1,11 @@
-import { BaseAIAgent, AIRequest, AIResponse, ConversationContext, AgentType, AIProvider } from '../types/ai-agent';
+import {
+  BaseAIAgent,
+  AIRequest,
+  AIResponse,
+  ConversationContext,
+  AgentType,
+  AIProvider,
+} from '../types/ai-agent';
 import AIServiceConfig from '../config/ai-services';
 
 export class DoubtSolverAgent extends BaseAIAgent {
@@ -28,13 +35,13 @@ Always be patient, clear, and educational in your responses.`,
 
   async processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       const aiService = AIServiceConfig.getInstance();
       const openai = aiService.getOpenAI();
-      
+
       const prompt = this.buildPrompt(request, context);
-      
+
       const response = await openai.chat.completions.create({
         model: this.config.model,
         messages: [
@@ -46,7 +53,7 @@ Always be patient, clear, and educational in your responses.`,
       });
 
       const content = response.choices[0]?.message?.content || '';
-      
+
       return {
         id: this.generateResponseId(),
         agentType: this.agentType,
@@ -95,7 +102,7 @@ Always be patient, clear, and educational in your responses.`,
   private countSolutionSteps(content: string): number {
     const stepPatterns = [/step \d+/gi, /\d+\./g, /first|second|third|finally/gi];
     let maxSteps = 0;
-    stepPatterns.forEach(pattern => {
+    stepPatterns.forEach((pattern) => {
       const matches = content.match(pattern);
       if (matches) maxSteps = Math.max(maxSteps, matches.length);
     });
@@ -104,14 +111,18 @@ Always be patient, clear, and educational in your responses.`,
 
   private hasExplanation(content: string): boolean {
     const explanationKeywords = ['because', 'reason', 'explanation', 'why', 'therefore'];
-    return explanationKeywords.some(keyword => content.toLowerCase().includes(keyword));
+    return explanationKeywords.some((keyword) => content.toLowerCase().includes(keyword));
   }
 
   private calculateCost(totalTokens: number): number {
     return (totalTokens / 1000) * 0.045;
   }
 
-  private async handleFallback(request: AIRequest, context?: ConversationContext, startTime: number): Promise<AIResponse> {
+  private async handleFallback(
+    request: AIRequest,
+    context?: ConversationContext,
+    startTime: number
+  ): Promise<AIResponse> {
     return {
       id: this.generateResponseId(),
       agentType: this.agentType,

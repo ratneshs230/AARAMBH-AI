@@ -1,4 +1,11 @@
-import { BaseAIAgent, AIRequest, AIResponse, ConversationContext, AgentType, AIProvider } from '../types/ai-agent';
+import {
+  BaseAIAgent,
+  AIRequest,
+  AIResponse,
+  ConversationContext,
+  AgentType,
+  AIProvider,
+} from '../types/ai-agent';
 import AIServiceConfig from '../config/ai-services';
 
 export class TutorAgent extends BaseAIAgent {
@@ -28,13 +35,13 @@ Always be encouraging, patient, and culturally sensitive.`,
 
   async processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       const aiService = AIServiceConfig.getInstance();
       const openai = aiService.getOpenAI();
-      
+
       const prompt = this.buildPrompt(request, context);
-      
+
       const response = await openai.chat.completions.create({
         model: this.config.model,
         messages: [
@@ -77,47 +84,48 @@ Always be encouraging, patient, and culturally sensitive.`,
 
   protected buildPrompt(request: AIRequest, context?: ConversationContext): string {
     let prompt = `Student Question: ${request.prompt}\n\n`;
-    
+
     if (request.metadata?.subject) {
       prompt += `Subject: ${request.metadata.subject}\n`;
     }
-    
+
     if (request.metadata?.level) {
       prompt += `Academic Level: ${request.metadata.level}\n`;
     }
-    
+
     if (request.metadata?.language && request.metadata.language !== 'english') {
       prompt += `Preferred Language: ${request.metadata.language}\n`;
     }
-    
+
     if (context?.metadata?.learningObjectives) {
       prompt += `Learning Objectives: ${context.metadata.learningObjectives.join(', ')}\n`;
     }
-    
+
     if (context?.history && context.history.length > 0) {
       prompt += `\nPrevious Conversation:\n`;
       context.history.slice(-3).forEach((msg, index) => {
         prompt += `${msg.role}: ${msg.content}\n`;
       });
     }
-    
+
     prompt += `\nPlease provide a clear, step-by-step explanation that helps the student understand the concept. Use examples relevant to Indian context when applicable.`;
-    
+
     return prompt;
   }
 
   private calculateTutorConfidence(content: string, metadata?: Record<string, any>): number {
     let confidence = 0.6;
-    
+
     // Check for educational indicators
-    if (content.includes('step') || content.includes('first') || content.includes('next')) confidence += 0.15;
+    if (content.includes('step') || content.includes('first') || content.includes('next'))
+      confidence += 0.15;
     if (content.includes('example') || content.includes('for instance')) confidence += 0.1;
     if (content.includes('understand') || content.includes('concept')) confidence += 0.1;
     if (content.length > 200) confidence += 0.05;
-    
+
     // Subject-specific confidence
     if (metadata?.subject) confidence += 0.1;
-    
+
     return Math.min(confidence, 1.0);
   }
 
@@ -143,16 +151,20 @@ Always be encouraging, patient, and culturally sensitive.`,
     return (totalTokens / 1000) * 0.045;
   }
 
-  private async handleFallback(request: AIRequest, context?: ConversationContext, startTime: number): Promise<AIResponse> {
+  private async handleFallback(
+    request: AIRequest,
+    context?: ConversationContext,
+    startTime: number
+  ): Promise<AIResponse> {
     try {
       const aiService = AIServiceConfig.getInstance();
       const gemini = aiService.getGemini();
       const model = gemini.getGenerativeModel({ model: 'gemini-pro' });
-      
+
       const prompt = this.buildPrompt(request, context);
       const result = await model.generateContent(prompt);
       const content = result.response.text();
-      
+
       return {
         id: this.generateResponseId(),
         agentType: this.agentType,
@@ -172,7 +184,8 @@ Always be encouraging, patient, and culturally sensitive.`,
         id: this.generateResponseId(),
         agentType: this.agentType,
         provider: this.config.provider,
-        content: 'I apologize, but I\'m currently experiencing technical difficulties. Please try again in a moment.',
+        content:
+          "I apologize, but I'm currently experiencing technical difficulties. Please try again in a moment.",
         confidence: 0.1,
         metadata: { error: true },
         timestamp: new Date(),

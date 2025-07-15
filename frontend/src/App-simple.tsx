@@ -13,12 +13,12 @@ const App: React.FC = () => {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path='/' element={<HomePage />} />
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/ai/tutor" element={<AITutorPage />} />
+            <Route path='/dashboard' element={<DashboardPage />} />
+            <Route path='/ai/tutor' element={<AITutorPage />} />
           </Route>
-          <Route path="*" element={<div>Page Not Found</div>} />
+          <Route path='*' element={<div>Page Not Found</div>} />
         </Routes>
       </Router>
     </ThemeProvider>

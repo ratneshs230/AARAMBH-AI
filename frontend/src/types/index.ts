@@ -56,7 +56,14 @@ export interface Course {
 }
 
 export interface AIAgent {
-  type: 'tutor' | 'content_creator' | 'assessment' | 'analytics' | 'mentor' | 'study_planner' | 'doubt_solver';
+  type:
+    | 'tutor'
+    | 'content_creator'
+    | 'assessment'
+    | 'analytics'
+    | 'mentor'
+    | 'study_planner'
+    | 'doubt_solver';
   name: string;
   description: string;
   capabilities: string[];

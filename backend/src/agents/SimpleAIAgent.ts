@@ -1,13 +1,23 @@
-import { BaseAIAgent, AIRequest, AIResponse, ConversationContext, AgentType, AIProvider } from '../types/ai-agent';
+import {
+  BaseAIAgent,
+  AIRequest,
+  AIResponse,
+  ConversationContext,
+  AgentType,
+  AIProvider,
+} from '../types/ai-agent';
 import AIServiceConfig from '../config/ai-services';
 
 export class SimpleAIAgent extends BaseAIAgent {
   constructor(agentType: AgentType, provider: AIProvider, systemPrompt: string) {
     super(agentType, {
       provider,
-      model: provider === AIProvider.OPENAI ? 'gpt-4' : 
-             provider === AIProvider.GEMINI ? 'gemini-pro' : 
-             'claude-3-sonnet-20240229',
+      model:
+        provider === AIProvider.OPENAI
+          ? 'gpt-4'
+          : provider === AIProvider.GEMINI
+            ? 'gemini-pro'
+            : 'claude-3-sonnet-20240229',
       temperature: 0.7,
       maxTokens: 1500,
       systemPrompt,
@@ -20,7 +30,7 @@ export class SimpleAIAgent extends BaseAIAgent {
 
   async processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       const prompt = this.buildPrompt(request, context);
       let content = '';
@@ -29,7 +39,7 @@ export class SimpleAIAgent extends BaseAIAgent {
       if (this.config.provider === AIProvider.OPENAI) {
         const aiService = AIServiceConfig.getInstance();
         const openai = aiService.getOpenAI();
-        
+
         const response = await openai.chat.completions.create({
           model: this.config.model,
           messages: [
@@ -50,7 +60,7 @@ export class SimpleAIAgent extends BaseAIAgent {
         const aiService = AIServiceConfig.getInstance();
         const gemini = aiService.getGemini();
         const model = gemini.getGenerativeModel({ model: this.config.model });
-        
+
         const result = await model.generateContent(prompt);
         content = result.response.text();
         usage = {
@@ -61,15 +71,13 @@ export class SimpleAIAgent extends BaseAIAgent {
       } else if (this.config.provider === AIProvider.ANTHROPIC) {
         const aiService = AIServiceConfig.getInstance();
         const anthropic = aiService.getAnthropic();
-        
+
         const response = await anthropic.messages.create({
           model: this.config.model,
           max_tokens: this.config.maxTokens || 1500,
           temperature: this.config.temperature || 0.7,
           system: this.config.systemPrompt!,
-          messages: [
-            { role: 'user', content: prompt },
-          ],
+          messages: [{ role: 'user', content: prompt }],
         });
 
         const firstContent = response.content[0];
@@ -117,17 +125,17 @@ export class SimpleAIAgent extends BaseAIAgent {
 
   protected buildPrompt(request: AIRequest, _context?: ConversationContext): string {
     let prompt = `Request: ${request.prompt}\n\n`;
-    
+
     if (request.metadata?.subject) {
       prompt += `Subject: ${request.metadata.subject}\n`;
     }
-    
+
     if (request.metadata?.level) {
       prompt += `Level: ${request.metadata.level}\n`;
     }
-    
+
     prompt += `Please provide a helpful and accurate response.`;
-    
+
     return prompt;
   }
 

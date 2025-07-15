@@ -40,7 +40,8 @@ const AIDoubtPage: React.FC = () => {
     {
       id: '1',
       type: 'ai',
-      content: 'Hi! I\'m your AI Doubt Solver. I can help you with any academic questions or problems. What would you like help with today?',
+      content:
+        "Hi! I'm your AI Doubt Solver. I can help you with any academic questions or problems. What would you like help with today?",
       timestamp: new Date(),
     },
   ]);
@@ -112,17 +113,17 @@ const AIDoubtPage: React.FC = () => {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+        <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
           AI Doubt Solver 💡
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           Get instant help with your academic doubts and problems
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {/* Chat Interface */}
-        <Grid item xs={12} lg={8}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Card sx={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
             {/* Messages Area */}
             <Box
@@ -133,7 +134,7 @@ const AIDoubtPage: React.FC = () => {
                 maxHeight: '450px',
               }}
             >
-              {messages.map((message) => (
+              {messages.map(message => (
                 <Box
                   key={message.id}
                   sx={{
@@ -147,22 +148,23 @@ const AIDoubtPage: React.FC = () => {
                       <HelpIcon />
                     </Avatar>
                   )}
-                  
+
                   <Paper
                     elevation={1}
                     sx={{
                       p: 2,
                       maxWidth: '75%',
-                      backgroundColor: message.type === 'user' ? 'primary.main' : 'background.paper',
+                      backgroundColor:
+                        message.type === 'user' ? 'primary.main' : 'background.paper',
                       color: message.type === 'user' ? 'primary.contrastText' : 'text.primary',
                       borderRadius: 2,
                     }}
                   >
-                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    <Typography variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>
                       {message.content}
                     </Typography>
                     <Typography
-                      variant="caption"
+                      variant='caption'
                       sx={{
                         display: 'block',
                         mt: 1,
@@ -174,9 +176,7 @@ const AIDoubtPage: React.FC = () => {
                   </Paper>
 
                   {message.type === 'user' && (
-                    <Avatar sx={{ bgcolor: 'grey.400', ml: 1, mt: 0.5 }}>
-                      👤
-                    </Avatar>
+                    <Avatar sx={{ bgcolor: 'grey.400', ml: 1, mt: 0.5 }}>👤</Avatar>
                   )}
                 </Box>
               ))}
@@ -188,7 +188,7 @@ const AIDoubtPage: React.FC = () => {
                   </Avatar>
                   <Paper elevation={1} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
                     <CircularProgress size={20} sx={{ mr: 1 }} />
-                    <Typography variant="body2">Solving your doubt...</Typography>
+                    <Typography variant='body2'>Solving your doubt...</Typography>
                   </Paper>
                 </Box>
               )}
@@ -199,7 +199,7 @@ const AIDoubtPage: React.FC = () => {
             {/* Input Area */}
             <Box sx={{ p: 2 }}>
               {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert severity='error' sx={{ mb: 2 }}>
                   {error}
                 </Alert>
               )}
@@ -210,13 +210,13 @@ const AIDoubtPage: React.FC = () => {
                   multiline
                   maxRows={3}
                   value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  onChange={e => setPrompt(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask your doubt here..."
+                  placeholder='Ask your doubt here...'
                   disabled={isLoading}
                 />
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleSendDoubt}
                   disabled={!prompt.trim() || isLoading}
                   sx={{ px: 3 }}
@@ -226,15 +226,10 @@ const AIDoubtPage: React.FC = () => {
               </Box>
 
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<CameraIcon />}
-                  disabled
-                >
+                <Button variant='outlined' size='small' startIcon={<CameraIcon />} disabled>
                   Upload Image
                 </Button>
-                <Typography variant="caption" color="text.secondary" sx={{ alignSelf: 'center' }}>
+                <Typography variant='caption' color='text.secondary' sx={{ alignSelf: 'center' }}>
                   Image upload coming soon
                 </Typography>
               </Box>
@@ -243,23 +238,19 @@ const AIDoubtPage: React.FC = () => {
         </Grid>
 
         {/* Sidebar with Options */}
-        <Grid item xs={12} lg={4}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           {/* Settings */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Doubt Context
               </Typography>
 
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Subject</InputLabel>
-                <Select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  label="Subject"
-                >
-                  <MenuItem value="">All Subjects</MenuItem>
-                  {SUBJECTS.map((subj) => (
+                <Select value={subject} onChange={e => setSubject(e.target.value)} label='Subject'>
+                  <MenuItem value=''>All Subjects</MenuItem>
+                  {SUBJECTS.map(subj => (
                     <MenuItem key={subj} value={subj.toLowerCase()}>
                       {subj}
                     </MenuItem>
@@ -271,11 +262,11 @@ const AIDoubtPage: React.FC = () => {
                 <InputLabel>Education Level</InputLabel>
                 <Select
                   value={level}
-                  onChange={(e) => setLevel(e.target.value)}
-                  label="Education Level"
+                  onChange={e => setLevel(e.target.value)}
+                  label='Education Level'
                 >
-                  <MenuItem value="">Any Level</MenuItem>
-                  {EDUCATION_LEVELS.map((lvl) => (
+                  <MenuItem value=''>Any Level</MenuItem>
+                  {EDUCATION_LEVELS.map(lvl => (
                     <MenuItem key={lvl} value={lvl.toLowerCase()}>
                       {lvl}
                     </MenuItem>
@@ -288,10 +279,10 @@ const AIDoubtPage: React.FC = () => {
           {/* Common Doubts */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Common Doubts
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
                 Click on any question to ask
               </Typography>
 
@@ -302,7 +293,7 @@ const AIDoubtPage: React.FC = () => {
                     label={doubt}
                     onClick={() => setPrompt(doubt)}
                     clickable
-                    variant="outlined"
+                    variant='outlined'
                     sx={{
                       justifyContent: 'flex-start',
                       height: 'auto',
@@ -322,34 +313,30 @@ const AIDoubtPage: React.FC = () => {
           {/* Tips */}
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Tips for Better Help
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <LightbulbIcon color="primary" sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
-                  <Typography variant="body2">
+                  <LightbulbIcon color='primary' sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
+                  <Typography variant='body2'>
                     Be specific about what you don't understand
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <LightbulbIcon color="primary" sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
-                  <Typography variant="body2">
+                  <LightbulbIcon color='primary' sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
+                  <Typography variant='body2'>
                     Mention your current level of understanding
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <LightbulbIcon color="primary" sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
-                  <Typography variant="body2">
-                    Ask follow-up questions for clarity
-                  </Typography>
+                  <LightbulbIcon color='primary' sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
+                  <Typography variant='body2'>Ask follow-up questions for clarity</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <LightbulbIcon color="primary" sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
-                  <Typography variant="body2">
-                    Include relevant context or formulas
-                  </Typography>
+                  <LightbulbIcon color='primary' sx={{ mr: 1, mt: 0.5, fontSize: 20 }} />
+                  <Typography variant='body2'>Include relevant context or formulas</Typography>
                 </Box>
               </Box>
             </CardContent>

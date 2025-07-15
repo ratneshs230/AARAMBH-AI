@@ -188,9 +188,10 @@ const getThemeOptions = (mode: PaletteMode): ThemeOptions => ({
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: mode === 'light' 
-            ? '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)'
-            : '0 4px 6px rgba(0, 0, 0, 0.3)',
+          boxShadow:
+            mode === 'light'
+              ? '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)'
+              : '0 4px 6px rgba(0, 0, 0, 0.3)',
           border: mode === 'light' ? 'none' : `1px solid ${colors.grey[700]}`,
         },
       },
@@ -224,9 +225,8 @@ const getThemeOptions = (mode: PaletteMode): ThemeOptions => ({
         root: {
           backgroundColor: mode === 'light' ? '#ffffff' : colors.grey[900],
           color: mode === 'light' ? colors.grey[900] : '#ffffff',
-          boxShadow: mode === 'light' 
-            ? '0 1px 3px rgba(0, 0, 0, 0.1)'
-            : '0 1px 3px rgba(0, 0, 0, 0.3)',
+          boxShadow:
+            mode === 'light' ? '0 1px 3px rgba(0, 0, 0, 0.1)' : '0 1px 3px rgba(0, 0, 0, 0.3)',
         },
       },
     },

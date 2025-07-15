@@ -5,53 +5,51 @@ import ValidationMiddleware from '../middleware/validation';
 
 const router = Router();
 
-router.post('/',
+router.post(
+  '/',
   AuthMiddleware.verifyFirebaseToken,
   AuthMiddleware.requireRole(['teacher', 'admin']),
   ValidationMiddleware.courseCreation,
   CourseController.createCourse
 );
 
-router.get('/',
-  ValidationMiddleware.paginationValidation,
-  CourseController.getCourses
-);
+router.get('/', ValidationMiddleware.paginationValidation, CourseController.getCourses);
 
-router.get('/my-courses',
+router.get(
+  '/my-courses',
   AuthMiddleware.verifyFirebaseToken,
   AuthMiddleware.requireRole(['teacher', 'admin']),
   ValidationMiddleware.paginationValidation,
   CourseController.getMyCourses
 );
 
-router.get('/slug/:slug',
-  CourseController.getCourseBySlug
-);
+router.get('/slug/:slug', CourseController.getCourseBySlug);
 
-router.get('/:id',
-  ValidationMiddleware.objectIdValidation,
-  CourseController.getCourseById
-);
+router.get('/:id', ValidationMiddleware.objectIdValidation, CourseController.getCourseById);
 
-router.put('/:id',
+router.put(
+  '/:id',
   ValidationMiddleware.objectIdValidation,
   AuthMiddleware.verifyFirebaseToken,
   CourseController.updateCourse
 );
 
-router.delete('/:id',
+router.delete(
+  '/:id',
   ValidationMiddleware.objectIdValidation,
   AuthMiddleware.verifyFirebaseToken,
   CourseController.deleteCourse
 );
 
-router.post('/:id/publish',
+router.post(
+  '/:id/publish',
   ValidationMiddleware.objectIdValidation,
   AuthMiddleware.verifyFirebaseToken,
   CourseController.publishCourse
 );
 
-router.post('/:id/unpublish',
+router.post(
+  '/:id/unpublish',
   ValidationMiddleware.objectIdValidation,
   AuthMiddleware.verifyFirebaseToken,
   CourseController.unpublishCourse

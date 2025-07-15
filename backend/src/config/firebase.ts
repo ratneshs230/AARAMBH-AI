@@ -29,7 +29,9 @@ class FirebaseConfig {
         client_id: process.env.FIREBASE_CLIENT_ID,
         auth_uri: process.env.FIREBASE_AUTH_URI || 'https://accounts.google.com/o/oauth2/auth',
         token_uri: process.env.FIREBASE_TOKEN_URI || 'https://oauth2.googleapis.com/token',
-        auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL || 'https://www.googleapis.com/oauth2/v1/certs'
+        auth_provider_x509_cert_url:
+          process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL ||
+          'https://www.googleapis.com/oauth2/v1/certs',
       };
 
       if (!serviceAccount.project_id) {
@@ -38,15 +40,14 @@ class FirebaseConfig {
 
       this.app = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-        projectId: serviceAccount.project_id
+        projectId: serviceAccount.project_id,
       });
 
       console.log('✅ Firebase Admin initialized successfully');
       console.log(`📁 Project ID: ${serviceAccount.project_id}`);
-
     } catch (error) {
       console.error('❌ Firebase initialization failed:', error);
-      
+
       console.log('🔄 Attempting to initialize Firebase with Application Default Credentials...');
       try {
         const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -54,7 +55,7 @@ class FirebaseConfig {
           throw new Error('FIREBASE_PROJECT_ID is required');
         }
         this.app = admin.initializeApp({
-          projectId
+          projectId,
         });
         console.log('✅ Firebase initialized with default credentials');
       } catch (fallbackError) {
@@ -120,7 +121,10 @@ class FirebaseConfig {
     }
   }
 
-  public async updateUser(uid: string, userData: admin.auth.UpdateRequest): Promise<admin.auth.UserRecord> {
+  public async updateUser(
+    uid: string,
+    userData: admin.auth.UpdateRequest
+  ): Promise<admin.auth.UserRecord> {
     try {
       const userRecord = await this.getAuth().updateUser(uid, userData);
       console.log('✅ Successfully updated user:', uid);
@@ -156,7 +160,7 @@ class FirebaseConfig {
       if (!this.app) {
         return false;
       }
-      
+
       await this.getAuth().listUsers(1);
       return true;
     } catch (error) {

@@ -93,11 +93,11 @@ export abstract class BaseAIAgent {
   protected calculateConfidence(response: string, metadata?: Record<string, any>): number {
     // Base confidence calculation - can be overridden by specific agents
     let confidence = 0.7;
-    
+
     if (response.length > 100) confidence += 0.1;
     if (response.includes('specific') || response.includes('example')) confidence += 0.1;
     if (metadata?.structured) confidence += 0.1;
-    
+
     return Math.min(confidence, 1.0);
   }
 

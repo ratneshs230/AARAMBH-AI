@@ -1,4 +1,11 @@
-import { BaseAIAgent, AIRequest, AIResponse, ConversationContext, AgentType, AIProvider } from '../types/ai-agent';
+import {
+  BaseAIAgent,
+  AIRequest,
+  AIResponse,
+  ConversationContext,
+  AgentType,
+  AIProvider,
+} from '../types/ai-agent';
 import AIServiceConfig from '../config/ai-services';
 
 export class StudyPlannerAgent extends BaseAIAgent {
@@ -28,18 +35,18 @@ Always create realistic, achievable plans that promote effective learning.`,
 
   async processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       const aiService = AIServiceConfig.getInstance();
       const gemini = aiService.getGemini();
-      const model = gemini.getGenerativeModel({ 
+      const model = gemini.getGenerativeModel({
         model: this.config.model,
         generationConfig: {
           temperature: this.config.temperature,
           maxOutputTokens: this.config.maxTokens,
         },
       });
-      
+
       const prompt = this.buildPrompt(request, context);
       const result = await model.generateContent(prompt);
       const content = result.response.text();
@@ -96,8 +103,17 @@ Always create realistic, achievable plans that promote effective learning.`,
 
   private extractSubjects(content: string): string[] {
     const subjects: string[] = [];
-    const commonSubjects = ['math', 'science', 'english', 'history', 'geography', 'physics', 'chemistry', 'biology'];
-    commonSubjects.forEach(subject => {
+    const commonSubjects = [
+      'math',
+      'science',
+      'english',
+      'history',
+      'geography',
+      'physics',
+      'chemistry',
+      'biology',
+    ];
+    commonSubjects.forEach((subject) => {
       if (content.toLowerCase().includes(subject)) {
         subjects.push(subject);
       }
@@ -113,7 +129,11 @@ Always create realistic, achievable plans that promote effective learning.`,
     return (totalTokens / 1000) * 0.0005;
   }
 
-  private async handleFallback(request: AIRequest, context?: ConversationContext, startTime: number): Promise<AIResponse> {
+  private async handleFallback(
+    request: AIRequest,
+    context?: ConversationContext,
+    startTime: number
+  ): Promise<AIResponse> {
     return {
       id: this.generateResponseId(),
       agentType: this.agentType,

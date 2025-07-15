@@ -18,7 +18,7 @@ export class AuthController {
         learningLanguage,
         role = 'student',
         subjects = [],
-        currentClass
+        currentClass,
       } = req.body;
 
       const { idToken } = req.body;
@@ -26,7 +26,7 @@ export class AuthController {
       if (!idToken) {
         return res.status(400).json({
           error: 'Firebase ID token required',
-          message: 'Please provide a valid Firebase ID token'
+          message: 'Please provide a valid Firebase ID token',
         });
       }
 
@@ -35,35 +35,31 @@ export class AuthController {
       if (decodedToken.email !== email) {
         return res.status(400).json({
           error: 'Email mismatch',
-          message: 'Firebase token email does not match provided email'
+          message: 'Firebase token email does not match provided email',
         });
       }
 
       const existingUser = await User.findOne({
-        $or: [
-          { email: email.toLowerCase() },
-          { username },
-          { firebaseUid: decodedToken.uid }
-        ]
+        $or: [{ email: email.toLowerCase() }, { username }, { firebaseUid: decodedToken.uid }],
       });
 
       if (existingUser) {
         if (existingUser.email === email.toLowerCase()) {
           return res.status(409).json({
             error: 'Email already exists',
-            message: 'An account with this email already exists'
+            message: 'An account with this email already exists',
           });
         }
         if (existingUser.username === username) {
           return res.status(409).json({
             error: 'Username already exists',
-            message: 'This username is already taken'
+            message: 'This username is already taken',
           });
         }
         if (existingUser.firebaseUid === decodedToken.uid) {
           return res.status(409).json({
             error: 'Account already exists',
-            message: 'An account with this Firebase UID already exists'
+            message: 'An account with this Firebase UID already exists',
           });
         }
       }
@@ -87,17 +83,17 @@ export class AuthController {
           notifications: {
             email: true,
             push: true,
-            sms: false
+            sms: false,
           },
           privacy: {
             profileVisibility: 'public',
             showOnlineStatus: true,
-            allowMessaging: true
+            allowMessaging: true,
           },
           learning: {
             dailyGoalMinutes: 30,
-            difficultyLevel: 'beginner'
-          }
+            difficultyLevel: 'beginner',
+          },
         },
         analytics: {
           totalStudyTime: 0,
@@ -105,8 +101,8 @@ export class AuthController {
           averageScore: 0,
           streakDays: 0,
           lastActiveDate: new Date(),
-          loginCount: 1
-        }
+          loginCount: 1,
+        },
       };
 
       const user = new User(userData);
@@ -115,7 +111,7 @@ export class AuthController {
       await FirebaseConfig.getInstance().setCustomUserClaims(decodedToken.uid, {
         role: user.role,
         subscriptionType: user.subscriptionType,
-        userId: user._id.toString()
+        userId: user._id.toString(),
       });
 
       const jwtToken = AuthMiddleware.generateJWT(user);
@@ -136,27 +132,26 @@ export class AuthController {
           subscriptionType: user.subscriptionType,
           isEmailVerified: user.isEmailVerified,
           accountStatus: user.accountStatus,
-          createdAt: user.createdAt
+          createdAt: user.createdAt,
         },
         tokens: {
           jwt: jwtToken,
-          firebase: idToken
-        }
+          firebase: idToken,
+        },
       });
-
     } catch (error) {
       console.error('User registration failed:', error);
-      
+
       if (error instanceof Error && error.message.includes('duplicate key')) {
         return res.status(409).json({
           error: 'Duplicate data',
-          message: 'Email or username already exists'
+          message: 'Email or username already exists',
         });
       }
 
       res.status(500).json({
         error: 'Registration failed',
-        message: 'Unable to create user account'
+        message: 'Unable to create user account',
       });
     }
   }
@@ -170,7 +165,7 @@ export class AuthController {
       if (decodedToken.email !== email) {
         return res.status(400).json({
           error: 'Email mismatch',
-          message: 'Firebase token email does not match provided email'
+          message: 'Firebase token email does not match provided email',
         });
       }
 
@@ -179,14 +174,14 @@ export class AuthController {
       if (!user) {
         return res.status(404).json({
           error: 'User not found',
-          message: 'No account found with this email. Please register first.'
+          message: 'No account found with this email. Please register first.',
         });
       }
 
       if (user.accountStatus !== 'active') {
         return res.status(403).json({
           error: 'Account suspended',
-          message: 'Your account has been suspended or deactivated'
+          message: 'Your account has been suspended or deactivated',
         });
       }
 
@@ -196,7 +191,7 @@ export class AuthController {
       await FirebaseConfig.getInstance().setCustomUserClaims(decodedToken.uid, {
         role: user.role,
         subscriptionType: user.subscriptionType,
-        userId: user._id.toString()
+        userId: user._id.toString(),
       });
 
       const jwtToken = AuthMiddleware.generateJWT(user);
@@ -220,19 +215,18 @@ export class AuthController {
           accountStatus: user.accountStatus,
           analytics: user.analytics,
           preferences: user.preferences,
-          lastLoginAt: user.analytics.lastActiveDate
+          lastLoginAt: user.analytics.lastActiveDate,
         },
         tokens: {
           jwt: jwtToken,
-          firebase: idToken
-        }
+          firebase: idToken,
+        },
       });
-
     } catch (error) {
       console.error('User login failed:', error);
       res.status(401).json({
         error: 'Login failed',
-        message: 'Invalid credentials or authentication error'
+        message: 'Invalid credentials or authentication error',
       });
     }
   }
@@ -244,7 +238,7 @@ export class AuthController {
       console.error('Token refresh failed:', error);
       res.status(500).json({
         error: 'Token refresh failed',
-        message: 'Unable to refresh authentication token'
+        message: 'Unable to refresh authentication token',
       });
     }
   }
@@ -258,14 +252,13 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: 'Logout successful'
+        message: 'Logout successful',
       });
-
     } catch (error) {
       console.error('Logout failed:', error);
       res.status(500).json({
         error: 'Logout failed',
-        message: 'Unable to process logout'
+        message: 'Unable to process logout',
       });
     }
   }
@@ -275,7 +268,7 @@ export class AuthController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -285,20 +278,19 @@ export class AuthController {
 
         res.json({
           success: true,
-          message: 'Email verified successfully'
+          message: 'Email verified successfully',
         });
       } else {
         res.status(400).json({
           error: 'Email not verified',
-          message: 'Email has not been verified in Firebase'
+          message: 'Email has not been verified in Firebase',
         });
       }
-
     } catch (error) {
       console.error('Email verification failed:', error);
       res.status(500).json({
         error: 'Verification failed',
-        message: 'Unable to verify email'
+        message: 'Unable to verify email',
       });
     }
   }
@@ -310,7 +302,7 @@ export class AuthController {
       if (!email) {
         return res.status(400).json({
           error: 'Email required',
-          message: 'Please provide an email address'
+          message: 'Please provide an email address',
         });
       }
 
@@ -319,21 +311,20 @@ export class AuthController {
       if (!user) {
         return res.json({
           success: true,
-          message: 'If an account with this email exists, a password reset link has been sent'
+          message: 'If an account with this email exists, a password reset link has been sent',
         });
       }
 
       res.json({
         success: true,
         message: 'Password reset link has been sent to your email',
-        instructions: 'Please use Firebase Auth to reset your password'
+        instructions: 'Please use Firebase Auth to reset your password',
       });
-
     } catch (error) {
       console.error('Password reset request failed:', error);
       res.status(500).json({
         error: 'Reset request failed',
-        message: 'Unable to process password reset request'
+        message: 'Unable to process password reset request',
       });
     }
   }
@@ -343,21 +334,20 @@ export class AuthController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
       res.json({
         success: true,
         message: 'Password change completed',
-        instructions: 'Password was changed through Firebase Auth'
+        instructions: 'Password was changed through Firebase Auth',
       });
-
     } catch (error) {
       console.error('Password change failed:', error);
       res.status(500).json({
         error: 'Password change failed',
-        message: 'Unable to change password'
+        message: 'Unable to change password',
       });
     }
   }
@@ -367,7 +357,7 @@ export class AuthController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -376,7 +366,7 @@ export class AuthController {
       if (confirmDelete !== 'DELETE_ACCOUNT') {
         return res.status(400).json({
           error: 'Confirmation required',
-          message: 'Please confirm account deletion by sending "DELETE_ACCOUNT"'
+          message: 'Please confirm account deletion by sending "DELETE_ACCOUNT"',
         });
       }
 
@@ -391,14 +381,13 @@ export class AuthController {
 
       res.json({
         success: true,
-        message: 'Account has been deleted successfully'
+        message: 'Account has been deleted successfully',
       });
-
     } catch (error) {
       console.error('Account deletion failed:', error);
       res.status(500).json({
         error: 'Account deletion failed',
-        message: 'Unable to delete account'
+        message: 'Unable to delete account',
       });
     }
   }

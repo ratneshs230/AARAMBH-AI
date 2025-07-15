@@ -7,7 +7,6 @@ import {
   Typography,
   Button,
   LinearProgress,
-  Chip,
   Avatar,
   List,
   ListItem,
@@ -16,8 +15,6 @@ import {
   Divider,
 } from '@mui/material';
 import {
-  TrendingUp as TrendingUpIcon,
-  School as SchoolIcon,
   Psychology as AIIcon,
   Quiz as QuizIcon,
   Book as BookIcon,
@@ -45,7 +42,7 @@ const DashboardPage: React.FC = () => {
       title: 'AI Tutor Session',
       description: 'Completed math problem solving with AI',
       time: '2 hours ago',
-      icon: <AIIcon color="primary" />,
+      icon: <AIIcon color='primary' />,
     },
     {
       id: 2,
@@ -53,7 +50,7 @@ const DashboardPage: React.FC = () => {
       title: 'Physics Course Progress',
       description: 'Completed Chapter 5: Motion in a Plane',
       time: '5 hours ago',
-      icon: <BookIcon color="success" />,
+      icon: <BookIcon color='success' />,
     },
     {
       id: 3,
@@ -61,7 +58,7 @@ const DashboardPage: React.FC = () => {
       title: 'Chemistry Quiz',
       description: 'Scored 92% in Organic Chemistry quiz',
       time: '1 day ago',
-      icon: <QuizIcon color="warning" />,
+      icon: <QuizIcon color='warning' />,
     },
   ];
 
@@ -100,75 +97,75 @@ const DashboardPage: React.FC = () => {
     <Box>
       {/* Welcome Section */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+        <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
           Welcome back, Student! 👋
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           Here's your learning overview for today
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {/* Stats Cards */}
-        <Grid item xs={12} sm={6} md={2.4}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="primary" fontWeight={600}>
+              <Typography variant='h4' color='primary' fontWeight={600}>
                 {stats.coursesEnrolled}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Courses Enrolled
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2.4}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="success.main" fontWeight={600}>
+              <Typography variant='h4' color='success.main' fontWeight={600}>
                 {stats.coursesCompleted}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Courses Completed
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2.4}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="warning.main" fontWeight={600}>
+              <Typography variant='h4' color='warning.main' fontWeight={600}>
                 {stats.totalStudyTime}h
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Study Time
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2.4}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="info.main" fontWeight={600}>
+              <Typography variant='h4' color='info.main' fontWeight={600}>
                 {stats.averageScore}%
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Average Score
               </Typography>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={2.4}>
+        <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
-              <Typography variant="h4" color="error.main" fontWeight={600}>
+              <Typography variant='h4' color='error.main' fontWeight={600}>
                 {stats.currentStreak}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant='body2' color='text.secondary'>
                 Day Streak
               </Typography>
             </CardContent>
@@ -176,17 +173,17 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         {/* Quick Actions */}
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Quick Actions
               </Typography>
               <Grid container spacing={2}>
                 {quickActions.map((action, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
+                  <Grid size={{ xs: 12, sm: 6 }} key={index}>
                     <Card
-                      variant="outlined"
+                      variant='outlined'
                       sx={{
                         cursor: 'pointer',
                         transition: 'all 0.2s',
@@ -202,10 +199,10 @@ const DashboardPage: React.FC = () => {
                           {action.icon}
                         </Avatar>
                         <Box>
-                          <Typography variant="subtitle2" fontWeight={600}>
+                          <Typography variant='subtitle2' fontWeight={600}>
                             {action.title}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography variant='caption' color='text.secondary'>
                             {action.description}
                           </Typography>
                         </Box>
@@ -219,42 +216,44 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         {/* Progress Overview */}
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Learning Progress
               </Typography>
-              
+
               <Box sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Mathematics</Typography>
-                  <Typography variant="body2" color="text.secondary">75%</Typography>
+                  <Typography variant='body2'>Mathematics</Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    75%
+                  </Typography>
                 </Box>
-                <LinearProgress variant="determinate" value={75} />
+                <LinearProgress variant='determinate' value={75} />
               </Box>
 
               <Box sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Physics</Typography>
-                  <Typography variant="body2" color="text.secondary">60%</Typography>
+                  <Typography variant='body2'>Physics</Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    60%
+                  </Typography>
                 </Box>
-                <LinearProgress variant="determinate" value={60} />
+                <LinearProgress variant='determinate' value={60} />
               </Box>
 
               <Box sx={{ mb: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography variant="body2">Chemistry</Typography>
-                  <Typography variant="body2" color="text.secondary">85%</Typography>
+                  <Typography variant='body2'>Chemistry</Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    85%
+                  </Typography>
                 </Box>
-                <LinearProgress variant="determinate" value={85} />
+                <LinearProgress variant='determinate' value={85} />
               </Box>
 
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={() => navigate(ROUTES.ANALYTICS)}
-              >
+              <Button variant='outlined' fullWidth onClick={() => navigate(ROUTES.ANALYTICS)}>
                 View Detailed Analytics
               </Button>
             </CardContent>
@@ -262,36 +261,41 @@ const DashboardPage: React.FC = () => {
         </Grid>
 
         {/* Recent Activities */}
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Recent Activities
               </Typography>
               <List>
                 {recentActivities.map((activity, index) => (
                   <React.Fragment key={activity.id}>
-                    <ListItem alignItems="flex-start">
+                    <ListItem alignItems='flex-start'>
                       <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: 'background.default' }}>
-                          {activity.icon}
-                        </Avatar>
+                        <Avatar sx={{ bgcolor: 'background.default' }}>{activity.icon}</Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         primary={activity.title}
                         secondary={
                           <>
-                            <Typography component="span" variant="body2">
+                            <Typography component='span' variant='body2'>
                               {activity.description}
                             </Typography>
-                            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
+                            <Typography
+                              component='span'
+                              variant='caption'
+                              color='text.secondary'
+                              sx={{ ml: 1 }}
+                            >
                               • {activity.time}
                             </Typography>
                           </>
                         }
                       />
                     </ListItem>
-                    {index < recentActivities.length - 1 && <Divider variant="inset" component="li" />}
+                    {index < recentActivities.length - 1 && (
+                      <Divider variant='inset' component='li' />
+                    )}
                   </React.Fragment>
                 ))}
               </List>

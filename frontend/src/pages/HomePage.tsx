@@ -29,7 +29,8 @@ const HomePage: React.FC = () => {
     {
       icon: <AIIcon sx={{ fontSize: 40, color: 'primary.main' }} />,
       title: 'AI-Powered Learning',
-      description: 'Get personalized tutoring, content creation, and assessments powered by advanced AI.',
+      description:
+        'Get personalized tutoring, content creation, and assessments powered by advanced AI.',
     },
     {
       icon: <LearnIcon sx={{ fontSize: 40, color: 'success.main' }} />,
@@ -51,11 +52,11 @@ const HomePage: React.FC = () => {
   return (
     <Box>
       {/* Header */}
-      <AppBar position="static" elevation={0} sx={{ backgroundColor: 'transparent' }}>
+      <AppBar position='static' elevation={0} sx={{ backgroundColor: 'transparent' }}>
         <Toolbar>
           <Typography
-            variant="h6"
-            component="h1"
+            variant='h6'
+            component='h1'
             sx={{
               fontWeight: 700,
               background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
@@ -67,39 +68,28 @@ const HomePage: React.FC = () => {
           >
             AARAMBH AI
           </Typography>
-          <Button
-            variant="outlined"
-            onClick={() => navigate(ROUTES.DASHBOARD)}
-            sx={{ mr: 1 }}
-          >
+          <Button variant='outlined' onClick={() => navigate(ROUTES.DASHBOARD)} sx={{ mr: 1 }}>
             Dashboard
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => navigate(ROUTES.AI_TUTOR)}
-          >
+          <Button variant='contained' onClick={() => navigate(ROUTES.AI_TUTOR)}>
             Try AI Tutor
           </Button>
         </Toolbar>
       </AppBar>
 
       {/* Hero Section */}
-      <Container maxWidth="lg">
+      <Container maxWidth='lg'>
         <Box
           sx={{
             py: 8,
             textAlign: 'center',
           }}
         >
-          <Chip
-            label="AI-Powered Education"
-            color="primary"
-            sx={{ mb: 3, fontWeight: 600 }}
-          />
-          
+          <Chip label='AI-Powered Education' color='primary' sx={{ mb: 3, fontWeight: 600 }} />
+
           <Typography
-            variant="h1"
-            component="h1"
+            variant='h1'
+            component='h1'
             gutterBottom
             sx={{
               fontWeight: 700,
@@ -113,29 +103,29 @@ const HomePage: React.FC = () => {
           >
             Revolutionize Learning with AI
           </Typography>
-          
+
           <Typography
-            variant="h5"
-            component="p"
-            color="text.secondary"
+            variant='h5'
+            component='p'
+            color='text.secondary'
             sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
           >
-            Personalized AI tutoring, smart content creation, and comprehensive analytics 
-            designed specifically for Indian students.
+            Personalized AI tutoring, smart content creation, and comprehensive analytics designed
+            specifically for Indian students.
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Button
-              variant="contained"
-              size="large"
+              variant='contained'
+              size='large'
               onClick={() => navigate(ROUTES.AI_TUTOR)}
               sx={{ px: 4, py: 1.5 }}
             >
               Start Learning with AI
             </Button>
             <Button
-              variant="outlined"
-              size="large"
+              variant='outlined'
+              size='large'
               onClick={() => navigate(ROUTES.COURSES)}
               sx={{ px: 4, py: 1.5 }}
             >
@@ -147,9 +137,9 @@ const HomePage: React.FC = () => {
         {/* Features Section */}
         <Box sx={{ py: 8 }}>
           <Typography
-            variant="h3"
-            component="h2"
-            textAlign="center"
+            variant='h3'
+            component='h2'
+            textAlign='center'
             gutterBottom
             sx={{ fontWeight: 600, mb: 6 }}
           >
@@ -158,7 +148,7 @@ const HomePage: React.FC = () => {
 
           <Grid container spacing={4}>
             {features.map((feature, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                 <Card
                   sx={{
                     height: '100%',
@@ -171,21 +161,11 @@ const HomePage: React.FC = () => {
                   }}
                 >
                   <CardContent sx={{ p: 3 }}>
-                    <Box sx={{ mb: 2 }}>
-                      {feature.icon}
-                    </Box>
-                    <Typography
-                      variant="h6"
-                      component="h3"
-                      gutterBottom
-                      sx={{ fontWeight: 600 }}
-                    >
+                    <Box sx={{ mb: 2 }}>{feature.icon}</Box>
+                    <Typography variant='h6' component='h3' gutterBottom sx={{ fontWeight: 600 }}>
                       {feature.title}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                    >
+                    <Typography variant='body2' color='text.secondary'>
                       {feature.description}
                     </Typography>
                   </CardContent>
@@ -207,23 +187,15 @@ const HomePage: React.FC = () => {
             mb: 8,
           }}
         >
-          <Typography
-            variant="h4"
-            component="h2"
-            gutterBottom
-            sx={{ fontWeight: 600 }}
-          >
+          <Typography variant='h4' component='h2' gutterBottom sx={{ fontWeight: 600 }}>
             Ready to Transform Your Learning?
           </Typography>
-          <Typography
-            variant="h6"
-            sx={{ mb: 4, opacity: 0.9 }}
-          >
+          <Typography variant='h6' sx={{ mb: 4, opacity: 0.9 }}>
             Join thousands of students already learning with AI
           </Typography>
           <Button
-            variant="contained"
-            size="large"
+            variant='contained'
+            size='large'
             onClick={() => navigate(ROUTES.DASHBOARD)}
             sx={{
               backgroundColor: 'white',

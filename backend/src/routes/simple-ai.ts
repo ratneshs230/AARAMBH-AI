@@ -6,7 +6,11 @@ import { Request, Response, NextFunction } from 'express';
 const router = Router();
 
 // Validation middleware
-const handleValidationErrors = (req: Request, res: Response, next: NextFunction): Response | void => {
+const handleValidationErrors = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Response | void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
@@ -22,7 +26,9 @@ const handleValidationErrors = (req: Request, res: Response, next: NextFunction)
 // Basic validation
 const baseValidation = [
   body('prompt').notEmpty().withMessage('Prompt is required'),
-  body('prompt').isLength({ min: 5, max: 2000 }).withMessage('Prompt must be between 5 and 2000 characters'),
+  body('prompt')
+    .isLength({ min: 5, max: 2000 })
+    .withMessage('Prompt must be between 5 and 2000 characters'),
 ];
 
 // AI Services Health Check
@@ -32,17 +38,29 @@ router.get('/health', simpleAIController.getAIServicesHealth.bind(simpleAIContro
 router.get('/agents/status', simpleAIController.getAgentStatus.bind(simpleAIController));
 
 // Generic AI Request
-router.post('/request', 
+router.post(
+  '/request',
   [
     ...baseValidation,
-    body('agentType').optional().isIn(['tutor', 'content_creator', 'assessment', 'analytics', 'mentor', 'study_planner', 'doubt_solver']),
+    body('agentType')
+      .optional()
+      .isIn([
+        'tutor',
+        'content_creator',
+        'assessment',
+        'analytics',
+        'mentor',
+        'study_planner',
+        'doubt_solver',
+      ]),
     handleValidationErrors,
   ],
   simpleAIController.processRequest.bind(simpleAIController)
 );
 
 // Tutor Endpoint
-router.post('/tutor/ask',
+router.post(
+  '/tutor/ask',
   [
     ...baseValidation,
     body('subject').optional().isString(),
@@ -54,7 +72,8 @@ router.post('/tutor/ask',
 );
 
 // Content Creator Endpoint
-router.post('/content/create',
+router.post(
+  '/content/create',
   [
     ...baseValidation,
     body('subject').optional().isString(),
@@ -65,7 +84,8 @@ router.post('/content/create',
 );
 
 // Assessment Creator Endpoint
-router.post('/assessment/create',
+router.post(
+  '/assessment/create',
   [
     ...baseValidation,
     body('subject').optional().isString(),
@@ -76,7 +96,8 @@ router.post('/assessment/create',
 );
 
 // Doubt Solver Endpoint
-router.post('/doubt/solve',
+router.post(
+  '/doubt/solve',
   [
     ...baseValidation,
     body('subject').optional().isString(),

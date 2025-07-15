@@ -1,4 +1,8 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, {
+  type AxiosInstance,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 import { config } from '@utils/config';
 import { LOCAL_STORAGE_KEYS } from '@utils/constants';
 
@@ -30,7 +34,7 @@ class ApiService {
 
   private setupInterceptors() {
     // Request interceptor to add auth token
-    const requestInterceptor = (config: AxiosRequestConfig) => {
+    const requestInterceptor = (config: InternalAxiosRequestConfig) => {
       const token = localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;

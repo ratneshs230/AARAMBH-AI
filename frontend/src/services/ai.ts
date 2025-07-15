@@ -19,11 +19,14 @@ export class AIService {
   }
 
   // Tutor Agent - Get personalized explanations
-  async askTutor(prompt: string, options?: {
-    subject?: string;
-    level?: string;
-    language?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async askTutor(
+    prompt: string,
+    options?: {
+      subject?: string;
+      level?: string;
+      language?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.TUTOR, {
       prompt,
       subject: options?.subject,
@@ -33,11 +36,14 @@ export class AIService {
   }
 
   // Content Creator Agent - Generate educational content
-  async createContent(prompt: string, options?: {
-    subject?: string;
-    level?: string;
-    contentType?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async createContent(
+    prompt: string,
+    options?: {
+      subject?: string;
+      level?: string;
+      contentType?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.CONTENT, {
       prompt,
       subject: options?.subject,
@@ -47,11 +53,14 @@ export class AIService {
   }
 
   // Assessment Agent - Create quizzes and tests
-  async createAssessment(prompt: string, options?: {
-    subject?: string;
-    level?: string;
-    assessmentType?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async createAssessment(
+    prompt: string,
+    options?: {
+      subject?: string;
+      level?: string;
+      assessmentType?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.ASSESSMENT, {
       prompt,
       subject: options?.subject,
@@ -61,10 +70,13 @@ export class AIService {
   }
 
   // Doubt Solver Agent - Solve problems and answer questions
-  async solveDoubt(prompt: string, options?: {
-    subject?: string;
-    level?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async solveDoubt(
+    prompt: string,
+    options?: {
+      subject?: string;
+      level?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.DOUBT, {
       prompt,
       subject: options?.subject,
@@ -73,11 +85,14 @@ export class AIService {
   }
 
   // Study Planner Agent - Create study schedules
-  async createStudyPlan(prompt: string, options?: {
-    subjects?: string[];
-    duration?: string;
-    examDate?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async createStudyPlan(
+    prompt: string,
+    options?: {
+      subjects?: string[];
+      duration?: string;
+      examDate?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.REQUEST, {
       prompt,
       agentType: AGENT_TYPES.STUDY_PLANNER,
@@ -90,10 +105,13 @@ export class AIService {
   }
 
   // Mentor Agent - Get career guidance
-  async getCareerGuidance(prompt: string, options?: {
-    interests?: string[];
-    currentLevel?: string;
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async getCareerGuidance(
+    prompt: string,
+    options?: {
+      interests?: string[];
+      currentLevel?: string;
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.REQUEST, {
       prompt,
       agentType: AGENT_TYPES.MENTOR,
@@ -105,10 +123,13 @@ export class AIService {
   }
 
   // Analytics Agent - Get learning insights
-  async getAnalytics(prompt: string, options?: {
-    timeRange?: string;
-    metrics?: string[];
-  }): Promise<{ success: boolean; data: AIResponse }> {
+  async getAnalytics(
+    prompt: string,
+    options?: {
+      timeRange?: string;
+      metrics?: string[];
+    }
+  ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.REQUEST, {
       prompt,
       agentType: AGENT_TYPES.ANALYTICS,
@@ -125,10 +146,13 @@ export class AIService {
   }
 
   // Start a conversation session
-  async startConversation(agentType: string, options?: {
-    subject?: string;
-    level?: string;
-  }): Promise<{ success: boolean; data: { sessionId: string } }> {
+  async startConversation(
+    agentType: string,
+    options?: {
+      subject?: string;
+      level?: string;
+    }
+  ): Promise<{ success: boolean; data: { sessionId: string } }> {
     return apiService.aiRequest('/conversation/start', {
       agentType,
       subject: options?.subject,

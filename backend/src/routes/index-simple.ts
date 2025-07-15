@@ -18,15 +18,15 @@ router.get('/', (_req, res) => {
       userManagement: 'In Progress',
       courseManagement: 'In Progress',
       database: 'Connected',
-      firebase: 'Configured'
+      firebase: 'Configured',
     },
     endpoints: {
       auth: {
         register: 'POST /api/auth/register',
         login: 'POST /api/auth/login',
-        logout: 'POST /api/auth/logout'
-      }
-    }
+        logout: 'POST /api/auth/logout',
+      },
+    },
   });
 });
 

@@ -8,7 +8,7 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -44,15 +44,14 @@ export class UserController {
           analytics: req.user.analytics,
           createdAt: req.user.createdAt,
           updatedAt: req.user.updatedAt,
-          lastLoginAt: req.user.lastLoginAt
-        }
+          lastLoginAt: req.user.lastLoginAt,
+        },
       });
-
     } catch (error) {
       console.error('Get profile failed:', error);
       res.status(500).json({
         error: 'Profile retrieval failed',
-        message: 'Unable to retrieve user profile'
+        message: 'Unable to retrieve user profile',
       });
     }
   }
@@ -62,17 +61,25 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
       const allowedUpdates = [
-        'firstName', 'lastName', 'dateOfBirth', 'gender', 'phoneNumber',
-        'profilePicture', 'bio', 'currentClass', 'subjects', 'learningStyle'
+        'firstName',
+        'lastName',
+        'dateOfBirth',
+        'gender',
+        'phoneNumber',
+        'profilePicture',
+        'bio',
+        'currentClass',
+        'subjects',
+        'learningStyle',
       ];
 
       const updates = Object.keys(req.body)
-        .filter(key => allowedUpdates.includes(key))
+        .filter((key) => allowedUpdates.includes(key))
         .reduce((obj: any, key: string) => {
           obj[key] = req.body[key];
           return obj;
@@ -81,7 +88,7 @@ export class UserController {
       if (Object.keys(updates).length === 0) {
         return res.status(400).json({
           error: 'No valid updates provided',
-          message: 'Please provide valid fields to update'
+          message: 'Please provide valid fields to update',
         });
       }
 
@@ -105,15 +112,14 @@ export class UserController {
           currentClass: req.user.currentClass,
           subjects: req.user.subjects,
           learningStyle: req.user.learningStyle,
-          updatedAt: req.user.updatedAt
-        }
+          updatedAt: req.user.updatedAt,
+        },
       });
-
     } catch (error) {
       console.error('Profile update failed:', error);
       res.status(500).json({
         error: 'Profile update failed',
-        message: 'Unable to update user profile'
+        message: 'Unable to update user profile',
       });
     }
   }
@@ -123,7 +129,7 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -132,7 +138,7 @@ export class UserController {
       if (!preferences) {
         return res.status(400).json({
           error: 'Preferences required',
-          message: 'Please provide preferences to update'
+          message: 'Please provide preferences to update',
         });
       }
 
@@ -153,14 +159,13 @@ export class UserController {
       res.json({
         success: true,
         message: 'Preferences updated successfully',
-        preferences: req.user.preferences
+        preferences: req.user.preferences,
       });
-
     } catch (error) {
       console.error('Preferences update failed:', error);
       res.status(500).json({
         error: 'Preferences update failed',
-        message: 'Unable to update user preferences'
+        message: 'Unable to update user preferences',
       });
     }
   }
@@ -170,32 +175,40 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
       const analytics = {
         basic: req.user.analytics,
         calculated: {
-          averageStudyTimePerDay: req.user.analytics.totalStudyTime / Math.max(req.user.analytics.streakDays, 1),
-          accountAge: Math.floor((Date.now() - req.user.createdAt.getTime()) / (1000 * 60 * 60 * 24)),
-          isActiveToday: req.user.analytics.lastActiveDate.toDateString() === new Date().toDateString(),
-          subscriptionDaysLeft: req.user.subscriptionEndDate 
-            ? Math.max(0, Math.floor((req.user.subscriptionEndDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-            : null
-        }
+          averageStudyTimePerDay:
+            req.user.analytics.totalStudyTime / Math.max(req.user.analytics.streakDays, 1),
+          accountAge: Math.floor(
+            (Date.now() - req.user.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+          ),
+          isActiveToday:
+            req.user.analytics.lastActiveDate.toDateString() === new Date().toDateString(),
+          subscriptionDaysLeft: req.user.subscriptionEndDate
+            ? Math.max(
+                0,
+                Math.floor(
+                  (req.user.subscriptionEndDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                )
+              )
+            : null,
+        },
       };
 
       res.json({
         success: true,
-        analytics
+        analytics,
       });
-
     } catch (error) {
       console.error('Get analytics failed:', error);
       res.status(500).json({
         error: 'Analytics retrieval failed',
-        message: 'Unable to retrieve user analytics'
+        message: 'Unable to retrieve user analytics',
       });
     }
   }
@@ -205,7 +218,7 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -215,7 +228,12 @@ export class UserController {
         req.user.analytics.totalStudyTime += studyTimeMinutes;
       }
 
-      if (scorePercentage && typeof scorePercentage === 'number' && scorePercentage >= 0 && scorePercentage <= 100) {
+      if (
+        scorePercentage &&
+        typeof scorePercentage === 'number' &&
+        scorePercentage >= 0 &&
+        scorePercentage <= 100
+      ) {
         const currentTotal = req.user.analytics.averageScore * req.user.analytics.coursesCompleted;
         const newTotal = currentTotal + scorePercentage;
         const newCount = req.user.analytics.coursesCompleted + (courseCompleted ? 1 : 0);
@@ -231,14 +249,13 @@ export class UserController {
       res.json({
         success: true,
         message: 'Learning progress updated successfully',
-        analytics: req.user.analytics
+        analytics: req.user.analytics,
       });
-
     } catch (error) {
       console.error('Learning progress update failed:', error);
       res.status(500).json({
         error: 'Progress update failed',
-        message: 'Unable to update learning progress'
+        message: 'Unable to update learning progress',
       });
     }
   }
@@ -250,7 +267,7 @@ export class UserController {
       if (!q || typeof q !== 'string' || q.trim().length < 2) {
         return res.status(400).json({
           error: 'Search query required',
-          message: 'Please provide a search query of at least 2 characters'
+          message: 'Please provide a search query of at least 2 characters',
         });
       }
 
@@ -265,8 +282,8 @@ export class UserController {
           { firstName: searchRegex },
           { lastName: searchRegex },
           { username: searchRegex },
-          { email: searchRegex }
-        ]
+          { email: searchRegex },
+        ],
       };
 
       if (role && typeof role === 'string') {
@@ -279,11 +296,13 @@ export class UserController {
 
       const [users, total] = await Promise.all([
         User.find(query)
-          .select('username firstName lastName profilePicture bio role educationLevel currentClass learningLanguage')
+          .select(
+            'username firstName lastName profilePicture bio role educationLevel currentClass learningLanguage'
+          )
           .limit(limitNum)
           .skip(skip)
           .sort({ 'analytics.lastActiveDate': -1 }),
-        User.countDocuments(query)
+        User.countDocuments(query),
       ]);
 
       res.json({
@@ -294,15 +313,14 @@ export class UserController {
           totalPages: Math.ceil(total / limitNum),
           totalUsers: total,
           hasNextPage: pageNum * limitNum < total,
-          hasPrevPage: pageNum > 1
-        }
+          hasPrevPage: pageNum > 1,
+        },
       });
-
     } catch (error) {
       console.error('User search failed:', error);
       res.status(500).json({
         error: 'Search failed',
-        message: 'Unable to search users'
+        message: 'Unable to search users',
       });
     }
   }
@@ -311,33 +329,33 @@ export class UserController {
     try {
       const { id } = req.params;
 
-      const user = await User.findById(id)
-        .select('username firstName lastName profilePicture bio role educationLevel currentClass learningLanguage subjects createdAt');
+      const user = await User.findById(id).select(
+        'username firstName lastName profilePicture bio role educationLevel currentClass learningLanguage subjects createdAt'
+      );
 
       if (!user) {
         return res.status(404).json({
           error: 'User not found',
-          message: 'No user found with the provided ID'
+          message: 'No user found with the provided ID',
         });
       }
 
       if (user.accountStatus !== 'active') {
         return res.status(404).json({
           error: 'User not found',
-          message: 'User account is not active'
+          message: 'User account is not active',
         });
       }
 
       res.json({
         success: true,
-        user
+        user,
       });
-
     } catch (error) {
       console.error('Get user by ID failed:', error);
       res.status(500).json({
         error: 'User retrieval failed',
-        message: 'Unable to retrieve user information'
+        message: 'Unable to retrieve user information',
       });
     }
   }
@@ -347,7 +365,7 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
@@ -356,14 +374,13 @@ export class UserController {
 
       res.json({
         success: true,
-        message: 'Account has been deactivated successfully'
+        message: 'Account has been deactivated successfully',
       });
-
     } catch (error) {
       console.error('Account deactivation failed:', error);
       res.status(500).json({
         error: 'Deactivation failed',
-        message: 'Unable to deactivate account'
+        message: 'Unable to deactivate account',
       });
     }
   }
@@ -373,14 +390,14 @@ export class UserController {
       if (!req.user) {
         return res.status(401).json({
           error: 'Authentication required',
-          message: 'User not authenticated'
+          message: 'User not authenticated',
         });
       }
 
       if (req.user.accountStatus !== 'deactivated') {
         return res.status(400).json({
           error: 'Account not deactivated',
-          message: 'Account is not in deactivated state'
+          message: 'Account is not in deactivated state',
         });
       }
 
@@ -389,14 +406,13 @@ export class UserController {
 
       res.json({
         success: true,
-        message: 'Account has been reactivated successfully'
+        message: 'Account has been reactivated successfully',
       });
-
     } catch (error) {
       console.error('Account reactivation failed:', error);
       res.status(500).json({
         error: 'Reactivation failed',
-        message: 'Unable to reactivate account'
+        message: 'Unable to reactivate account',
       });
     }
   }

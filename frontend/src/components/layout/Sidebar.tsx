@@ -35,18 +35,28 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   { text: 'Dashboard', icon: <DashboardIcon />, path: ROUTES.DASHBOARD },
   { text: 'Courses', icon: <CoursesIcon />, path: ROUTES.COURSES },
-  
+
   // AI Features
   { text: 'AI Tutor', icon: <AIIcon />, path: ROUTES.AI_TUTOR, category: 'AI Features' },
-  { text: 'Content Creator', icon: <CoursesIcon />, path: ROUTES.AI_CONTENT, category: 'AI Features' },
-  { text: 'Assessment Generator', icon: <AssessmentIcon />, path: ROUTES.AI_ASSESSMENT, category: 'AI Features' },
+  {
+    text: 'Content Creator',
+    icon: <CoursesIcon />,
+    path: ROUTES.AI_CONTENT,
+    category: 'AI Features',
+  },
+  {
+    text: 'Assessment Generator',
+    icon: <AssessmentIcon />,
+    path: ROUTES.AI_ASSESSMENT,
+    category: 'AI Features',
+  },
   { text: 'Doubt Solver', icon: <DoubtIcon />, path: ROUTES.AI_DOUBT, category: 'AI Features' },
-  
+
   // Tools
   { text: 'Study Planner', icon: <PlannerIcon />, path: ROUTES.STUDY_PLANNER, category: 'Tools' },
   { text: 'Assessments', icon: <AssessmentIcon />, path: ROUTES.ASSESSMENTS, category: 'Tools' },
   { text: 'Analytics', icon: <AnalyticsIcon />, path: ROUTES.ANALYTICS, category: 'Tools' },
-  
+
   // Account
   { text: 'Profile', icon: <ProfileIcon />, path: ROUTES.PROFILE, category: 'Account' },
 ];
@@ -61,14 +71,14 @@ const Sidebar: React.FC = () => {
 
   const renderMenuSection = (category: string | undefined, items: MenuItem[]) => {
     const sectionItems = items.filter(item => item.category === category);
-    
+
     if (sectionItems.length === 0) return null;
 
     return (
       <Box key={category || 'main'}>
         {category && (
           <Typography
-            variant="overline"
+            variant='overline'
             sx={{
               px: 2,
               py: 1,
@@ -82,9 +92,9 @@ const Sidebar: React.FC = () => {
           </Typography>
         )}
         <List sx={{ py: 0 }}>
-          {sectionItems.map((item) => {
+          {sectionItems.map(item => {
             const isSelected = location.pathname === item.path;
-            
+
             return (
               <ListItem key={item.text} disablePadding sx={{ px: 1 }}>
                 <ListItemButton
@@ -135,11 +145,13 @@ const Sidebar: React.FC = () => {
 
   // Group items by category
   const mainItems = menuItems.filter(item => !item.category);
-  const categories = [...new Set(menuItems.filter(item => item.category).map(item => item.category))];
+  const categories = [
+    ...new Set(menuItems.filter(item => item.category).map(item => item.category)),
+  ];
 
   return (
     <Drawer
-      variant="permanent"
+      variant='permanent'
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -155,11 +167,9 @@ const Sidebar: React.FC = () => {
       <Box sx={{ p: 2, pt: 10 }}>
         {/* Main Navigation Items */}
         {renderMenuSection(undefined, mainItems)}
-        
+
         {/* Categorized Items */}
-        {categories.map(category => 
-          renderMenuSection(category, menuItems)
-        )}
+        {categories.map(category => renderMenuSection(category, menuItems))}
       </Box>
     </Drawer>
   );

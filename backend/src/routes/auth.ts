@@ -5,47 +5,27 @@ import ValidationMiddleware from '../middleware/validation';
 
 const router = Router();
 
-router.post('/register', 
-  ValidationMiddleware.userRegistration,
-  AuthController.register
-);
+router.post('/register', ValidationMiddleware.userRegistration, AuthController.register);
 
-router.post('/login',
-  ValidationMiddleware.userLogin,
-  AuthController.login
-);
+router.post('/login', ValidationMiddleware.userLogin, AuthController.login);
 
-router.post('/refresh-token',
-  AuthMiddleware.verifyFirebaseToken,
-  AuthController.refreshToken
-);
+router.post('/refresh-token', AuthMiddleware.verifyFirebaseToken, AuthController.refreshToken);
 
-router.post('/logout',
-  AuthMiddleware.verifyFirebaseToken,
-  AuthController.logout
-);
+router.post('/logout', AuthMiddleware.verifyFirebaseToken, AuthController.logout);
 
-router.post('/verify-email',
-  AuthMiddleware.verifyFirebaseToken,
-  AuthController.verifyEmail
-);
+router.post('/verify-email', AuthMiddleware.verifyFirebaseToken, AuthController.verifyEmail);
 
-router.post('/request-password-reset',
+router.post(
+  '/request-password-reset',
   [
     ValidationMiddleware.userLogin[0], // email validation
-    ValidationMiddleware.handleValidationErrors
+    ValidationMiddleware.handleValidationErrors,
   ],
   AuthController.requestPasswordReset
 );
 
-router.post('/change-password',
-  AuthMiddleware.verifyFirebaseToken,
-  AuthController.changePassword
-);
+router.post('/change-password', AuthMiddleware.verifyFirebaseToken, AuthController.changePassword);
 
-router.delete('/delete-account',
-  AuthMiddleware.verifyFirebaseToken,
-  AuthController.deleteAccount
-);
+router.delete('/delete-account', AuthMiddleware.verifyFirebaseToken, AuthController.deleteAccount);
 
 export default router;

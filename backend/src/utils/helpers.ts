@@ -24,7 +24,11 @@ export function getCourseCompletionRate(course: ICourse): number {
 
 export function getCourseEffectivePrice(course: ICourse): number {
   if (course.pricing.type === 'free') return 0;
-  if (course.pricing.discountPrice && course.pricing.discountEndDate && new Date() <= course.pricing.discountEndDate) {
+  if (
+    course.pricing.discountPrice &&
+    course.pricing.discountEndDate &&
+    new Date() <= course.pricing.discountEndDate
+  ) {
     return course.pricing.discountPrice;
   }
   return course.pricing.amount || 0;
@@ -47,13 +51,13 @@ export async function updateUserStreakDays(user: IUser): Promise<IUser> {
   const lastActive = new Date(user.analytics.lastActiveDate);
   const diffTime = Math.abs(today.getTime() - lastActive.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays === 1) {
     user.analytics.streakDays += 1;
   } else if (diffDays > 1) {
     user.analytics.streakDays = 1;
   }
-  
+
   user.analytics.lastActiveDate = today;
   return user.save();
 }

@@ -26,7 +26,6 @@ import {
 } from '@mui/icons-material';
 import { SUBJECTS, EDUCATION_LEVELS } from '@/utils/constants';
 import { aiService } from '@/services/ai';
-import { AIResponse } from '@/types/index';
 
 interface ChatMessage {
   id: string;
@@ -41,7 +40,8 @@ const AITutorPage: React.FC = () => {
     {
       id: '1',
       type: 'ai',
-      content: 'Hello! I\'m your AI Tutor. I\'m here to help you learn and understand any topic. What would you like to explore today?',
+      content:
+        "Hello! I'm your AI Tutor. I'm here to help you learn and understand any topic. What would you like to explore today?",
       timestamp: new Date(),
     },
   ]);
@@ -107,7 +107,7 @@ const AITutorPage: React.FC = () => {
     'Help me solve quadratic equations',
     'What is the difference between mitosis and meiosis?',
     'How do I calculate derivatives?',
-    'Explain Newton\'s laws of motion',
+    "Explain Newton's laws of motion",
     'What are the causes of World War I?',
   ];
 
@@ -115,17 +115,17 @@ const AITutorPage: React.FC = () => {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+        <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
           AI Tutor 🧠
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           Get personalized explanations and step-by-step guidance from your AI tutor
         </Typography>
       </Box>
 
       <Grid container spacing={3}>
         {/* Chat Interface */}
-        <Grid item xs={12} lg={8}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Card sx={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
             {/* Messages Area */}
             <Box
@@ -136,7 +136,7 @@ const AITutorPage: React.FC = () => {
                 maxHeight: '450px',
               }}
             >
-              {messages.map((message) => (
+              {messages.map(message => (
                 <Box
                   key={message.id}
                   sx={{
@@ -150,22 +150,23 @@ const AITutorPage: React.FC = () => {
                       <AIIcon />
                     </Avatar>
                   )}
-                  
+
                   <Paper
                     elevation={1}
                     sx={{
                       p: 2,
                       maxWidth: '70%',
-                      backgroundColor: message.type === 'user' ? 'primary.main' : 'background.paper',
+                      backgroundColor:
+                        message.type === 'user' ? 'primary.main' : 'background.paper',
                       color: message.type === 'user' ? 'primary.contrastText' : 'text.primary',
                       borderRadius: 2,
                     }}
                   >
-                    <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    <Typography variant='body1' sx={{ whiteSpace: 'pre-wrap' }}>
                       {message.content}
                     </Typography>
                     <Typography
-                      variant="caption"
+                      variant='caption'
                       sx={{
                         display: 'block',
                         mt: 1,
@@ -177,9 +178,7 @@ const AITutorPage: React.FC = () => {
                   </Paper>
 
                   {message.type === 'user' && (
-                    <Avatar sx={{ bgcolor: 'grey.400', ml: 1, mt: 0.5 }}>
-                      👤
-                    </Avatar>
+                    <Avatar sx={{ bgcolor: 'grey.400', ml: 1, mt: 0.5 }}>👤</Avatar>
                   )}
                 </Box>
               ))}
@@ -191,7 +190,7 @@ const AITutorPage: React.FC = () => {
                   </Avatar>
                   <Paper elevation={1} sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
                     <CircularProgress size={20} sx={{ mr: 1 }} />
-                    <Typography variant="body2">AI is thinking...</Typography>
+                    <Typography variant='body2'>AI is thinking...</Typography>
                   </Paper>
                 </Box>
               )}
@@ -202,7 +201,7 @@ const AITutorPage: React.FC = () => {
             {/* Input Area */}
             <Box sx={{ p: 2 }}>
               {error && (
-                <Alert severity="error" sx={{ mb: 2 }}>
+                <Alert severity='error' sx={{ mb: 2 }}>
                   {error}
                 </Alert>
               )}
@@ -213,13 +212,13 @@ const AITutorPage: React.FC = () => {
                   multiline
                   maxRows={3}
                   value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
+                  onChange={e => setPrompt(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask your AI tutor anything..."
+                  placeholder='Ask your AI tutor anything...'
                   disabled={isLoading}
                 />
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleSendMessage}
                   disabled={!prompt.trim() || isLoading}
                   sx={{ px: 3 }}
@@ -232,23 +231,19 @@ const AITutorPage: React.FC = () => {
         </Grid>
 
         {/* Sidebar with Options */}
-        <Grid item xs={12} lg={4}>
+        <Grid size={{ xs: 12, lg: 4 }}>
           {/* Settings */}
           <Card sx={{ mb: 3 }}>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Tutor Settings
               </Typography>
 
               <FormControl fullWidth sx={{ mb: 2 }}>
                 <InputLabel>Subject</InputLabel>
-                <Select
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  label="Subject"
-                >
-                  <MenuItem value="">All Subjects</MenuItem>
-                  {SUBJECTS.map((subj) => (
+                <Select value={subject} onChange={e => setSubject(e.target.value)} label='Subject'>
+                  <MenuItem value=''>All Subjects</MenuItem>
+                  {SUBJECTS.map(subj => (
                     <MenuItem key={subj} value={subj.toLowerCase()}>
                       {subj}
                     </MenuItem>
@@ -260,11 +255,11 @@ const AITutorPage: React.FC = () => {
                 <InputLabel>Education Level</InputLabel>
                 <Select
                   value={level}
-                  onChange={(e) => setLevel(e.target.value)}
-                  label="Education Level"
+                  onChange={e => setLevel(e.target.value)}
+                  label='Education Level'
                 >
-                  <MenuItem value="">Any Level</MenuItem>
-                  {EDUCATION_LEVELS.map((lvl) => (
+                  <MenuItem value=''>Any Level</MenuItem>
+                  {EDUCATION_LEVELS.map(lvl => (
                     <MenuItem key={lvl} value={lvl.toLowerCase()}>
                       {lvl}
                     </MenuItem>
@@ -276,12 +271,12 @@ const AITutorPage: React.FC = () => {
                 <InputLabel>Language</InputLabel>
                 <Select
                   value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  label="Language"
+                  onChange={e => setLanguage(e.target.value)}
+                  label='Language'
                 >
-                  <MenuItem value="english">English</MenuItem>
-                  <MenuItem value="hindi">Hindi</MenuItem>
-                  <MenuItem value="mixed">Mixed (English + Hindi)</MenuItem>
+                  <MenuItem value='english'>English</MenuItem>
+                  <MenuItem value='hindi'>Hindi</MenuItem>
+                  <MenuItem value='mixed'>Mixed (English + Hindi)</MenuItem>
                 </Select>
               </FormControl>
             </CardContent>
@@ -290,10 +285,10 @@ const AITutorPage: React.FC = () => {
           {/* Quick Prompts */}
           <Card>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 Quick Questions
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
                 Try these example questions to get started
               </Typography>
 
@@ -304,7 +299,7 @@ const AITutorPage: React.FC = () => {
                     label={quickPrompt}
                     onClick={() => setPrompt(quickPrompt)}
                     clickable
-                    variant="outlined"
+                    variant='outlined'
                     sx={{
                       justifyContent: 'flex-start',
                       height: 'auto',
@@ -324,28 +319,22 @@ const AITutorPage: React.FC = () => {
           {/* Features */}
           <Card sx={{ mt: 3 }}>
             <CardContent>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
+              <Typography variant='h6' fontWeight={600} gutterBottom>
                 AI Tutor Features
               </Typography>
 
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <SchoolIcon color="primary" sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    Personalized explanations
-                  </Typography>
+                  <SchoolIcon color='primary' sx={{ mr: 1 }} />
+                  <Typography variant='body2'>Personalized explanations</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <MagicIcon color="primary" sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    Step-by-step problem solving
-                  </Typography>
+                  <MagicIcon color='primary' sx={{ mr: 1 }} />
+                  <Typography variant='body2'>Step-by-step problem solving</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <AIIcon color="primary" sx={{ mr: 1 }} />
-                  <Typography variant="body2">
-                    Adaptive learning approach
-                  </Typography>
+                  <AIIcon color='primary' sx={{ mr: 1 }} />
+                  <Typography variant='body2'>Adaptive learning approach</Typography>
                 </Box>
               </Box>
             </CardContent>

@@ -17,7 +17,7 @@ class DatabaseConfig {
   public async connectMongoDB(): Promise<void> {
     try {
       const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
-      
+
       if (!connectionString) {
         throw new Error('COSMOS_DB_CONNECTION_STRING is not defined');
       }
@@ -31,7 +31,7 @@ class DatabaseConfig {
       });
 
       console.log('✅ MongoDB connection established successfully');
-      
+
       mongoose.connection.on('error', (error) => {
         console.error('❌ MongoDB connection error:', error);
       });
@@ -43,7 +43,6 @@ class DatabaseConfig {
       mongoose.connection.on('reconnected', () => {
         console.log('🔄 MongoDB reconnected');
       });
-
     } catch (error) {
       console.error('❌ MongoDB connection failed:', error);
       process.exit(1);
@@ -65,17 +64,16 @@ class DatabaseConfig {
         connectionPolicy: {
           requestTimeout: 60000,
           enableEndpointDiscovery: true,
-          preferredLocations: ['East US', 'West US']
-        }
+          preferredLocations: ['East US', 'West US'],
+        },
       });
 
       const { database } = await this.cosmosClient.databases.createIfNotExists({
-        id: 'aarambh-ai-db'
+        id: 'aarambh-ai-db',
       });
 
       console.log('✅ Cosmos DB connection established successfully');
       console.log(`📁 Database: ${database.id}`);
-
     } catch (error) {
       console.error('❌ Cosmos DB connection failed:', error);
       throw error;
@@ -101,7 +99,7 @@ class DatabaseConfig {
   public async healthCheck(): Promise<{ mongodb: boolean; cosmosdb: boolean }> {
     const health = {
       mongodb: false,
-      cosmosdb: false
+      cosmosdb: false,
     };
 
     try {

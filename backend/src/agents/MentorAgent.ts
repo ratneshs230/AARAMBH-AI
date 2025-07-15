@@ -1,4 +1,11 @@
-import { BaseAIAgent, AIRequest, AIResponse, ConversationContext, AgentType, AIProvider } from '../types/ai-agent';
+import {
+  BaseAIAgent,
+  AIRequest,
+  AIResponse,
+  ConversationContext,
+  AgentType,
+  AIProvider,
+} from '../types/ai-agent';
 import AIServiceConfig from '../config/ai-services';
 
 export class MentorAgent extends BaseAIAgent {
@@ -28,25 +35,23 @@ Always be supportive, encouraging, and provide practical, actionable advice.`,
 
   async processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse> {
     const startTime = Date.now();
-    
+
     try {
       const aiService = AIServiceConfig.getInstance();
       const anthropic = aiService.getAnthropic();
-      
+
       const prompt = this.buildPrompt(request, context);
-      
+
       const response = await anthropic.messages.create({
         model: this.config.model,
         max_tokens: this.config.maxTokens!,
         temperature: this.config.temperature,
         system: this.config.systemPrompt!,
-        messages: [
-          { role: 'user', content: prompt },
-        ],
+        messages: [{ role: 'user', content: prompt }],
       });
 
       const content = response.content[0]?.text || '';
-      
+
       return {
         id: this.generateResponseId(),
         agentType: this.agentType,
@@ -103,7 +108,11 @@ Always be supportive, encouraging, and provide practical, actionable advice.`,
     return (inputTokens / 1000) * 0.003 + (outputTokens / 1000) * 0.015;
   }
 
-  private async handleFallback(request: AIRequest, context?: ConversationContext, startTime: number): Promise<AIResponse> {
+  private async handleFallback(
+    request: AIRequest,
+    context?: ConversationContext,
+    startTime: number
+  ): Promise<AIResponse> {
     return {
       id: this.generateResponseId(),
       agentType: this.agentType,
