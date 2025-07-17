@@ -1,1269 +1,572 @@
-import React, { useState, useEffect } from 'react';
-import { curiosityService } from '@/services/curiosity';
-import { curiosityAIService } from '@/services/curiosityAI';
-import type {
-  CuriosityTopic,
-  CuriosityQuestion,
-  DiscoveryPath,
-  CuriosityInsight,
-  CuriosityStats,
-} from '@/types/curiosity';
-import CuriosityRewards from '@/components/curiosity/CuriosityRewards';
-// import CuriosityAnalytics from '@/components/curiosity/CuriosityAnalytics';
-import KnowledgeGraph from '@/components/curiosity/KnowledgeGraph';
-import CuriosityChallenges from '@/components/curiosity/CuriosityChallenges';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Grid,
+  Container,
+  Typography,
+  TextField,
+  Button,
   Card,
   CardContent,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
   Chip,
-  Avatar,
+  CircularProgress,
   Paper,
-  Tabs,
-  Tab,
   List,
   ListItem,
-  ListItemText,
-  ListItemAvatar,
   ListItemIcon,
-  Tooltip,
+  ListItemText,
+  Fade,
+  IconButton,
+  AppBar,
+  Toolbar,
   Badge,
-  LinearProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Fab,
-  Menu,
-  MenuItem,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Rating,
-  Divider,
-  CircularProgress,
-  Alert,
-  Skeleton,
+  Tooltip,
 } from '@mui/material';
-import type { AlertColor } from '@mui/material/Alert'; // Import AlertColor for type safety
 import {
-  Psychology as CuriosityIcon,
-  Explore as ExploreIcon,
-  Lightbulb as IdeaIcon,
-  Quiz as QuestionIcon,
-  TrendingUp as TrendingIcon,
-  Bookmark as BookmarkIcon,
-  Share as ShareIcon,
-  Favorite as FavoriteIcon,
-  School as LearnIcon,
-  Science as ScienceIcon,
-  History as HistoryIcon,
-  Language as LanguageIcon,
-  Computer as TechIcon,
-  Palette as ArtIcon,
-  Sports as SportsIcon,
-  Public as WorldIcon,
-  AutoAwesome as MagicIcon,
-  Timeline as TimelineIcon, // Re-added TimelineIcon
-  Groups as CommunityIcon,
-  Star as StarIcon,
   Search as SearchIcon,
-  FilterList as FilterIcon,
-  Sort as SortIcon,
+  MenuBook as BookOpenIcon,
+  Photo as PhotoIcon,
+  Lightbulb as LightBulbIcon,
+  Science as BeakerIcon,
   Refresh as RefreshIcon,
-  Add as AddIcon,
-  PlayArrow as PlayIcon,
-  Pause as PauseIcon,
-  VolumeUp as AudioIcon,
-  Image as ImageIcon,
-  VideoLibrary as VideoIcon,
-  Article as ArticleIcon,
-  MenuBook as BookIcon,
-  Quiz as QuizIcon,
-  Assignment as ActivityIcon,
-  EmojiEvents as AchievementIcon,
-  Speed as SpeedIcon,
-  ExpandMore as ExpandMoreIcon,
-  Close as CloseIcon,
-  ThumbUp as LikeIcon,
-  Comment as CommentIcon,
-  Launch as LaunchIcon,
-  Download as DownloadIcon,
-  CloudUpload as UploadIcon,
-  Whatshot as FireIcon,
-  EmojiEvents as TrophyIcon,
-  Analytics as AnalyticsIcon,
+  Notifications as NotificationsIcon,
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
+import { curiosityAIService } from '@/services/curiosityAI';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import { ROUTES } from '@/utils/constants';
+
+interface ExplanationResult {
+  title: string;
+  summary: string;
+  keyPoints: string[];
+  realWorldExample: string;
+  imageUrl?: string;
+}
 
 const CuriosityPlatformPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [sortBy, setSortBy] = useState('trending');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<CuriosityTopic | null>(null);
-  const [questionDialogOpen, setQuestionDialogOpen] = useState(false);
-  const [newQuestion, setNewQuestion] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [aiInsights, setAiInsights] = useState<any[]>([]);
-  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'year'>('week');
-  const [userStats, setUserStats] = useState<CuriosityStats>({
-    topicsExplored: 47,
-    questionsAsked: 12,
-    questionsAnswered: 8,
-    pathsCompleted: 3,
-    pathsInProgress: 2,
-    curiosityScore: 2847,
-    curiosityLevel: 15,
-    badges: ['First Explorer', 'Curious Mind', 'Deep Thinker'],
-    streakDays: 7,
-    totalTimeSpent: 480,
-    favoriteCategories: ['Technology', 'Science', 'Arts'],
-    recentAchievements: ['Weekly Explorer', 'Question Master'],
-  });
+  const [result, setResult] = useState<ExplanationResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Load AI recommendations and insights
-  useEffect(() => {
-    loadAIRecommendations();
-    loadAIInsights();
-  }, []);
-
-  const loadAIRecommendations = async () => {
-    try {
-      // Mock user profile - in production, this would come from user context
-      const userProfile = {
-        id: 'user123',
-        interests: ['physics', 'technology', 'science'],
-        learningStyle: 'visual',
-        preferredDifficulty: 'intermediate',
-        completedTopics: ['1', '2'],
-        bookmarkedTopics: ['2', '4'],
-        searchHistory: ['black holes', 'neural networks'],
-        timeSpent: {},
-        ratings: {},
-      };
-
-      const context = {
-        recentlyViewed: ['1', '2', '3'],
-        sessionDuration: 45,
-        todayActivity: ['1', '2'],
-        activeQuestions: ['1', '2'],
-      };
-
-      const aiRecommendations = await curiosityAIService.generatePersonalizedRecommendations(
-        userProfile,
-        context,
-        5
-      );
-
-      setRecommendations(aiRecommendations);
-    } catch (error) {
-      console.error('Error loading AI recommendations:', error);
-      // Fallback recommendations
-      setRecommendations([
-        {
-          id: 'fallback_1',
-          type: 'topic',
-          title: 'Quantum Computing Basics',
-          description:
-            'Explore the fundamentals of quantum computing and its potential applications.',
-          relevanceScore: 0.9,
-          reason: 'Based on your interest in technology',
-          relatedToTopics: ['quantum-mechanics', 'computer-science'],
-        },
-        {
-          id: 'fallback_2',
-          type: 'topic',
-          title: 'The Science of Learning',
-          description: 'Understand how the brain learns and retains information.',
-          relevanceScore: 0.8,
-          reason: 'Popular among curious learners',
-          relatedToTopics: ['neuroscience', 'psychology'],
-        },
-      ]);
-    }
-  };
-
-  const loadAIInsights = async () => {
-    try {
-      const userProfile = {
-        id: 'user123',
-        interests: ['physics', 'technology', 'science'],
-        learningStyle: 'visual',
-        preferredDifficulty: 'intermediate',
-        completedTopics: ['1', '2'],
-        bookmarkedTopics: ['2', '4'],
-        searchHistory: ['black holes', 'neural networks'],
-        timeSpent: {},
-        ratings: {},
-      };
-
-      const context = {
-        recentlyViewed: ['1', '2', '3'],
-        sessionDuration: 45,
-        todayActivity: ['1', '2'],
-        activeQuestions: ['1', '2'],
-      };
-
-      const generatedInsights = await curiosityAIService.generateCuriosityInsights(
-        userProfile,
-        context
-      );
-
-      setAiInsights(generatedInsights);
-    } catch (error) {
-      console.error('Error loading AI insights:', error);
-      // Fallback insights
-      setAiInsights([
-        {
-          id: 'fallback_insight_1',
-          type: 'fact',
-          content:
-            'Did you know? The human brain contains approximately 86 billion neurons, each connected to thousands of others.',
-          relatedTopics: ['neuroscience', 'biology'],
-          source: 'Neuroscience Research',
-          timestamp: new Date().toISOString(),
-          isNew: true,
-        },
-        {
-          id: 'fallback_insight_2',
-          type: 'connection',
-          content:
-            'Your interest in AI and learning connects to cognitive science, neuroscience, and educational psychology.',
-          relatedTopics: ['artificial-intelligence', 'learning', 'psychology'],
-          source: 'Learning Analytics',
-          timestamp: new Date().toISOString(),
-          isNew: true,
-        },
-      ]);
-    }
-  };
-
-  const [topics, setTopics] = useState<CuriosityTopic[]>([
-    {
-      id: '1',
-      title: 'Why do black holes bend space-time?',
-      description:
-        'Explore the fascinating physics behind black holes and their effect on the fabric of spacetime itself.',
-      category: 'Physics',
-      difficulty: 'advanced',
-      estimatedTime: 45,
-      tags: ['space', 'physics', 'relativity', 'astronomy'],
-      likes: 1247,
-      views: 15890,
-      rating: 4.8,
-      isBookmarked: false,
-      contentTypes: ['video', 'interactive', 'article'],
-      relatedTopics: ['general-relativity', 'quantum-mechanics', 'cosmology'],
-      aiGenerated: true,
-      thumbnail: '/curiosity/black-hole.jpg',
-      createdAt: '2024-01-15',
-    },
-    {
-      id: '2',
-      title: 'How do neural networks learn patterns?',
-      description:
-        'Dive deep into the mechanisms of artificial neural networks and understand how they recognize patterns.',
-      category: 'Technology',
-      difficulty: 'intermediate',
-      estimatedTime: 30,
-      tags: ['ai', 'machine-learning', 'neural-networks', 'technology'],
-      likes: 892,
-      views: 12456,
-      rating: 4.6,
-      isBookmarked: true,
-      contentTypes: ['interactive', 'video', 'quiz'],
-      relatedTopics: ['machine-learning', 'deep-learning', 'algorithms'],
-      aiGenerated: false,
-      thumbnail: '/curiosity/neural-network.jpg',
-      createdAt: '2024-01-10',
-    },
-    {
-      id: '3',
-      title: 'What makes music emotionally powerful?',
-      description:
-        "Discover the science behind music's ability to evoke emotions and create powerful memories.",
-      category: 'Arts',
-      difficulty: 'beginner',
-      estimatedTime: 20,
-      tags: ['music', 'psychology', 'emotions', 'neuroscience'],
-      likes: 654,
-      views: 8934,
-      rating: 4.4,
-      isBookmarked: false,
-      contentTypes: ['video', 'article', 'experiment'],
-      relatedTopics: ['psychology', 'neuroscience', 'sound-waves'],
-      aiGenerated: true,
-      thumbnail: '/curiosity/music-brain.jpg',
-      createdAt: '2024-01-08',
-    },
-    {
-      id: '4',
-      title: 'How do languages evolve over time?',
-      description:
-        'Explore the fascinating journey of language evolution and how new words and grammar emerge.',
-      category: 'Language',
-      difficulty: 'intermediate',
-      estimatedTime: 35,
-      tags: ['linguistics', 'evolution', 'communication', 'history'],
-      likes: 743,
-      views: 9876,
-      rating: 4.5,
-      isBookmarked: true,
-      contentTypes: ['article', 'video', 'interactive'],
-      relatedTopics: ['linguistics', 'anthropology', 'communication'],
-      aiGenerated: false,
-      thumbnail: '/curiosity/language-evolution.jpg',
-      createdAt: '2024-01-05',
-    },
-  ]);
-
-  const [questions, setQuestions] = useState<CuriosityQuestion[]>([
-    {
-      id: '1',
-      question: "Why don't we fall through the floor if atoms are mostly empty space?",
-      askedBy: 'curious_student',
-      category: 'Physics',
-      votes: 234,
-      answers: 12,
-      isAnswered: true,
-      difficulty: 'intermediate',
-      tags: ['atoms', 'physics', 'quantum'],
-      timestamp: '2024-01-16T10:30:00Z',
-    },
-    {
-      id: '2',
-      question: 'How does the brain decide what to remember and what to forget?',
-      askedBy: 'mindful_learner',
-      category: 'Neuroscience',
-      votes: 189,
-      answers: 8,
-      isAnswered: false,
-      difficulty: 'advanced',
-      tags: ['memory', 'brain', 'neuroscience'],
-      timestamp: '2024-01-16T09:15:00Z',
-    },
-    {
-      id: '3',
-      question: 'What would happen if we could travel faster than light?',
-      askedBy: 'space_explorer',
-      category: 'Physics',
-      votes: 156,
-      answers: 15,
-      isAnswered: true,
-      difficulty: 'advanced',
-      tags: ['relativity', 'space', 'physics'],
-      timestamp: '2024-01-16T08:45:00Z',
-    },
-  ]);
-
-  const [discoveryPaths, setDiscoveryPaths] = useState<DiscoveryPath[]>([
-    {
-      id: '1',
-      title: 'Journey Through the Cosmos',
-      description: 'From atoms to galaxies - explore the scales of the universe',
-      topics: ['atoms', 'molecules', 'planets', 'stars', 'galaxies'],
-      progress: 60,
-      totalTopics: 15,
-      estimatedDuration: 180,
-      difficulty: 'intermediate',
-      category: 'Physics',
-      participants: 1234,
-    },
-    {
-      id: '2',
-      title: 'The Evolution of Intelligence',
-      description: 'Trace the development of intelligence from simple organisms to AI',
-      topics: ['evolution', 'neuroscience', 'cognition', 'ai'],
-      progress: 30,
-      totalTopics: 12,
-      estimatedDuration: 150,
-      difficulty: 'advanced',
-      category: 'Biology',
-      participants: 892,
-    },
-    {
-      id: '3',
-      title: 'Art Through the Ages',
-      description: 'Discover how art has evolved and influenced human culture',
-      topics: ['prehistoric-art', 'renaissance', 'modern-art', 'digital-art'],
-      progress: 80,
-      totalTopics: 10,
-      estimatedDuration: 120,
-      difficulty: 'beginner',
-      category: 'Arts',
-      participants: 567,
-    },
-  ]);
-
-  const [insights, setInsights] = useState<CuriosityInsight[]>([
-    {
-      id: '1',
-      type: 'fact',
-      content:
-        'Did you know? A single teaspoon of neutron star material would weigh about 6 billion tons!',
-      relatedTopics: ['neutron-stars', 'physics', 'astronomy'],
-      source: 'NASA',
-      timestamp: '2024-01-16T12:00:00Z',
-      isNew: true,
-    },
-    {
-      id: '2',
-      type: 'connection',
-      content:
-        "Your interest in neural networks connects to 3 other topics you've explored: pattern recognition, machine learning, and cognitive science.",
-      relatedTopics: ['neural-networks', 'pattern-recognition', 'machine-learning'],
-      source: 'AI Analysis',
-      timestamp: '2024-01-16T11:30:00Z',
-      isNew: false,
-    },
-    {
-      id: '3',
-      type: 'question',
-      content:
-        'Based on your exploration of quantum mechanics, you might be curious about: How does quantum entanglement work in practice?',
-      relatedTopics: ['quantum-mechanics', 'entanglement', 'physics'],
-      source: 'Curiosity AI',
-      timestamp: '2024-01-16T10:45:00Z',
-      isNew: true,
-    },
-  ]);
-
-  const categories = [
-    { id: 'all', label: 'All Categories', icon: <WorldIcon /> },
-    { id: 'Physics', label: 'Physics', icon: <ScienceIcon /> },
-    { id: 'Technology', label: 'Technology', icon: <TechIcon /> },
-    { id: 'Biology', label: 'Biology', icon: <LearnIcon /> },
-    { id: 'Arts', label: 'Arts', icon: <ArtIcon /> },
-    { id: 'Language', label: 'Language', icon: <LanguageIcon /> },
-    { id: 'History', label: 'History', icon: <HistoryIcon /> },
-    { id: 'Sports', label: 'Sports', icon: <SportsIcon /> },
+  // Example prompts to guide users
+  const examplePrompts = [
+    "What is Quantum Entanglement?",
+    "How do black holes work?",
+    "Why do we dream?",
+    "How does machine learning work?",
+    "What causes the Northern Lights?",
+    "How do vaccines protect us?",
   ];
 
-  const handleTopicClick = (topic: CuriosityTopic) => {
-    setSelectedTopic(topic);
-    setDetailsOpen(true);
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+
+    setIsLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      // Step 1: Generate text explanation
+      const textResponse = await generateTextExplanation(searchQuery);
+      
+      // Step 2: Generate image (optional)
+      let imageUrl: string | undefined;
+      try {
+        imageUrl = await generateImage(textResponse.title, textResponse.summary);
+      } catch (imageError) {
+        console.warn('Image generation failed:', imageError);
+        // Continue without image - this is acceptable
+      }
+
+      setResult({
+        ...textResponse,
+        imageUrl,
+      });
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('Sorry, I encountered an issue while generating the explanation. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleBookmark = (topicId: string) => {
-    setTopics(prev =>
-      prev.map(topic =>
-        topic.id === topicId ? { ...topic, isBookmarked: !topic.isBookmarked } : topic
-      )
-    );
+  const generateTextExplanation = async (query: string): Promise<Omit<ExplanationResult, 'imageUrl'>> => {
+    // This would call the Gemini API with a structured prompt
+    const prompt = `You are a friendly and knowledgeable tutor for a student in India. Please explain "${query}" in a clear, engaging way.
+
+Return your response as a JSON object with this exact structure:
+{
+  "title": "A clear, descriptive title for the topic",
+  "summary": "A concise 2-3 sentence explanation of the main concept",
+  "keyPoints": ["3-5 bullet points highlighting the most important aspects"],
+  "realWorldExample": "A practical, relatable example that demonstrates the concept in action"
+}`;
+
+    // For now, using the existing curiosityAI service as a placeholder
+    // In production, this would use Gemini with the structured responseSchema
+    try {
+      const response = await curiosityAIService.generateCuriosityInsights(
+        {
+          id: 'user',
+          interests: [query],
+          learningStyle: 'visual',
+          preferredDifficulty: 'intermediate',
+          completedTopics: [],
+          bookmarkedTopics: [],
+          searchHistory: [query],
+          timeSpent: {},
+          ratings: {},
+        },
+        {
+          recentlyViewed: [],
+          sessionDuration: 0,
+          todayActivity: [],
+          activeQuestions: [query],
+        }
+      );
+
+      // Mock structured response based on query
+      return generateMockResponse(query);
+    } catch (error) {
+      // Fallback to mock response
+      return generateMockResponse(query);
+    }
   };
 
-  const handleLike = (topicId: string) => {
-    setTopics(prev =>
-      prev.map(topic => (topic.id === topicId ? { ...topic, likes: topic.likes + 1 } : topic))
-    );
+  const generateImage = async (title: string, summary: string): Promise<string> => {
+    // This would call the Imagen API
+    const imagePrompt = `Create an educational illustration for "${title}". ${summary}. Make it clear, colorful, and suitable for learning. Style: educational diagram, scientific illustration.`;
+    
+    // For now, return a placeholder
+    // In production: const imageUrl = await imagenAPI.generateImage(imagePrompt);
+    throw new Error('Image generation not implemented yet');
   };
 
-  const submitQuestion = () => {
-    if (!newQuestion.trim()) return;
+  const generateMockResponse = (query: string): Omit<ExplanationResult, 'imageUrl'> => {
+    // Generate contextual mock responses based on the query
+    const queryLower = query.toLowerCase();
+    
+    if (queryLower.includes('quantum') || queryLower.includes('entanglement')) {
+      return {
+        title: "Quantum Entanglement",
+        summary: "Quantum entanglement is a physical phenomenon where two or more particles become connected in such a way that the quantum state of each particle cannot be described independently. When particles are entangled, measuring one instantly affects the other, regardless of the distance between them.",
+        keyPoints: [
+          "Particles become 'entangled' and share a quantum state",
+          "Measuring one particle instantly affects its entangled partner",
+          "This connection persists even across vast distances",
+          "Einstein called it 'spooky action at a distance'",
+          "It's fundamental to quantum computing and quantum communication"
+        ],
+        realWorldExample: "Imagine you have two magic coins that are quantum entangled. No matter how far apart you take them, when you flip one and it lands heads, the other will instantly land tails. Scientists use this principle in quantum computers to process information in revolutionary ways, and it may one day enable ultra-secure quantum internet."
+      };
+    }
+    
+    if (queryLower.includes('black hole')) {
+      return {
+        title: "Black Holes: Cosmic Vacuum Cleaners",
+        summary: "A black hole is a region in space where gravity is so strong that nothing, not even light, can escape once it crosses the event horizon. They form when massive stars collapse at the end of their lives, creating a point of infinite density called a singularity.",
+        keyPoints: [
+          "Gravity is so strong that even light cannot escape",
+          "Formed from collapsed massive stars (at least 25 times our Sun's mass)",
+          "Have an 'event horizon' - the point of no return",
+          "Time slows down dramatically near black holes",
+          "They can grow by consuming matter and merging with other black holes"
+        ],
+        realWorldExample: "Think of a black hole like a cosmic drain in a bathtub. Just as water spirals down a drain and disappears, matter spirals into a black hole and vanishes from our observable universe. The closest black hole to Earth is about 1,000 light-years away - far enough that we're completely safe, but close enough for scientists to study!"
+      };
+    }
 
-    const question: CuriosityQuestion = {
-      id: Date.now().toString(),
-      question: newQuestion,
-      askedBy: 'current_user',
-      category: selectedCategory === 'all' ? 'General' : selectedCategory,
-      votes: 0,
-      answers: 0,
-      isAnswered: false,
-      difficulty: 'intermediate',
-      tags: [],
-      timestamp: new Date().toISOString(),
+    if (queryLower.includes('dream')) {
+      return {
+        title: "Why Do We Dream?",
+        summary: "Dreams occur during REM (Rapid Eye Movement) sleep when our brain is highly active. Scientists believe dreams help process memories, emotions, and experiences from our waking hours, essentially helping our brain organize and make sense of information.",
+        keyPoints: [
+          "Dreams mainly occur during REM sleep (about 25% of our sleep)",
+          "Brain activity during dreams is similar to when we're awake",
+          "Dreams help process and consolidate memories",
+          "They may help us work through emotions and problems",
+          "Everyone dreams, but not everyone remembers their dreams"
+        ],
+        realWorldExample: "Think of your brain as a computer that needs to organize its files at night. During dreams, your brain sorts through the day's experiences - like filing important memories in long-term storage and deleting unnecessary information. This is why you might dream about studying for an exam or have strange combinations of people and places from your day mixed together."
+      };
+    }
+
+    // Default response for any other query
+    return {
+      title: `Understanding: ${query}`,
+      summary: `This is a fascinating topic that deserves exploration! While I'm generating a detailed explanation about ${query}, I'll provide you with key insights and practical examples to help you understand this concept better.`,
+      keyPoints: [
+        `${query} is an important concept worth understanding`,
+        "It connects to many other areas of knowledge",
+        "Real-world applications make it relevant to daily life",
+        "Understanding this topic opens doors to deeper learning",
+        "There are always new discoveries being made in this field"
+      ],
+      realWorldExample: `To better understand ${query}, think about how it might appear in your everyday life. Many complex concepts become clearer when we connect them to familiar experiences and practical applications that we can observe around us.`
     };
-
-    setQuestions(prev => [question, ...prev]);
-    setNewQuestion('');
-    setQuestionDialogOpen(false);
   };
 
-  // Handler functions for new components
-  const handleChallengeJoin = (challengeId: string) => {
-    console.log('Joining challenge:', challengeId);
-    // Implementation for joining a challenge
+  const handleExamplePrompt = (prompt: string) => {
+    setSearchQuery(prompt);
   };
 
-  const handleChallengeComplete = (challengeId: string) => {
-    console.log('Completing challenge:', challengeId);
-    // Implementation for completing a challenge
-  };
-
-  const handleTaskComplete = (challengeId: string, taskId: string) => {
-    console.log('Completing task:', taskId, 'in challenge:', challengeId);
-    // Implementation for completing a task
-  };
-
-  const handleBadgeEarned = (badgeId: string) => {
-    console.log('Badge earned:', badgeId);
-    // Implementation for earning a badge
-  };
-
-  const handleTimeRangeChange = (range: 'week' | 'month' | 'year') => {
-    setTimeRange(range);
-  };
-
-  const handleNodeClick = (node: any) => {
-    console.log('Node clicked:', node);
-    // Implementation for knowledge graph node click
-  };
-
-  const handleEdgeClick = (edge: any) => {
-    console.log('Edge clicked:', edge);
-    // Implementation for knowledge graph edge click
-  };
-
-  const filteredTopics = topics.filter(topic => {
-    const matchesSearch =
-      topic.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      topic.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      topic.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = selectedCategory === 'all' || topic.category === selectedCategory;
-    const matchesDifficulty =
-      selectedDifficulty === 'all' || topic.difficulty === selectedDifficulty;
-
-    return matchesSearch && matchesCategory && matchesDifficulty;
-  });
-
-  const sortedTopics = [...filteredTopics].sort((a, b) => {
-    switch (sortBy) {
-      case 'trending':
-        return b.likes + b.views - (a.likes + a.views);
-      case 'newest':
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      case 'rating':
-        return b.rating - a.rating;
-      case 'difficulty':
-        const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 };
-        return difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
-      default:
-        return 0;
-    }
-  });
-
-  const getDifficultyColor = (difficulty: string): AlertColor => {
-    // Changed return type to AlertColor
-    switch (difficulty) {
-      case 'beginner':
-        return 'success';
-      case 'intermediate':
-        return 'warning';
-      case 'advanced':
-        return 'error';
-      default:
-        return 'info'; // Changed default to 'info' to match AlertColor
+  const handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' && !isLoading) {
+      handleSearch();
     }
   };
 
-  const getCategoryIcon = (category: string) => {
-    const categoryMap: { [key: string]: React.ReactNode } = {
-      Physics: <ScienceIcon />,
-      Technology: <TechIcon />,
-      Biology: <LearnIcon />,
-      Arts: <ArtIcon />,
-      Language: <LanguageIcon />,
-      History: <HistoryIcon />,
-      Sports: <SportsIcon />,
-    };
-    return categoryMap[category] || <WorldIcon />;
-  };
-
-  const getInsightIcon = (type: string) => {
-    switch (type) {
-      case 'fact':
-        return <IdeaIcon />;
-      case 'connection':
-        return <ExploreIcon />;
-      case 'question':
-        return <QuestionIcon />;
-      case 'discovery':
-        return <ExploreIcon />;
-      default:
-        return <MagicIcon />;
-    }
-  };
-
-  const getInsightColor = (type: string): AlertColor => {
-    switch (type) {
-      case 'fact':
-        return 'info';
-      case 'connection':
-        return 'success';
-      case 'question':
-        return 'warning';
-      case 'discovery':
-        return 'info';
-      default:
-        return 'info';
+  const handleRefresh = () => {
+    if (searchQuery) {
+      handleSearch();
     }
   };
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography
-          variant='h4'
-          component='h1'
-          sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}
+    <Box sx={{ minHeight: '100vh' }}>
+      {/* Clean Header */}
+      <AppBar
+        position='sticky'
+        elevation={0}
+        sx={{
+          backgroundColor: 'background.paper',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          {/* Left Side - Brand */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography
+              variant='h6'
+              component='h1'
+              onClick={() => navigate(ROUTES.HOME)}
+              sx={{
+                fontWeight: 700,
+                background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                  transform: 'scale(1.02)',
+                  transition: 'all 0.2s ease-in-out',
+                },
+              }}
+            >
+              AARAMBH AI
+            </Typography>
+          </Box>
+
+          {/* Right Side - Actions */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* SARAS AI Status */}
+            <SarasStatusIndicator variant="chip" />
+            
+            <Tooltip title='Notifications'>
+              <IconButton color='inherit'>
+                <Badge badgeContent={3} color='primary'>
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title='Settings'>
+              <IconButton color='inherit'>
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* Header */}
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Typography 
+          variant="h3" 
+          component="h1" 
+          gutterBottom 
+          sx={{ 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+          }}
         >
-          <CuriosityIcon color='primary' sx={{ fontSize: '2rem' }} />
           Curiosity Platform
         </Typography>
+        <Typography 
+          variant="h6" 
+          color="text.secondary" 
+          sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
+        >
+          Ask any question and get comprehensive explanations with visual illustrations
+        </Typography>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            variant='contained'
-            startIcon={<AddIcon />}
-            onClick={() => setQuestionDialogOpen(true)}
-          >
-            Ask Question
-          </Button>
-          <Button variant='outlined' startIcon={<ExploreIcon />}>
-            Explore Topics
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Search and Filters */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* Search Bar */}
+        <Paper 
+          sx={{ 
+            p: 2, 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2,
+            maxWidth: 700,
+            mx: 'auto',
+            boxShadow: 3,
+          }}
+        >
+          <SearchIcon color="action" />
           <TextField
-            placeholder='Search topics, questions, or discoveries...'
+            fullWidth
+            variant="standard"
+            placeholder="What would you like to explore today?"
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            variant='outlined'
-            size='small'
-            sx={{ flex: 1, minWidth: 300 }}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
             InputProps={{
-              startAdornment: <SearchIcon sx={{ color: 'action.active', mr: 1 }} />,
+              disableUnderline: true,
+              sx: { fontSize: '1.1rem' }
             }}
           />
+          <Button
+            variant="contained"
+            onClick={handleSearch}
+            disabled={!searchQuery.trim() || isLoading}
+            sx={{ 
+              minWidth: 100,
+              background: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 100%)',
+            }}
+          >
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Explore'}
+          </Button>
+          {result && (
+            <IconButton 
+              onClick={handleRefresh}
+              disabled={isLoading}
+              color="primary"
+            >
+              <RefreshIcon />
+            </IconButton>
+          )}
+        </Paper>
+      </Box>
 
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {categories.slice(0, 4).map(category => (
+      {/* Example Prompts */}
+      {!result && (
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography variant="h6" gutterBottom color="text.secondary">
+            Not sure what to ask? Try these examples:
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {examplePrompts.map((prompt, index) => (
               <Chip
-                key={category.id}
-                label={category.label}
-                icon={category.icon}
-                onClick={() => setSelectedCategory(category.id)}
-                color={selectedCategory === category.id ? 'primary' : 'default'}
-                variant={selectedCategory === category.id ? 'filled' : 'outlined'}
+                key={index}
+                label={prompt}
+                onClick={() => handleExamplePrompt(prompt)}
+                clickable
+                variant="outlined"
+                sx={{ 
+                  m: 0.5,
+                  '&:hover': {
+                    backgroundColor: 'primary.light',
+                    color: 'white',
+                  }
+                }}
               />
             ))}
-
-            <IconButton onClick={e => setFilterMenuAnchor(e.currentTarget)} size='small'>
-              <FilterIcon />
-            </IconButton>
           </Box>
         </Box>
-      </Paper>
+      )}
 
-      {/* Main Content */}
-      <Grid container spacing={3}>
-        {/* Left Column - Main Content */}
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Paper sx={{ mb: 3 }}>
-            <Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)}>
-              <Tab label='Explore Topics' icon={<ExploreIcon />} />
-              <Tab label='Questions' icon={<QuestionIcon />} />
-              <Tab label='Discovery Paths' icon={<TimelineIcon />} />
-              <Tab label='Challenges' icon={<FireIcon />} />
-              <Tab label='Rewards' icon={<TrophyIcon />} />
-              <Tab label='Analytics' icon={<AnalyticsIcon />} />
-              <Tab label='Knowledge Graph' icon={<TimelineIcon />} />
-            </Tabs>
-          </Paper>
+      {/* Loading State */}
+      {isLoading && (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <CircularProgress size={60} sx={{ mb: 3 }} />
+          <Typography variant="h6" color="text.secondary">
+            Generating explanation & illustration...
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            Please wait while SARAS creates a comprehensive explanation for you
+          </Typography>
+        </Box>
+      )}
 
-          {/* Topics Tab */}
-          {activeTab === 0 && (
-            <Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 2,
-                }}
-              >
-                <Typography variant='h6'>Trending Topics ({sortedTopics.length})</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button
-                    size='small'
-                    startIcon={<SortIcon />}
-                    onClick={e => setFilterMenuAnchor(e.currentTarget)}
-                  >
-                    Sort by: {sortBy}
-                  </Button>
-                  <Button
-                    size='small'
-                    startIcon={<RefreshIcon />}
-                    onClick={() => setIsLoading(true)}
-                  >
-                    Refresh
-                  </Button>
-                </Box>
+      {/* Error State */}
+      {error && (
+        <Card sx={{ mt: 4, border: '1px solid', borderColor: 'error.main' }}>
+          <CardContent sx={{ textAlign: 'center' }}>
+            <Typography color="error" variant="h6" gutterBottom>
+              Oops! Something went wrong
+            </Typography>
+            <Typography color="text.secondary">
+              {error}
+            </Typography>
+            <Button 
+              variant="outlined" 
+              onClick={handleSearch} 
+              sx={{ mt: 2 }}
+              disabled={isLoading}
+            >
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Result Card */}
+      {result && !isLoading && (
+        <Fade in={true} timeout={800}>
+          <Card sx={{ mt: 4, boxShadow: 4 }}>
+            <CardContent sx={{ p: 4 }}>
+              {/* Title */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <BookOpenIcon 
+                  sx={{ 
+                    fontSize: 40, 
+                    color: 'primary.main' 
+                  }} 
+                />
+                <Typography 
+                  variant="h4" 
+                  component="h2" 
+                  sx={{ 
+                    fontWeight: 'bold',
+                    color: 'primary.main'
+                  }}
+                >
+                  {result.title}
+                </Typography>
               </Box>
 
-              <Grid container spacing={2}>
-                {sortedTopics.map(topic => (
-                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={topic.id}>
-                    <Card
-                      sx={{
-                        height: '100%',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          boxShadow: 3,
-                          transform: 'translateY(-2px)',
-                        },
-                        transition: 'all 0.3s',
-                      }}
-                      onClick={() => handleTopicClick(topic)}
-                    >
-                      <Box sx={{ position: 'relative' }}>
-                        <Box
-                          sx={{
-                            height: 120,
-                            bgcolor: 'primary.light',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {getCategoryIcon(topic.category)}
-                        </Box>
-
-                        <Box sx={{ position: 'absolute', top: 8, right: 8 }}>
-                          <IconButton
-                            size='small'
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleBookmark(topic.id);
-                            }}
-                            sx={{ bgcolor: 'rgba(255,255,255,0.8)' }}
-                          >
-                            <BookmarkIcon color={topic.isBookmarked ? 'primary' : 'action'} />
-                          </IconButton>
-                        </Box>
-
-                        {topic.aiGenerated && (
-                          <Chip
-                            label='AI Generated'
-                            size='small'
-                            sx={{ position: 'absolute', top: 8, left: 8 }}
-                            color='secondary'
-                          />
-                        )}
-                      </Box>
-
-                      <CardContent>
-                        <Typography variant='h6' gutterBottom noWrap>
-                          {topic.title}
-                        </Typography>
-
-                        <Typography
-                          variant='body2'
-                          color='text.secondary'
-                          sx={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {topic.description}
-                        </Typography>
-
-                        <Box sx={{ display: 'flex', gap: 1, mt: 1, mb: 2 }}>
-                          <Chip
-                            label={topic.difficulty}
-                            size='small'
-                            color={getDifficultyColor(topic.difficulty)}
-                          />
-                          <Chip
-                            label={`${topic.estimatedTime}min`}
-                            size='small'
-                            variant='outlined'
-                          />
-                        </Box>
-
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <LikeIcon fontSize='small' />
-                              <Typography variant='caption'>{topic.likes}</Typography>
-                            </Box>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <Rating value={topic.rating} readOnly size='small' />
-                              <Typography variant='caption'>({topic.rating})</Typography>
-                            </Box>
-                          </Box>
-
-                          <IconButton
-                            size='small'
-                            onClick={e => {
-                              e.stopPropagation();
-                              handleLike(topic.id);
-                            }}
-                          >
-                            <FavoriteIcon fontSize='small' />
-                          </IconButton>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-          )}
-
-          {/* Questions Tab */}
-          {activeTab === 1 && (
-            <Box>
-              <Typography variant='h6' gutterBottom>
-                Community Questions
+              {/* Summary */}
+              <Typography 
+                variant="h6" 
+                paragraph 
+                sx={{ 
+                  mb: 4,
+                  lineHeight: 1.6,
+                  color: 'text.primary'
+                }}
+              >
+                {result.summary}
               </Typography>
 
-              <List>
-                {questions.map(question => (
-                  <Paper key={question.id} sx={{ mb: 2 }}>
-                    <ListItem>
-                      <ListItemAvatar>
-                        <Avatar>
-                          <QuestionIcon />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={question.question}
-                        secondary={
-                          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mt: 1 }}>
-                            <Typography variant='caption'>Asked by {question.askedBy}</Typography>
-                            <Chip label={question.category} size='small' />
-                            <Chip
-                              label={question.difficulty}
-                              size='small'
-                              color={getDifficultyColor(question.difficulty)}
-                            />
-                            <Box sx={{ display: 'flex', gap: 1, ml: 'auto' }}>
-                              <Typography variant='caption'>{question.votes} votes</Typography>
-                              <Typography variant='caption'>{question.answers} answers</Typography>
-                            </Box>
-                          </Box>
-                        }
-                      />
-                    </ListItem>
-                  </Paper>
-                ))}
-              </List>
-            </Box>
-          )}
-
-          {/* Discovery Paths Tab */}
-          {activeTab === 2 && (
-            <Box>
-              <Typography variant='h6' gutterBottom>
-                Discovery Paths
-              </Typography>
-
-              {discoveryPaths.map(path => (
-                <Paper key={path.id} sx={{ mb: 2, p: 2 }}>
+              {/* Visual Explanation */}
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <PhotoIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Visual Explanation
+                  </Typography>
+                </Box>
+                
+                {result.imageUrl ? (
                   <Box
+                    component="img"
+                    src={result.imageUrl}
+                    alt={result.title}
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
+                      width: '100%',
+                      maxHeight: 400,
+                      objectFit: 'contain',
+                      borderRadius: 2,
+                      boxShadow: 2,
+                    }}
+                  />
+                ) : (
+                  <Paper 
+                    sx={{ 
+                      p: 4, 
+                      textAlign: 'center', 
+                      backgroundColor: 'grey.50',
+                      border: '2px dashed',
+                      borderColor: 'grey.300'
                     }}
                   >
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant='h6' gutterBottom>
-                        {path.title}
-                      </Typography>
-                      <Typography variant='body2' color='text.secondary' gutterBottom>
-                        {path.description}
-                      </Typography>
+                    <PhotoIcon sx={{ fontSize: 60, color: 'grey.400', mb: 2 }} />
+                    <Typography color="text.secondary">
+                      Visual illustration will be generated here
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      AI-generated images are being prepared to enhance your understanding
+                    </Typography>
+                  </Paper>
+                )}
+              </Box>
 
-                      <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                        <Chip label={path.category} size='small' />
-                        <Chip
-                          label={path.difficulty}
-                          size='small'
-                          color={getDifficultyColor(path.difficulty)}
+              {/* Key Points */}
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <LightBulbIcon color="warning" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Key Points
+                  </Typography>
+                </Box>
+                
+                <List>
+                  {result.keyPoints.map((point, index) => (
+                    <ListItem key={index} sx={{ py: 0.5 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: 'primary.main',
+                          }}
                         />
-                        <Chip
-                          label={`${path.estimatedDuration}min`}
-                          size='small'
-                          variant='outlined'
-                        />
-                      </Box>
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary={point}
+                        primaryTypographyProps={{
+                          sx: { lineHeight: 1.5 }
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
 
-                      <Box sx={{ mb: 2 }}>
-                        <Typography variant='caption' color='text.secondary'>
-                          Progress: {path.progress}% (
-                          {Math.floor((path.totalTopics * path.progress) / 100)}/{path.totalTopics}{' '}
-                          topics)
-                        </Typography>
-                        <LinearProgress
-                          variant='determinate'
-                          value={path.progress}
-                          sx={{ mt: 0.5 }}
-                        />
-                      </Box>
-
-                      <Typography variant='caption' color='text.secondary'>
-                        {path.participants} participants
-                      </Typography>
-                    </Box>
-
-                    <Button variant='contained' startIcon={<PlayIcon />}>
-                      Continue
-                    </Button>
-                  </Box>
+              {/* Real-World Example */}
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <BeakerIcon color="success" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Real-World Example
+                  </Typography>
+                </Box>
+                
+                <Paper 
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'success.light',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    border: '1px solid',
+                    borderColor: 'success.light'
+                  }}
+                >
+                  <Typography 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      color: 'text.primary'
+                    }}
+                  >
+                    {result.realWorldExample}
+                  </Typography>
                 </Paper>
-              ))}
-            </Box>
-          )}
-
-          {/* Challenges Tab */}
-          {activeTab === 3 && (
-            <CuriosityChallenges
-              onChallengeJoin={handleChallengeJoin}
-              onChallengeComplete={handleChallengeComplete}
-              onTaskComplete={handleTaskComplete}
-            />
-          )}
-
-          {/* Rewards Tab */}
-          {activeTab === 4 && (
-            <CuriosityRewards
-              userStats={userStats}
-              onChallengeComplete={handleChallengeComplete}
-              onBadgeEarned={handleBadgeEarned}
-            />
-          )}
-
-          {/* Analytics Tab */}
-          {activeTab === 5 && (
-            <Box sx={{ p: 2 }}>
-              <Typography variant='h6' gutterBottom>
-                Curiosity Analytics
-              </Typography>
-              <Typography variant='body2' color='text.secondary'>
-                Analytics feature is being implemented. Check back soon for detailed insights!
-              </Typography>
-            </Box>
-          )}
-
-          {/* Knowledge Graph Tab */}
-          {activeTab === 6 && (
-            <KnowledgeGraph
-              centerTopic='artificial-intelligence'
-              showControls={true}
-              interactive={true}
-              onNodeClick={handleNodeClick}
-              onEdgeClick={handleEdgeClick}
-            />
-          )}
-        </Grid>
-
-        {/* Right Column - Insights and Activities */}
-        <Grid size={{ xs: 12, md: 4 }}>
-          {/* AI Recommendations */}
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography
-              variant='h6'
-              gutterBottom
-              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-            >
-              <MagicIcon color='primary' />
-              AI Recommendations
-            </Typography>
-
-            {recommendations.length > 0 ? (
-              <List dense>
-                {recommendations.map((rec, index) => (
-                  <ListItem key={index} sx={{ px: 0 }}>
-                    <ListItemText
-                      primary={rec.title}
-                      secondary={rec.description}
-                      primaryTypographyProps={{ variant: 'body2', fontWeight: 'medium' }}
-                      secondaryTypographyProps={{ variant: 'caption' }}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                <CircularProgress size={24} />
               </Box>
-            )}
-          </Paper>
-
-          {/* Daily Insights */}
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography
-              variant='h6'
-              gutterBottom
-              sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-            >
-              <MagicIcon color='primary' />
-              Daily Insights
-            </Typography>
-
-            {aiInsights.length > 0
-              ? aiInsights.map(insight => (
-                  <Box key={insight.id} sx={{ mb: 2 }}>
-                    <Alert
-                      severity={getInsightColor(insight.type)}
-                      icon={getInsightIcon(insight.type)}
-                      sx={{ mb: 1 }}
-                    >
-                      <Typography variant='body2'>{insight.content}</Typography>
-                    </Alert>
-
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {insight.relatedTopics.map(topic => (
-                        <Chip key={topic} label={topic} size='small' variant='outlined' />
-                      ))}
-                    </Box>
-                  </Box>
-                ))
-              : insights.map(insight => (
-                  <Box key={insight.id} sx={{ mb: 2 }}>
-                    <Alert
-                      severity={getInsightColor(insight.type)}
-                      icon={getInsightIcon(insight.type)}
-                      sx={{ mb: 1 }}
-                    >
-                      <Typography variant='body2'>{insight.content}</Typography>
-                    </Alert>
-
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                      {insight.relatedTopics.map(topic => (
-                        <Chip key={topic} label={topic} size='small' variant='outlined' />
-                      ))}
-                    </Box>
-                  </Box>
-                ))}
-          </Paper>
-
-          {/* Quick Stats */}
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography variant='h6' gutterBottom>
-              Your Curiosity Stats
-            </Typography>
-
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant='h4' color='primary'>
-                  47
-                </Typography>
-                <Typography variant='caption'>Topics Explored</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant='h4' color='secondary'>
-                  12
-                </Typography>
-                <Typography variant='caption'>Questions Asked</Typography>
-              </Box>
-              <Box sx={{ textAlign: 'center' }}>
-                <Typography variant='h4' color='success.main'>
-                  89
-                </Typography>
-                <Typography variant='caption'>Curiosity Score</Typography>
-              </Box>
-            </Box>
-
-            <LinearProgress variant='determinate' value={89} sx={{ height: 8, borderRadius: 4 }} />
-            <Typography variant='caption' color='text.secondary' sx={{ mt: 1, display: 'block' }}>
-              Keep exploring to reach Curiosity Level 10!
-            </Typography>
-          </Paper>
-
-          {/* Recent Activity */}
-          <Paper sx={{ p: 2 }}>
-            <Typography variant='h6' gutterBottom>
-              Recent Activity
-            </Typography>
-
-            <List dense>
-              <ListItem>
-                <ListItemIcon>
-                  <ExploreIcon color='primary' />
-                </ListItemIcon>
-                <ListItemText primary='Explored: Black Holes' secondary='2 hours ago' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <QuestionIcon color='secondary' />
-                </ListItemIcon>
-                <ListItemText primary='Asked about quantum mechanics' secondary='5 hours ago' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <AchievementIcon color='warning' />
-                </ListItemIcon>
-                <ListItemText primary="Earned 'Deep Thinker' badge" secondary='1 day ago' />
-              </ListItem>
-
-              <ListItem>
-                <ListItemIcon>
-                  <BookmarkIcon color='info' />
-                </ListItemIcon>
-                <ListItemText primary='Bookmarked 3 topics' secondary='2 days ago' />
-              </ListItem>
-            </List>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Topic Details Dialog */}
-      <Dialog open={detailsOpen} onClose={() => setDetailsOpen(false)} maxWidth='md' fullWidth>
-        {selectedTopic && (
-          <>
-            <DialogTitle>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant='h6'>{selectedTopic.title}</Typography>
-                <IconButton onClick={() => setDetailsOpen(false)}>
-                  <CloseIcon />
-                </IconButton>
-              </Box>
-            </DialogTitle>
-
-            <DialogContent>
-              <Typography variant='body1' gutterBottom>
-                {selectedTopic.description}
-              </Typography>
-
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                <Chip label={selectedTopic.category} />
-                <Chip
-                  label={selectedTopic.difficulty}
-                  color={getDifficultyColor(selectedTopic.difficulty)}
-                />
-                <Chip label={`${selectedTopic.estimatedTime} minutes`} variant='outlined' />
-              </Box>
-
-              <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
-                Content Types Available
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                {selectedTopic.contentTypes.map(type => (
-                  <Chip
-                    key={type}
-                    label={type}
-                    icon={
-                      type === 'video' ? (
-                        <VideoIcon />
-                      ) : type === 'article' ? (
-                        <ArticleIcon />
-                      ) : type === 'quiz' ? (
-                        <QuizIcon />
-                      ) : type === 'interactive' ? (
-                        <ActivityIcon />
-                      ) : (
-                        <BookIcon />
-                      )
-                    }
-                    variant='outlined'
-                  />
-                ))}
-              </Box>
-
-              <Typography variant='h6' gutterBottom sx={{ mt: 2 }}>
-                Related Topics
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                {selectedTopic.relatedTopics.map(topic => (
-                  <Chip key={topic} label={topic} size='small' clickable variant='outlined' />
-                ))}
-              </Box>
-            </DialogContent>
-
-            <DialogActions>
-              <Button onClick={() => setDetailsOpen(false)}>Close</Button>
-              <Button
-                variant='contained'
-                startIcon={<PlayIcon />}
-                onClick={() => {
-                  // Handle start learning
-                  setDetailsOpen(false);
-                }}
-              >
-                Start Learning
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
-
-      {/* Ask Question Dialog */}
-      <Dialog
-        open={questionDialogOpen}
-        onClose={() => setQuestionDialogOpen(false)}
-        maxWidth='sm'
-        fullWidth
-      >
-        <DialogTitle>Ask a Question</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            multiline
-            rows={4}
-            fullWidth
-            label='Your Question'
-            value={newQuestion}
-            onChange={e => setNewQuestion(e.target.value)}
-            placeholder='What are you curious about?'
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setQuestionDialogOpen(false)}>Cancel</Button>
-          <Button variant='contained' onClick={submitQuestion} disabled={!newQuestion.trim()}>
-            Ask Question
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Filter Menu */}
-      <Menu
-        anchorEl={filterMenuAnchor}
-        open={Boolean(filterMenuAnchor)}
-        onClose={() => setFilterMenuAnchor(null)}
-      >
-        <MenuItem onClick={() => setSortBy('trending')}>Trending</MenuItem>
-        <MenuItem onClick={() => setSortBy('newest')}>Newest</MenuItem>
-        <MenuItem onClick={() => setSortBy('rating')}>Highest Rated</MenuItem>
-        <MenuItem onClick={() => setSortBy('difficulty')}>By Difficulty</MenuItem>
-      </Menu>
-
-      {/* Floating Action Button */}
-      <Fab
-        color='primary'
-        sx={{ position: 'fixed', bottom: 24, right: 24 }}
-        onClick={() => setQuestionDialogOpen(true)}
-      >
-        <QuestionIcon />
-      </Fab>
+            </CardContent>
+          </Card>
+        </Fade>
+      )}
+      </Container>
     </Box>
   );
 };

@@ -20,6 +20,7 @@ import AIAssessmentPage from '@/pages/ai/AIAssessmentPage';
 import AIDoubtPage from '@/pages/ai/AIDoubtPage';
 import CoursesPage from '@/pages/courses/CoursesPage';
 import CourseDetailPage from '@/pages/courses/CourseDetailPage';
+import CourseDashboardPage from '@/pages/courses/CourseDashboardPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
@@ -47,17 +48,20 @@ const App: React.FC = () => {
           <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
 
+          {/* Curiosity Platform - Clean Layout without Sidebar */}
+          <Route path={ROUTES.CURIOSITY} element={<CuriosityPlatformPage />} />
+
           {/* App Routes with Layout */}
           <Route element={<Layout />}>
             <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
             <Route path={ROUTES.COURSES} element={<CoursesPage />} />
             <Route path={ROUTES.COURSE_DETAIL} element={<CourseDetailPage />} />
+            <Route path="/courses/:id/dashboard" element={<CourseDashboardPage />} />
             <Route path={ROUTES.AI_TUTOR} element={<AITutorPage />} />
             <Route path={ROUTES.AI_CONTENT} element={<AIContentPage />} />
             <Route path={ROUTES.AI_ASSESSMENT} element={<AIAssessmentPage />} />
             <Route path={ROUTES.AI_DOUBT} element={<AIDoubtPage />} />
             <Route path={ROUTES.ANALYTICS} element={<AnalyticsPage />} />
-            <Route path={ROUTES.CURIOSITY} element={<CuriosityPlatformPage />} />
             <Route path='/study-rooms' element={<StudyRoomsPage />} />
             <Route path='/advanced-analytics' element={<AdvancedAnalyticsPage />} />
             <Route path='/learning-paths' element={<AdaptiveLearningPathPage />} />

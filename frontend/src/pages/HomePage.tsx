@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -11,6 +11,13 @@ import {
   AppBar,
   Toolbar,
   useTheme,
+  Avatar,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemText,
+  ListItemAvatar,
+  Divider,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
@@ -18,12 +25,76 @@ import {
   School as LearnIcon,
   Analytics as AnalyticsIcon,
   Explore as CuriosityIcon,
+  Person as PersonIcon,
+  Login as LoginIcon,
+  KeyboardArrowDown as ArrowDownIcon,
+  PlayArrow as PlayIcon,
+  Book as BookIcon,
 } from '@mui/icons-material';
 import { ROUTES } from '@/utils/constants';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [coursesAnchorEl, setCoursesAnchorEl] = useState<null | HTMLElement>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // This would come from auth context
+  
+  // Mock enrolled courses data - this would come from API/context
+  const enrolledCourses = [
+    {
+      id: 1,
+      title: 'Advanced Mathematics',
+      progress: 75,
+      thumbnail: '/api/placeholder/40/40',
+      subject: 'Mathematics',
+    },
+    {
+      id: 2,
+      title: 'Physics Fundamentals',
+      progress: 45,
+      thumbnail: '/api/placeholder/40/40',
+      subject: 'Physics',
+    },
+    {
+      id: 3,
+      title: 'Chemistry Basics',
+      progress: 90,
+      thumbnail: '/api/placeholder/40/40',
+      subject: 'Chemistry',
+    },
+  ];
+  
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCoursesMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setCoursesAnchorEl(event.currentTarget);
+  };
+
+  const handleCoursesMenuClose = () => {
+    setCoursesAnchorEl(null);
+  };
+
+  const handleCourseSelect = (courseId: number) => {
+    handleCoursesMenuClose();
+    navigate(`/courses/${courseId}/dashboard`); // Navigate to course dashboard
+  };
+
+  const handleLogin = () => {
+    // This would handle actual login logic
+    navigate('/login'); // You might need to add this route
+  };
+
+  const handleSignup = () => {
+    // This would handle actual signup logic
+    navigate('/signup'); // You might need to add this route
+  };
 
   const features = [
     {
@@ -58,6 +129,7 @@ const HomePage: React.FC = () => {
           <Typography
             variant='h6'
             component='h1'
+            onClick={() => navigate(ROUTES.HOME)}
             sx={{
               fontWeight: 700,
               background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
@@ -65,19 +137,78 @@ const HomePage: React.FC = () => {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               flexGrow: 1,
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8,
+                transform: 'scale(1.02)',
+                transition: 'all 0.2s ease-in-out',
+              },
             }}
           >
             AARAMBH AI
           </Typography>
-          <Button variant='outlined' onClick={() => navigate(ROUTES.DASHBOARD)} sx={{ mr: 1 }}>
-            Dashboard
-          </Button>
-          <Button variant='outlined' onClick={() => navigate(ROUTES.CURIOSITY)} sx={{ mr: 1 }}>
-            Curiosity Platform
-          </Button>
-          <Button variant='contained' onClick={() => navigate(ROUTES.AI_TUTOR)}>
-            Try AI Tutor
-          </Button>
+          {!isLoggedIn ? (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                variant='outlined'
+                onClick={handleLogin}
+                startIcon={<LoginIcon />}
+                sx={{ mr: 1 }}
+              >
+                Login
+              </Button>
+              <Button
+                variant='contained'
+                onClick={handleSignup}
+              >
+                Sign Up
+              </Button>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <IconButton
+                size='large'
+                edge='end'
+                aria-label='account of current user'
+                aria-controls='profile-menu'
+                aria-haspopup='true'
+                onClick={handleProfileMenuOpen}
+                color='inherit'
+              >
+                <Avatar sx={{ width: 32, height: 32 }}>
+                  <PersonIcon />
+                </Avatar>
+              </IconButton>
+              <Menu
+                id='profile-menu'
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleProfileMenuClose}
+              >
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(ROUTES.DASHBOARD); }}>
+                  Dashboard
+                </MenuItem>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/profile'); }}>
+                  My Profile
+                </MenuItem>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/settings'); }}>
+                  Settings
+                </MenuItem>
+                <MenuItem onClick={() => { handleProfileMenuClose(); setIsLoggedIn(false); }}>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
 
@@ -119,14 +250,100 @@ const HomePage: React.FC = () => {
           </Typography>
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant='contained'
-              size='large'
-              onClick={() => navigate(ROUTES.AI_TUTOR)}
-              sx={{ px: 4, py: 1.5 }}
-            >
-              Start Learning with AI
-            </Button>
+            {/* Start Learning Button - Dropdown for enrolled courses */}
+            <Box>
+              <Button
+                variant='contained'
+                size='large'
+                onClick={enrolledCourses.length > 0 ? handleCoursesMenuOpen : () => navigate(ROUTES.AI_TUTOR)}
+                endIcon={enrolledCourses.length > 0 ? <ArrowDownIcon /> : <PlayIcon />}
+                sx={{ px: 4, py: 1.5 }}
+              >
+                {enrolledCourses.length > 0 ? 'Continue Learning' : 'Start Learning with AI'}
+              </Button>
+              
+              {/* Courses Dropdown Menu */}
+              <Menu
+                anchorEl={coursesAnchorEl}
+                open={Boolean(coursesAnchorEl)}
+                onClose={handleCoursesMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                PaperProps={{
+                  sx: {
+                    mt: 1,
+                    minWidth: 300,
+                    maxHeight: 400,
+                  },
+                }}
+              >
+                {/* Header */}
+                <MenuItem disabled sx={{ py: 1 }}>
+                  <Typography variant='subtitle2' color='text.secondary'>
+                    Your Enrolled Courses
+                  </Typography>
+                </MenuItem>
+                <Divider />
+                
+                {/* Course List */}
+                {enrolledCourses.map((course) => (
+                  <MenuItem
+                    key={course.id}
+                    onClick={() => handleCourseSelect(course.id)}
+                    sx={{ py: 1.5, px: 2 }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        variant='rounded'
+                        sx={{ 
+                          width: 40, 
+                          height: 40, 
+                          bgcolor: 'primary.main',
+                          mr: 1 
+                        }}
+                      >
+                        <BookIcon />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={course.title}
+                      secondary={
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                          <Typography variant='caption' color='text.secondary'>
+                            {course.subject}
+                          </Typography>
+                          <Chip
+                            label={`${course.progress}% Complete`}
+                            size='small'
+                            color={course.progress >= 75 ? 'success' : course.progress >= 50 ? 'warning' : 'primary'}
+                            sx={{ fontSize: '0.7rem', height: 20 }}
+                          />
+                        </Box>
+                      }
+                    />
+                  </MenuItem>
+                ))}
+                
+                <Divider />
+                
+                {/* Footer Actions */}
+                <MenuItem 
+                  onClick={() => { handleCoursesMenuClose(); navigate(ROUTES.COURSES); }}
+                  sx={{ py: 1, justifyContent: 'center' }}
+                >
+                  <Typography variant='body2' color='primary'>
+                    Browse All Courses
+                  </Typography>
+                </MenuItem>
+              </Menu>
+            </Box>
+            
             <Button
               variant='contained'
               size='large'
@@ -141,14 +358,6 @@ const HomePage: React.FC = () => {
               }}
             >
               Explore Curiosity Platform
-            </Button>
-            <Button
-              variant='outlined'
-              size='large'
-              onClick={() => navigate(ROUTES.COURSES)}
-              sx={{ px: 4, py: 1.5 }}
-            >
-              View Courses
             </Button>
           </Box>
         </Box>
@@ -200,101 +409,6 @@ const HomePage: React.FC = () => {
           </Grid>
         </Box>
 
-        {/* Curiosity Platform Highlight */}
-        <Box
-          sx={{
-            py: 8,
-            px: 4,
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #e91e63 0%, #f06292 100%)',
-            borderRadius: 4,
-            color: 'white',
-            mb: 8,
-          }}
-        >
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-            <CuriosityIcon sx={{ fontSize: 60, opacity: 0.9 }} />
-          </Box>
-          <Typography variant='h4' component='h2' gutterBottom sx={{ fontWeight: 600 }}>
-            Discover Your Curiosity
-          </Typography>
-          <Typography variant='h6' sx={{ mb: 4, opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
-            Explore fascinating topics, ask questions, and embark on discovery paths guided by AI.
-            Let your curiosity lead you to new knowledge and insights.
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button
-              variant='contained'
-              size='large'
-              onClick={() => navigate(ROUTES.CURIOSITY)}
-              sx={{
-                backgroundColor: 'white',
-                color: 'secondary.main',
-                px: 4,
-                py: 1.5,
-                fontWeight: 600,
-                '&:hover': {
-                  backgroundColor: 'grey.100',
-                },
-              }}
-            >
-              Start Exploring
-            </Button>
-            <Button
-              variant='outlined'
-              size='large'
-              onClick={() => navigate(ROUTES.AI_TUTOR)}
-              sx={{
-                borderColor: 'white',
-                color: 'white',
-                px: 4,
-                py: 1.5,
-                '&:hover': {
-                  borderColor: 'white',
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              Try AI Tutor
-            </Button>
-          </Box>
-        </Box>
-
-        {/* CTA Section */}
-        <Box
-          sx={{
-            py: 8,
-            px: 4,
-            textAlign: 'center',
-            background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
-            borderRadius: 4,
-            color: 'white',
-            mb: 8,
-          }}
-        >
-          <Typography variant='h4' component='h2' gutterBottom sx={{ fontWeight: 600 }}>
-            Ready to Transform Your Learning?
-          </Typography>
-          <Typography variant='h6' sx={{ mb: 4, opacity: 0.9 }}>
-            Join thousands of students already learning with AI
-          </Typography>
-          <Button
-            variant='contained'
-            size='large'
-            onClick={() => navigate(ROUTES.DASHBOARD)}
-            sx={{
-              backgroundColor: 'white',
-              color: 'primary.main',
-              px: 4,
-              py: 1.5,
-              '&:hover': {
-                backgroundColor: 'grey.100',
-              },
-            }}
-          >
-            Get Started Now
-          </Button>
-        </Box>
       </Container>
     </Box>
   );

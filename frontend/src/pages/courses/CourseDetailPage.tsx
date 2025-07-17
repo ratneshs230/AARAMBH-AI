@@ -4,93 +4,94 @@ import Grid from '@mui/material/Grid';
 import {
   Box,
   Card,
-  Breadcrumbs,
-  Link,
-  Typography,
   CardContent,
-  Rating,
-  IconButton,
-  Chip,
-  LinearProgress,
-  Tabs,
-  Tab,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Avatar,
-  Divider,
+  Typography,
   Button,
+  LinearProgress,
+  Chip,
+  Avatar,
+  IconButton,
+  Paper,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemAvatar,
+  Divider,
+  Container,
 } from '@mui/material';
 import {
   PlayArrow as PlayIcon,
-  ExpandMore as ExpandMoreIcon,
-  Schedule as DurationIcon,
-  People as StudentsIcon,
-  Star as StarIcon,
-  CardMembership as CertificateIcon,
-  HelpOutline as QuizIcon,
-  Article as LessonIcon,
-  Lock as LockedIcon,
+  Quiz as QuizIcon,
+  MenuBook as LessonsIcon,
+  SportsEsports as GamesIcon,
+  People as CommunityIcon,
+  Analytics as AnalyticsIcon,
+  Folder as ContentIcon,
+  School as CourseIcon,
+  Person as ProfileIcon,
+  Work as WorkspaceIcon,
+  LocalFireDepartment as StreakIcon,
+  AccessTime as TimeIcon,
+  TrendingUp as TrendingIcon,
+  EmojiEvents as AchievementIcon,
+  Notifications as NotificationIcon,
+  Group as GroupIcon,
   CheckCircle as CompletedIcon,
-  BookmarkBorder as BookmarkIcon,
-  Bookmark as BookmarkedIcon,
-  Share as ShareIcon,
-  Home as HomeIcon,
-  School as SchoolIcon,
 } from '@mui/icons-material';
 import { ROUTES } from '@/utils/constants';
 
-interface Lesson {
-  id: string;
-  title: string;
-  duration: string;
-  type: 'video' | 'article' | 'quiz';
-  isCompleted: boolean;
-  isLocked: boolean;
-  preview?: boolean;
+interface CourseProgress {
+  courseId: string;
+  courseName: string;
+  subject: string;
+  progress: number;
+  totalLessons: number;
+  completedLessons: number;
+  lastAccessed: string;
+  timeRemaining: string;
+  currentLesson: {
+    id: string;
+    title: string;
+    type: 'video' | 'quiz' | 'assignment';
+  };
 }
 
-interface Chapter {
-  id: string;
-  title: string;
-  lessons: Lesson[];
-  duration: string;
-  isCompleted: boolean;
+interface StudentStats {
+  currentStreak: number;
+  totalStudyTime: number;
+  todayStudyTime: number;
+  weeklyGoal: number;
+  weeklyProgress: number;
+  achievements: Achievement[];
 }
 
-interface CourseDetail {
+interface Achievement {
   id: string;
   title: string;
   description: string;
-  fullDescription: string;
-  instructor: {
-    name: string;
-    avatar: string;
-    bio: string;
-    rating: number;
-    students: number;
-  };
-  thumbnail: string;
-  duration: string;
-  level: string;
-  subject: string;
-  rating: number;
-  reviewCount: number;
-  studentsEnrolled: number;
-  price: number;
-  originalPrice?: number;
-  isBookmarked: boolean;
-  isEnrolled: boolean;
-  progress: number;
-  tags: string[];
-  chapters: Chapter[];
-  learningOutcomes: string[];
-  requirements: string[];
-  features: string[];
+  icon: string;
+  unlockedAt: string;
+  type: 'streak' | 'completion' | 'time' | 'social';
+}
+
+interface RecentActivity {
+  id: string;
+  type: 'lesson_completed' | 'quiz_completed' | 'achievement_unlocked' | 'group_joined';
+  title: string;
+  description: string;
+  timestamp: string;
+  score?: number;
+  icon: string;
+}
+
+interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  route: string;
+  color: string;
 }
 
 // Mock course detail data

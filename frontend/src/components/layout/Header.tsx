@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -15,8 +16,11 @@ import {
   Settings as SettingsIcon,
 } from '@mui/icons-material';
 import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import { ROUTES } from '@/utils/constants';
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <AppBar
       position='sticky'
@@ -34,12 +38,19 @@ const Header: React.FC = () => {
           <Typography
             variant='h6'
             component='h1'
+            onClick={() => navigate(ROUTES.HOME)}
             sx={{
               fontWeight: 700,
               background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8,
+                transform: 'scale(1.02)',
+                transition: 'all 0.2s ease-in-out',
+              },
             }}
           >
             AARAMBH AI
