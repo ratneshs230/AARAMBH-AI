@@ -79,7 +79,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         requestsPerHour: 300,
       },
     });
-    
+
     this.initializeContentTemplates();
     this.initializeCurriculumStandards();
     this.initializePedagogicalPrinciples();
@@ -142,7 +142,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
     const contentType = this.detectRequestedContentType(request.prompt);
     const template = this.contentTemplates.get(contentType);
     const curriculumInfo = this.getCurriculumAlignment(request.metadata);
-    
+
     let prompt = `🎯 CONTENT CREATION REQUEST\n`;
     prompt += `Request: ${request.prompt}\n\n`;
 
@@ -227,10 +227,10 @@ Always create pedagogically sound, engaging, and culturally relevant educational
       /activity|exercise/i,
       /bloom'?s taxonomy/i,
       /scaffolding/i,
-      /differentiat/i
+      /differentiat/i,
     ];
-    
-    structureIndicators.forEach(indicator => {
+
+    structureIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.08;
     });
 
@@ -243,10 +243,10 @@ Always create pedagogically sound, engaging, and culturally relevant educational
       /multiple intelligence/i,
       /learning styles/i,
       /constructivist/i,
-      /real-world application/i
+      /real-world application/i,
     ];
-    
-    pedagogicalIndicators.forEach(indicator => {
+
+    pedagogicalIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.05;
     });
 
@@ -256,10 +256,10 @@ Always create pedagogically sound, engaging, and culturally relevant educational
       /cbse|icse/i,
       /hindi|regional language/i,
       /cultural/i,
-      /local example/i
+      /local example/i,
     ];
-    
-    culturalIndicators.forEach(indicator => {
+
+    culturalIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.04;
     });
 
@@ -277,45 +277,45 @@ Always create pedagogically sound, engaging, and culturally relevant educational
 
   private detectContentType(content: string): string {
     const typeIndicators = {
-      'lesson_plan': /lesson plan|teaching plan|class plan/i,
-      'lesson': /lesson|chapter|unit/i,
-      'assessment': /quiz|test|exam|evaluation|assessment/i,
-      'activity': /activity|exercise|practice|worksheet/i,
-      'project': /project|assignment|investigation/i,
-      'explanation': /explanation|concept|theory|introduction/i,
-      'curriculum': /curriculum|syllabus|course outline/i,
-      'rubric': /rubric|grading|criteria|evaluation matrix/i,
-      'module': /module|course|program/i
+      lesson_plan: /lesson plan|teaching plan|class plan/i,
+      lesson: /lesson|chapter|unit/i,
+      assessment: /quiz|test|exam|evaluation|assessment/i,
+      activity: /activity|exercise|practice|worksheet/i,
+      project: /project|assignment|investigation/i,
+      explanation: /explanation|concept|theory|introduction/i,
+      curriculum: /curriculum|syllabus|course outline/i,
+      rubric: /rubric|grading|criteria|evaluation matrix/i,
+      module: /module|course|program/i,
     };
-    
+
     for (const [type, pattern] of Object.entries(typeIndicators)) {
       if (pattern.test(content)) return type;
     }
-    
+
     return 'general';
   }
 
   private detectContentFormat(content: string): string {
     const formatIndicators = {
-      'multimedia': /video|audio|animation|multimedia|podcast/i,
-      'interactive': /interactive|simulation|virtual lab|gamification/i,
-      'visual': /diagram|chart|infographic|mind map|visual/i,
-      'structured_text': /#|\*\*|markdown|formatted/i,
-      'presentation': /slide|presentation|ppt|powerpoint/i,
-      'hands_on': /hands.?on|practical|experiment|lab/i,
-      'digital': /online|digital|e-learning|lms/i
+      multimedia: /video|audio|animation|multimedia|podcast/i,
+      interactive: /interactive|simulation|virtual lab|gamification/i,
+      visual: /diagram|chart|infographic|mind map|visual/i,
+      structured_text: /#|\*\*|markdown|formatted/i,
+      presentation: /slide|presentation|ppt|powerpoint/i,
+      hands_on: /hands.?on|practical|experiment|lab/i,
+      digital: /online|digital|e-learning|lms/i,
     };
-    
+
     for (const [format, pattern] of Object.entries(formatIndicators)) {
       if (pattern.test(content)) return format;
     }
-    
+
     return 'text';
   }
 
   private detectInteractivityLevel(content: string): string {
     let interactivity = 0;
-    
+
     const interactivityIndicators = [
       /activity|exercise|practice/i,
       /discussion|group work|collaboration/i,
@@ -324,10 +324,10 @@ Always create pedagogically sound, engaging, and culturally relevant educational
       /game|gamification|quiz/i,
       /peer review|feedback|reflection/i,
       /role.?play|case study|scenario/i,
-      /create|design|build|construct/i
+      /create|design|build|construct/i,
     ];
-    
-    interactivityIndicators.forEach(indicator => {
+
+    interactivityIndicators.forEach((indicator) => {
       if (indicator.test(content)) interactivity += 1;
     });
 
@@ -398,11 +398,11 @@ Always create pedagogically sound, engaging, and culturally relevant educational
   // Initialization Methods
   private initializeContentTemplates(): void {
     this.contentTemplates = new Map();
-    
+
     this.contentTemplates.set('lesson_plan', {
       type: 'lesson_plan',
       structure: [
-        'Learning Objectives (aligned to Bloom\'s taxonomy)',
+        "Learning Objectives (aligned to Bloom's taxonomy)",
         'Prerequisites and Prior Knowledge Assessment',
         'Materials and Resources Required',
         'Lesson Introduction (Hook/Engagement)',
@@ -413,7 +413,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Closure and Reflection',
         'Extension Activities for Advanced Learners',
         'Differentiation Strategies',
-        'Cultural Connections and Real-world Applications'
+        'Cultural Connections and Real-world Applications',
       ],
       guidelines: [
         'Use 5E Model (Engage, Explore, Explain, Elaborate, Evaluate)',
@@ -423,9 +423,9 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Design for universal access and inclusion',
         'Integrate technology meaningfully',
         'Plan for different learning paces',
-        'Include metacognitive strategies'
+        'Include metacognitive strategies',
       ],
-      bloomsLevel: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create']
+      bloomsLevel: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate', 'Create'],
     });
 
     this.contentTemplates.set('lesson', {
@@ -438,17 +438,17 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Practice Exercises',
         'Real-world Applications',
         'Summary and Key Takeaways',
-        'Assessment Questions'
+        'Assessment Questions',
       ],
       guidelines: [
         'Use clear, age-appropriate language',
         'Include visual aids and multimedia',
         'Provide multiple examples and non-examples',
-        'Connect to students\' prior knowledge',
+        "Connect to students' prior knowledge",
         'Use Indian cultural context and examples',
-        'Include hands-on activities where possible'
+        'Include hands-on activities where possible',
       ],
-      bloomsLevel: ['Remember', 'Understand', 'Apply']
+      bloomsLevel: ['Remember', 'Understand', 'Apply'],
     });
 
     this.contentTemplates.set('assessment', {
@@ -461,7 +461,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Sample Questions by Difficulty Level',
         'Time Allocation Guidelines',
         'Accommodation Strategies',
-        'Feedback Mechanisms'
+        'Feedback Mechanisms',
       ],
       guidelines: [
         'Align questions to learning objectives',
@@ -469,9 +469,9 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Design for different cognitive levels',
         'Ensure cultural fairness and sensitivity',
         'Provide clear instructions and examples',
-        'Include self-assessment opportunities'
+        'Include self-assessment opportunities',
       ],
-      bloomsLevel: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate']
+      bloomsLevel: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate'],
     });
 
     this.contentTemplates.set('activity', {
@@ -484,7 +484,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Discussion Questions/Reflection',
         'Extension Opportunities',
         'Assessment Criteria',
-        'Troubleshooting Guide'
+        'Troubleshooting Guide',
       ],
       guidelines: [
         'Design for active student participation',
@@ -492,31 +492,51 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         'Ensure safety considerations',
         'Provide clear success criteria',
         'Include reflection and metacognition',
-        'Allow for creative expression'
+        'Allow for creative expression',
       ],
-      bloomsLevel: ['Apply', 'Analyze', 'Evaluate', 'Create']
+      bloomsLevel: ['Apply', 'Analyze', 'Evaluate', 'Create'],
     });
   }
 
   private initializeCurriculumStandards(): void {
     this.curriculumStandards = new Map();
-    
+
     // CBSE Standards
     this.curriculumStandards.set('mathematics', [
       {
         board: 'CBSE',
         grade: 'Class 10',
         subject: 'Mathematics',
-        topics: ['Real Numbers', 'Polynomials', 'Linear Equations', 'Quadratic Equations', 'Arithmetic Progressions'],
-        learningOutcomes: ['Solve real-world problems using mathematical concepts', 'Apply logical reasoning', 'Demonstrate computational skills']
+        topics: [
+          'Real Numbers',
+          'Polynomials',
+          'Linear Equations',
+          'Quadratic Equations',
+          'Arithmetic Progressions',
+        ],
+        learningOutcomes: [
+          'Solve real-world problems using mathematical concepts',
+          'Apply logical reasoning',
+          'Demonstrate computational skills',
+        ],
       },
       {
         board: 'CBSE',
         grade: 'Class 12',
         subject: 'Mathematics',
-        topics: ['Relations and Functions', 'Inverse Trigonometric Functions', 'Matrices', 'Determinants', 'Calculus'],
-        learningOutcomes: ['Apply mathematical concepts to solve complex problems', 'Demonstrate analytical thinking', 'Use mathematical modeling']
-      }
+        topics: [
+          'Relations and Functions',
+          'Inverse Trigonometric Functions',
+          'Matrices',
+          'Determinants',
+          'Calculus',
+        ],
+        learningOutcomes: [
+          'Apply mathematical concepts to solve complex problems',
+          'Demonstrate analytical thinking',
+          'Use mathematical modeling',
+        ],
+      },
     ]);
 
     // Science Standards
@@ -525,9 +545,19 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         board: 'CBSE',
         grade: 'Class 10',
         subject: 'Science',
-        topics: ['Light', 'Human Eye', 'Natural Resource Management', 'Life Processes', 'Control and Coordination'],
-        learningOutcomes: ['Understand scientific principles', 'Conduct scientific investigations', 'Apply scientific knowledge to daily life']
-      }
+        topics: [
+          'Light',
+          'Human Eye',
+          'Natural Resource Management',
+          'Life Processes',
+          'Control and Coordination',
+        ],
+        learningOutcomes: [
+          'Understand scientific principles',
+          'Conduct scientific investigations',
+          'Apply scientific knowledge to daily life',
+        ],
+      },
     ]);
   }
 
@@ -537,63 +567,71 @@ Always create pedagogically sound, engaging, and culturally relevant educational
         name: 'Constructivism',
         description: 'Students build knowledge through active participation and experience',
         application: ['Hands-on activities', 'Problem-based learning', 'Inquiry-based instruction'],
-        bloomsLevel: 'Apply'
+        bloomsLevel: 'Apply',
       },
       {
         name: 'Scaffolding',
-        description: 'Provide temporary support that is gradually removed as students become independent',
+        description:
+          'Provide temporary support that is gradually removed as students become independent',
         application: ['Guided practice', 'Modeling', 'Think-alouds', 'Graphic organizers'],
-        bloomsLevel: 'Understand'
+        bloomsLevel: 'Understand',
       },
       {
         name: 'Differentiation',
         description: 'Tailor instruction to meet diverse student needs and learning styles',
-        application: ['Multiple learning pathways', 'Varied assessment methods', 'Flexible grouping'],
-        bloomsLevel: 'Apply'
+        application: [
+          'Multiple learning pathways',
+          'Varied assessment methods',
+          'Flexible grouping',
+        ],
+        bloomsLevel: 'Apply',
       },
       {
         name: 'Culturally Responsive Teaching',
-        description: 'Connect learning to students\' cultural backgrounds and experiences',
+        description: "Connect learning to students' cultural backgrounds and experiences",
         application: ['Local examples', 'Cultural references', 'Multilingual support'],
-        bloomsLevel: 'Understand'
-      }
+        bloomsLevel: 'Understand',
+      },
     ];
   }
 
   // Analysis Methods
   private detectRequestedContentType(prompt: string): string {
     const typeKeywords = {
-      'lesson_plan': /lesson plan|teaching plan|class plan/i,
-      'lesson': /lesson|chapter|unit|explain|teach/i,
-      'assessment': /quiz|test|exam|assessment|evaluate/i,
-      'activity': /activity|exercise|practice|worksheet/i,
-      'project': /project|assignment|investigation/i,
-      'curriculum': /curriculum|syllabus|course/i,
-      'rubric': /rubric|grading criteria|evaluation matrix/i
+      lesson_plan: /lesson plan|teaching plan|class plan/i,
+      lesson: /lesson|chapter|unit|explain|teach/i,
+      assessment: /quiz|test|exam|assessment|evaluate/i,
+      activity: /activity|exercise|practice|worksheet/i,
+      project: /project|assignment|investigation/i,
+      curriculum: /curriculum|syllabus|course/i,
+      rubric: /rubric|grading criteria|evaluation matrix/i,
     };
-    
+
     for (const [type, pattern] of Object.entries(typeKeywords)) {
       if (pattern.test(prompt)) return type;
     }
-    
+
     return 'lesson';
   }
 
   private getCurriculumAlignment(metadata?: Record<string, any>): CurriculumAlignment | null {
     if (!metadata?.subject) return null;
-    
+
     const standards = this.curriculumStandards.get(metadata.subject.toLowerCase());
     if (!standards) return null;
-    
+
     // Return most relevant standard based on grade level
-    return standards.find(standard => 
-      metadata.level && standard.grade.toLowerCase().includes(metadata.level.toLowerCase())
-    ) || standards[0];
+    return (
+      standards.find(
+        (standard) =>
+          metadata.level && standard.grade.toLowerCase().includes(metadata.level.toLowerCase())
+      ) || standards[0]
+    );
   }
 
   private analyzePedagogicalApproach(content: string): string[] {
     const approaches = [];
-    
+
     if (/scaffolding|guided practice|gradual release/i.test(content)) {
       approaches.push('Scaffolding');
     }
@@ -612,47 +650,47 @@ Always create pedagogically sound, engaging, and culturally relevant educational
     if (/collaborate|group|team|peer/i.test(content)) {
       approaches.push('Collaborative Learning');
     }
-    
+
     return approaches;
   }
 
   private identifyBloomsLevels(content: string): string[] {
     const levels = [];
-    
+
     const bloomsIndicators = {
-      'Remember': /remember|recall|list|identify|define|describe/i,
-      'Understand': /understand|explain|interpret|summarize|classify/i,
-      'Apply': /apply|demonstrate|solve|use|implement|practice/i,
-      'Analyze': /analyze|compare|contrast|examine|categorize/i,
-      'Evaluate': /evaluate|assess|judge|critique|defend|justify/i,
-      'Create': /create|design|develop|compose|construct|formulate/i
+      Remember: /remember|recall|list|identify|define|describe/i,
+      Understand: /understand|explain|interpret|summarize|classify/i,
+      Apply: /apply|demonstrate|solve|use|implement|practice/i,
+      Analyze: /analyze|compare|contrast|examine|categorize/i,
+      Evaluate: /evaluate|assess|judge|critique|defend|justify/i,
+      Create: /create|design|develop|compose|construct|formulate/i,
     };
-    
+
     for (const [level, pattern] of Object.entries(bloomsIndicators)) {
       if (pattern.test(content)) {
         levels.push(level);
       }
     }
-    
+
     return levels;
   }
 
   private assessCulturalRelevance(content: string): number {
     let score = 0;
-    
+
     const culturalIndicators = [
       /indian|india/i,
       /hindi|tamil|bengali|marathi|gujarati|punjabi/i,
       /festival|tradition|culture/i,
       /local|regional|community/i,
       /cbse|icse|ncert/i,
-      /rupee|cricket|bollywood/i
+      /rupee|cricket|bollywood/i,
     ];
-    
-    culturalIndicators.forEach(indicator => {
+
+    culturalIndicators.forEach((indicator) => {
       if (indicator.test(content)) score += 1;
     });
-    
+
     return Math.min(score / culturalIndicators.length, 1.0);
   }
 
@@ -661,15 +699,15 @@ Always create pedagogically sound, engaging, and culturally relevant educational
       /assessment|evaluate|quiz|test/i,
       /rubric|criteria|grading/i,
       /feedback|reflection/i,
-      /formative|summative/i
+      /formative|summative/i,
     ];
-    
-    return assessmentIndicators.some(indicator => indicator.test(content));
+
+    return assessmentIndicators.some((indicator) => indicator.test(content));
   }
 
   private identifyMultimodalElements(content: string): string[] {
     const modalities = [];
-    
+
     if (/visual|diagram|chart|image|graphic|video/i.test(content)) {
       modalities.push('Visual');
     }
@@ -685,7 +723,7 @@ Always create pedagogically sound, engaging, and culturally relevant educational
     if (/digital|online|interactive|technology/i.test(content)) {
       modalities.push('Digital');
     }
-    
+
     return modalities;
   }
 }

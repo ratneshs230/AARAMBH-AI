@@ -97,7 +97,7 @@ Always provide scientifically grounded, ethically sound, and practically useful 
         requestsPerHour: 200,
       },
     });
-    
+
     this.initializeAnalyticsFrameworks();
     this.initializePerformanceIndicators();
     this.initializeInsightTemplates();
@@ -160,7 +160,7 @@ Always provide scientifically grounded, ethically sound, and practically useful 
     const analysisType = this.detectRequestedAnalysisType(request.prompt);
     const framework = this.analyticsFrameworks.get(analysisType);
     const indicators = this.performanceIndicators.get(analysisType);
-    
+
     let prompt = `📊 LEARNING ANALYTICS REQUEST\n`;
     prompt += `Request: ${request.prompt}\n\n`;
 
@@ -244,10 +244,10 @@ Always provide scientifically grounded, ethically sound, and practically useful 
       /correlation|regression|analysis/i,
       /sample size|data points|observations/i,
       /variance|standard deviation|mean/i,
-      /trend analysis|time series/i
+      /trend analysis|time series/i,
     ];
-    
-    statisticalIndicators.forEach(indicator => {
+
+    statisticalIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.08;
     });
 
@@ -258,10 +258,10 @@ Always provide scientifically grounded, ethically sound, and practically useful 
       /benchmark|comparison|baseline/i,
       /prediction|forecast|projection/i,
       /pattern|trend|correlation/i,
-      /insight|finding|discovery/i
+      /insight|finding|discovery/i,
     ];
-    
-    qualityIndicators.forEach(indicator => {
+
+    qualityIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.06;
     });
 
@@ -270,10 +270,10 @@ Always provide scientifically grounded, ethically sound, and practically useful 
       /recommendation|suggest|should/i,
       /intervention|strategy|approach/i,
       /next steps|action plan/i,
-      /improve|enhance|optimize/i
+      /improve|enhance|optimize/i,
     ];
-    
-    actionabilityIndicators.forEach(indicator => {
+
+    actionabilityIndicators.forEach((indicator) => {
       if (indicator.test(content)) confidence += 0.05;
     });
 
@@ -343,57 +343,82 @@ Always provide scientifically grounded, ethically sound, and practically useful 
   // Initialization Methods
   private initializeAnalyticsFrameworks(): void {
     this.analyticsFrameworks = new Map();
-    
+
     this.analyticsFrameworks.set('performance', {
       methodology: 'Multi-dimensional Performance Analysis',
       metrics: ['Academic Achievement', 'Skill Development', 'Engagement Level', 'Progress Rate'],
-      dimensions: ['Cognitive', 'Behavioral', 'Affective', 'Social']
+      dimensions: ['Cognitive', 'Behavioral', 'Affective', 'Social'],
     });
 
     this.analyticsFrameworks.set('learning_path', {
       methodology: 'Adaptive Learning Path Analytics',
       metrics: ['Completion Rate', 'Time Efficiency', 'Mastery Level', 'Retention Rate'],
-      dimensions: ['Content Mastery', 'Learning Velocity', 'Difficulty Progression', 'Knowledge Transfer']
+      dimensions: [
+        'Content Mastery',
+        'Learning Velocity',
+        'Difficulty Progression',
+        'Knowledge Transfer',
+      ],
     });
 
     this.analyticsFrameworks.set('engagement', {
       methodology: 'Multi-modal Engagement Analysis',
-      metrics: ['Attention Duration', 'Interaction Frequency', 'Content Preference', 'Participation Quality'],
-      dimensions: ['Cognitive Engagement', 'Behavioral Engagement', 'Emotional Engagement', 'Social Engagement']
+      metrics: [
+        'Attention Duration',
+        'Interaction Frequency',
+        'Content Preference',
+        'Participation Quality',
+      ],
+      dimensions: [
+        'Cognitive Engagement',
+        'Behavioral Engagement',
+        'Emotional Engagement',
+        'Social Engagement',
+      ],
     });
 
     this.analyticsFrameworks.set('predictive', {
       methodology: 'Predictive Learning Analytics',
-      metrics: ['Success Probability', 'Risk Indicators', 'Intervention Points', 'Outcome Forecasts'],
-      dimensions: ['Academic Trajectory', 'Skill Development', 'Motivation Trends', 'Support Needs']
+      metrics: [
+        'Success Probability',
+        'Risk Indicators',
+        'Intervention Points',
+        'Outcome Forecasts',
+      ],
+      dimensions: [
+        'Academic Trajectory',
+        'Skill Development',
+        'Motivation Trends',
+        'Support Needs',
+      ],
     });
   }
 
   private initializePerformanceIndicators(): void {
     this.performanceIndicators = new Map();
-    
+
     this.performanceIndicators.set('academic', [
       {
         name: 'Overall Academic Performance',
         value: 85,
         unit: 'percentage',
         trend: 'up',
-        interpretation: 'Strong performance with consistent improvement'
+        interpretation: 'Strong performance with consistent improvement',
       },
       {
         name: 'Subject Mastery Rate',
         value: 78,
         unit: 'percentage',
         trend: 'stable',
-        interpretation: 'Good conceptual understanding with room for improvement'
+        interpretation: 'Good conceptual understanding with room for improvement',
       },
       {
         name: 'Assessment Success Rate',
         value: 92,
         unit: 'percentage',
         trend: 'up',
-        interpretation: 'Excellent test performance indicating effective preparation'
-      }
+        interpretation: 'Excellent test performance indicating effective preparation',
+      },
     ]);
 
     this.performanceIndicators.set('engagement', [
@@ -402,36 +427,36 @@ Always provide scientifically grounded, ethically sound, and practically useful 
         value: 45,
         unit: 'minutes',
         trend: 'up',
-        interpretation: 'Increasing attention span and focus during study sessions'
+        interpretation: 'Increasing attention span and focus during study sessions',
       },
       {
         name: 'Content Interaction Rate',
         value: 68,
         unit: 'percentage',
         trend: 'stable',
-        interpretation: 'Moderate engagement with learning materials'
+        interpretation: 'Moderate engagement with learning materials',
       },
       {
         name: 'Discussion Participation',
         value: 35,
         unit: 'posts per week',
         trend: 'down',
-        interpretation: 'Declining participation in collaborative activities'
-      }
+        interpretation: 'Declining participation in collaborative activities',
+      },
     ]);
   }
 
   private initializeInsightTemplates(): void {
     this.insightTemplates = new Map();
-    
+
     this.insightTemplates.set('strength', [
       {
         category: 'Academic Strength',
         insight: 'Excellent performance in analytical subjects',
         evidence: ['High scores in mathematics', 'Strong problem-solving skills'],
         impact: 'high',
-        actionable: true
-      }
+        actionable: true,
+      },
     ]);
 
     this.insightTemplates.set('improvement', [
@@ -440,39 +465,39 @@ Always provide scientifically grounded, ethically sound, and practically useful 
         insight: 'Conceptual understanding needs reinforcement',
         evidence: ['Lower scores in theory-based questions', 'Difficulty with abstract concepts'],
         impact: 'medium',
-        actionable: true
-      }
+        actionable: true,
+      },
     ]);
   }
 
   // Analysis Methods
   private detectRequestedAnalysisType(prompt: string): string {
     const typeKeywords = {
-      'performance': /performance|achievement|scores|grades/i,
-      'engagement': /engagement|participation|interaction|activity/i,
-      'learning_path': /learning path|progress|trajectory|journey/i,
-      'predictive': /predict|forecast|risk|probability|future/i,
-      'comparative': /compare|benchmark|peer|cohort/i,
-      'diagnostic': /diagnose|gap|weakness|strength|assessment/i
+      performance: /performance|achievement|scores|grades/i,
+      engagement: /engagement|participation|interaction|activity/i,
+      learning_path: /learning path|progress|trajectory|journey/i,
+      predictive: /predict|forecast|risk|probability|future/i,
+      comparative: /compare|benchmark|peer|cohort/i,
+      diagnostic: /diagnose|gap|weakness|strength|assessment/i,
     };
-    
+
     for (const [type, pattern] of Object.entries(typeKeywords)) {
       if (pattern.test(prompt)) return type;
     }
-    
+
     return 'performance';
   }
 
   private extractMetrics(content: string): AnalyticsMetric[] {
     const metrics: AnalyticsMetric[] = [];
-    
+
     // Extract numerical values and their contexts
     const metricPatterns = [
       /(\d+(?:\.\d+)?)\s*%?\s*(percentage|percent|score|rate)/gi,
-      /(\w+)\s*:\s*(\d+(?:\.\d+)?)\s*(%|points|minutes|hours)/gi
+      /(\w+)\s*:\s*(\d+(?:\.\d+)?)\s*(%|points|minutes|hours)/gi,
     ];
-    
-    metricPatterns.forEach(pattern => {
+
+    metricPatterns.forEach((pattern) => {
       let match;
       while ((match = pattern.exec(content)) !== null) {
         if (match.length >= 3) {
@@ -481,106 +506,114 @@ Always provide scientifically grounded, ethically sound, and practically useful 
             value: parseFloat(match[2] || match[1]),
             unit: match[3] || match[2] || 'units',
             trend: 'stable',
-            interpretation: 'Extracted from analytics report'
+            interpretation: 'Extracted from analytics report',
           });
         }
       }
     });
-    
+
     return metrics.slice(0, 10); // Limit to top 10 metrics
   }
 
   private identifyPatterns(content: string): string[] {
     const patterns = [];
-    
+
     const patternIndicators = [
       /pattern|trend|correlation|relationship/i,
       /increasing|decreasing|improving|declining/i,
       /consistent|inconsistent|variable|stable/i,
       /cycle|seasonal|periodic|regular/i,
-      /peak|valley|plateau|spike/i
+      /peak|valley|plateau|spike/i,
     ];
-    
-    patternIndicators.forEach(indicator => {
+
+    patternIndicators.forEach((indicator) => {
       const matches = content.match(new RegExp(`[^.]*${indicator.source}[^.]*`, 'gi'));
       if (matches) {
         patterns.push(...matches.slice(0, 2));
       }
     });
-    
+
     return patterns.slice(0, 8);
   }
 
   private extractPredictions(content: string): string[] {
     const predictions = [];
-    
+
     const predictionIndicators = [
       /predict|forecast|expect|likely|probability/i,
       /will|should|may|might|projected/i,
-      /future|upcoming|next|ahead|forward/i
+      /future|upcoming|next|ahead|forward/i,
     ];
-    
-    predictionIndicators.forEach(indicator => {
+
+    predictionIndicators.forEach((indicator) => {
       const matches = content.match(new RegExp(`[^.]*${indicator.source}[^.]*`, 'gi'));
       if (matches) {
         predictions.push(...matches.slice(0, 2));
       }
     });
-    
+
     return predictions.slice(0, 5);
   }
 
   private identifyStakeholders(content: string): string[] {
     const stakeholders = [];
-    
+
     const stakeholderKeywords = [
-      'student', 'teacher', 'parent', 'administrator', 'counselor',
-      'tutor', 'mentor', 'peer', 'instructor', 'guardian'
+      'student',
+      'teacher',
+      'parent',
+      'administrator',
+      'counselor',
+      'tutor',
+      'mentor',
+      'peer',
+      'instructor',
+      'guardian',
     ];
-    
-    stakeholderKeywords.forEach(keyword => {
+
+    stakeholderKeywords.forEach((keyword) => {
       if (new RegExp(keyword, 'i').test(content)) {
         stakeholders.push(keyword.charAt(0).toUpperCase() + keyword.slice(1));
       }
     });
-    
+
     return [...new Set(stakeholders)];
   }
 
   private assessDataQuality(content: string): number {
     let quality = 0.5;
-    
+
     const qualityIndicators = [
       /large sample|significant data|comprehensive analysis/i,
       /multiple sources|diverse data|triangulation/i,
       /validated|verified|reliable|accurate/i,
       /longitudinal|time series|historical/i,
-      /statistical significance|confidence/i
+      /statistical significance|confidence/i,
     ];
-    
-    qualityIndicators.forEach(indicator => {
+
+    qualityIndicators.forEach((indicator) => {
       if (indicator.test(content)) quality += 0.1;
     });
-    
+
     return Math.min(quality, 1.0);
   }
 
   private calculateActionabilityScore(content: string): number {
     let score = 0;
-    
+
     const actionabilityIndicators = [
       /specific|concrete|detailed/i,
       /recommend|suggest|should/i,
       /next steps|action plan|implementation/i,
       /timeline|deadline|schedule/i,
       /resources|support|tools/i,
-      /measurable|trackable|observable/i
+      /measurable|trackable|observable/i,
     ];
-    
-    actionabilityIndicators.forEach(indicator => {
+
+    actionabilityIndicators.forEach((indicator) => {
       if (indicator.test(content)) score += 1;
     });
-    
+
     return Math.min(score / actionabilityIndicators.length, 1.0);
   }
 }

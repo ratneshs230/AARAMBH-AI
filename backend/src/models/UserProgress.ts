@@ -3,13 +3,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IUserProgress extends Document {
   userId: mongoose.Types.ObjectId;
   courseId: mongoose.Types.ObjectId;
-  
+
   // Progress Tracking
   enrollmentDate: Date;
   completionDate?: Date;
   isCompleted: boolean;
   completionPercentage: number;
-  
+
   // Lesson Progress
   lessonProgress: {
     lessonId: mongoose.Types.ObjectId;
@@ -381,13 +381,13 @@ UserProgressSchema.methods.updateLessonProgress = function (
     lessonProgress.timeSpent += timeSpent;
     lessonProgress.watchedDuration += watchedDuration;
     lessonProgress.lastAccessedAt = new Date();
-    
+
     if (status === 'completed' && !lessonProgress.completedAt) {
       lessonProgress.completedAt = new Date();
       lessonProgress.progressPercentage = 100;
       this.analytics.completedLessons += 1;
     }
-    
+
     if (status === 'in_progress' && !lessonProgress.startedAt) {
       lessonProgress.startedAt = new Date();
     }
@@ -433,7 +433,10 @@ UserProgressSchema.methods.updateAssessmentProgress = function (
     }
 
     // Update average score
-    const totalScore = assessmentProgress.attempts.reduce((sum: number, attempt: any) => sum + attempt.percentage, 0);
+    const totalScore = assessmentProgress.attempts.reduce(
+      (sum: number, attempt: any) => sum + attempt.percentage,
+      0
+    );
     assessmentProgress.averageScore = totalScore / assessmentProgress.totalAttempts;
 
     // Update status
@@ -516,10 +519,10 @@ UserProgressSchema.statics.getCompletedCourses = function (userId: string) {
 };
 
 UserProgressSchema.statics.getInProgressCourses = function (userId: string) {
-  return this.find({ 
-    userId, 
-    isCompleted: false, 
-    completionPercentage: { $gt: 0 } 
+  return this.find({
+    userId,
+    isCompleted: false,
+    completionPercentage: { $gt: 0 },
   }).populate('courseId');
 };
 
@@ -527,9 +530,15 @@ UserProgressSchema.statics.getInProgressCourses = function (userId: string) {
 interface IUserProgressModel extends mongoose.Model<IUserProgress> {
   findByUser(userId: string): mongoose.Query<IUserProgress[], IUserProgress>;
   findByCourse(courseId: string): mongoose.Query<IUserProgress[], IUserProgress>;
-  findUserCourseProgress(userId: string, courseId: string): mongoose.Query<IUserProgress | null, IUserProgress>;
+  findUserCourseProgress(
+    userId: string,
+    courseId: string
+  ): mongoose.Query<IUserProgress | null, IUserProgress>;
   getCompletedCourses(userId: string): mongoose.Query<IUserProgress[], IUserProgress>;
   getInProgressCourses(userId: string): mongoose.Query<IUserProgress[], IUserProgress>;
 }
 
-export default mongoose.model<IUserProgress, IUserProgressModel>('UserProgress', UserProgressSchema);
+export default mongoose.model<IUserProgress, IUserProgressModel>(
+  'UserProgress',
+  UserProgressSchema
+);

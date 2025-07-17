@@ -16,6 +16,7 @@ export const ROUTES = {
   PROFILE: '/profile',
   SETTINGS: '/settings',
   ANALYTICS: '/analytics',
+  CURIOSITY: '/curiosity',
 } as const;
 
 export const AGENT_TYPES = {
@@ -110,13 +111,13 @@ export const API_ENDPOINTS = {
     REFRESH: '/auth/refresh',
   },
   AI: {
-    TUTOR: '/ai/tutor/ask',
-    CONTENT: '/ai/content/create',
-    ASSESSMENT: '/ai/assessment/create',
-    DOUBT: '/ai/doubt/solve',
-    REQUEST: '/ai/request',
-    AGENTS: '/ai/agents',
-    HEALTH: '/ai/health',
+    TUTOR: '/tutor/ask',
+    CONTENT: '/content/create',
+    ASSESSMENT: '/assessment/create',
+    DOUBT: '/doubt/solve',
+    REQUEST: '/request',
+    AGENTS: '/agents',
+    HEALTH: '/health',
   },
   COURSES: {
     LIST: '/courses',
@@ -128,5 +129,15 @@ export const API_ENDPOINTS = {
     PROFILE: '/users/profile',
     UPDATE: '/users/update',
     ANALYTICS: '/users/analytics',
+  },
+  CURIOSITY: {
+    TOPICS: '/curiosity/topics',
+    QUESTIONS: '/curiosity/questions',
+    PATHS: '/curiosity/paths',
+    INSIGHTS: '/curiosity/insights',
+    RECOMMENDATIONS: '/curiosity/recommendations',
+    BOOKMARK: '/curiosity/bookmark',
+    RATING: '/curiosity/rating',
+    PROGRESS: '/curiosity/progress',
   },
 } as const;

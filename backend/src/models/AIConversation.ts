@@ -20,10 +20,17 @@ export interface IAIConversation extends Document {
   userId: mongoose.Types.ObjectId;
   sessionId: string;
   title?: string;
-  
+
   // Conversation Context
   context: {
-    agentType: 'tutor' | 'content_creator' | 'assessment' | 'analytics' | 'mentor' | 'study_planner' | 'doubt_solver';
+    agentType:
+      | 'tutor'
+      | 'content_creator'
+      | 'assessment'
+      | 'analytics'
+      | 'mentor'
+      | 'study_planner'
+      | 'doubt_solver';
     subject?: string;
     educationLevel?: string;
     language: 'hindi' | 'english' | 'bilingual';
@@ -140,7 +147,15 @@ const AIConversationSchema: Schema = new Schema(
     context: {
       agentType: {
         type: String,
-        enum: ['tutor', 'content_creator', 'assessment', 'analytics', 'mentor', 'study_planner', 'doubt_solver'],
+        enum: [
+          'tutor',
+          'content_creator',
+          'assessment',
+          'analytics',
+          'mentor',
+          'study_planner',
+          'doubt_solver',
+        ],
         required: true,
         index: true,
       },
@@ -352,7 +367,8 @@ AIConversationSchema.methods.addMessage = function (message: Partial<IMessage>) 
   }
   if (message.metadata?.processingTime) {
     const currentTotal = this.analytics.averageResponseTime * (this.messageCount - 1);
-    this.analytics.averageResponseTime = (currentTotal + message.metadata.processingTime) / this.messageCount;
+    this.analytics.averageResponseTime =
+      (currentTotal + message.metadata.processingTime) / this.messageCount;
   }
 
   // Auto-generate title if not set
@@ -412,7 +428,7 @@ AIConversationSchema.methods.incrementFollowUpQuestions = function () {
 
 AIConversationSchema.methods.generateTitle = function () {
   // Generate title from first user message
-  const firstUserMessage = this.messages.find(msg => msg.role === 'user');
+  const firstUserMessage = this.messages.find((msg: any) => msg.role === 'user');
   if (firstUserMessage) {
     const content = firstUserMessage.content;
     if (content.length <= 50) {
@@ -425,10 +441,10 @@ AIConversationSchema.methods.generateTitle = function () {
 
 AIConversationSchema.methods.isExpired = function () {
   if (!this.isActive) return true;
-  
+
   const now = new Date();
   const timeoutMs = this.settings.sessionTimeout * 60 * 1000;
-  return (now.getTime() - this.lastActivityAt.getTime()) > timeoutMs;
+  return now.getTime() - this.lastActivityAt.getTime() > timeoutMs;
 };
 
 AIConversationSchema.methods.getLastUserMessage = function () {
@@ -449,14 +465,14 @@ AIConversationSchema.statics.findByUser = function (userId: string, options = {}
   const query: any = { userId };
   if (options.agentType) query['context.agentType'] = options.agentType;
   if (options.isActive !== undefined) query.isActive = options.isActive;
-  
+
   return this.find(query).sort({ lastActivityAt: -1 });
 };
 
 AIConversationSchema.statics.findActiveSession = function (userId: string, agentType?: string) {
   const query: any = { userId, isActive: true };
   if (agentType) query['context.agentType'] = agentType;
-  
+
   return this.findOne(query).sort({ lastActivityAt: -1 });
 };
 
@@ -464,7 +480,10 @@ AIConversationSchema.statics.findBySessionId = function (sessionId: string) {
   return this.findOne({ sessionId });
 };
 
-AIConversationSchema.statics.getConversationStats = function (userId: string, dateRange?: { start: Date; end: Date }) {
+AIConversationSchema.statics.getConversationStats = function (
+  userId: string,
+  dateRange?: { start: Date; end: Date }
+) {
   const matchQuery: any = { userId };
   if (dateRange) {
     matchQuery.createdAt = { $gte: dateRange.start, $lte: dateRange.end };
@@ -488,9 +507,18 @@ AIConversationSchema.statics.getConversationStats = function (userId: string, da
 // Extend the model interface
 interface IAIConversationModel extends mongoose.Model<IAIConversation> {
   findByUser(userId: string, options?: any): mongoose.Query<IAIConversation[], IAIConversation>;
-  findActiveSession(userId: string, agentType?: string): mongoose.Query<IAIConversation | null, IAIConversation>;
+  findActiveSession(
+    userId: string,
+    agentType?: string
+  ): mongoose.Query<IAIConversation | null, IAIConversation>;
   findBySessionId(sessionId: string): mongoose.Query<IAIConversation | null, IAIConversation>;
-  getConversationStats(userId: string, dateRange?: { start: Date; end: Date }): mongoose.Aggregate<any[]>;
+  getConversationStats(
+    userId: string,
+    dateRange?: { start: Date; end: Date }
+  ): mongoose.Aggregate<any[]>;
 }
 
-export default mongoose.model<IAIConversation, IAIConversationModel>('AIConversation', AIConversationSchema);
+export default mongoose.model<IAIConversation, IAIConversationModel>(
+  'AIConversation',
+  AIConversationSchema
+);

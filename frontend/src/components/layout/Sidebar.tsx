@@ -20,6 +20,7 @@ import {
   EventNote as PlannerIcon,
   Help as DoubtIcon,
   Person as ProfileIcon,
+  Explore as CuriosityIcon,
 } from '@mui/icons-material';
 import { ROUTES } from '@/utils/constants';
 
@@ -38,6 +39,12 @@ const menuItems: MenuItem[] = [
 
   // AI Features
   { text: 'AI Tutor', icon: <AIIcon />, path: ROUTES.AI_TUTOR, category: 'AI Features' },
+  {
+    text: 'Curiosity Platform',
+    icon: <CuriosityIcon />,
+    path: ROUTES.CURIOSITY,
+    category: 'AI Features',
+  },
   {
     text: 'Content Creator',
     icon: <CoursesIcon />,

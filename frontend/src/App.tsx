@@ -20,6 +20,14 @@ import CourseDetailPage from '@/pages/courses/CourseDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
+import StudyRoomsPage from '@/pages/study-rooms/StudyRoomsPage';
+import AdvancedAnalyticsPage from '@/pages/analytics/AdvancedAnalyticsPage';
+import AdaptiveLearningPathPage from '@/pages/learning-paths/AdaptiveLearningPathPage';
+import GamificationPage from '@/pages/gamification/GamificationPage';
+import ARVRLearningPage from '@/pages/immersive/ARVRLearningPage';
+import AICodeEditorPage from '@/pages/coding/AICodeEditorPage';
+import NeuralNetworkVisualizationPage from '@/pages/neural-networks/NeuralNetworkVisualizationPage';
+import CuriosityPlatformPage from '@/pages/curiosity/CuriosityPlatformPage';
 
 // Constants
 import { ROUTES } from '@/utils/constants';
@@ -45,6 +53,14 @@ const App: React.FC = () => {
             <Route path={ROUTES.AI_ASSESSMENT} element={<AIAssessmentPage />} />
             <Route path={ROUTES.AI_DOUBT} element={<AIDoubtPage />} />
             <Route path={ROUTES.ANALYTICS} element={<AnalyticsPage />} />
+            <Route path={ROUTES.CURIOSITY} element={<CuriosityPlatformPage />} />
+            <Route path='/study-rooms' element={<StudyRoomsPage />} />
+            <Route path='/advanced-analytics' element={<AdvancedAnalyticsPage />} />
+            <Route path='/learning-paths' element={<AdaptiveLearningPathPage />} />
+            <Route path='/gamification' element={<GamificationPage />} />
+            <Route path='/ar-vr-learning' element={<ARVRLearningPage />} />
+            <Route path='/code-editor' element={<AICodeEditorPage />} />
+            <Route path='/neural-networks' element={<NeuralNetworkVisualizationPage />} />
           </Route>
 
           {/* 404 Route */}

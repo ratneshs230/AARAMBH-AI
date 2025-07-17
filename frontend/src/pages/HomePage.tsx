@@ -5,7 +5,6 @@ import {
   Container,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   Chip,
@@ -13,11 +12,12 @@ import {
   Toolbar,
   useTheme,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   Psychology as AIIcon,
   School as LearnIcon,
   Analytics as AnalyticsIcon,
-  Speed as SpeedIcon,
+  Explore as CuriosityIcon,
 } from '@mui/icons-material';
 import { ROUTES } from '@/utils/constants';
 
@@ -33,6 +33,12 @@ const HomePage: React.FC = () => {
         'Get personalized tutoring, content creation, and assessments powered by advanced AI.',
     },
     {
+      icon: <CuriosityIcon sx={{ fontSize: 40, color: 'secondary.main' }} />,
+      title: 'Curiosity Platform',
+      description:
+        'Explore topics, ask questions, and discover new knowledge through AI-powered recommendations.',
+    },
+    {
       icon: <LearnIcon sx={{ fontSize: 40, color: 'success.main' }} />,
       title: 'Comprehensive Courses',
       description: 'Access courses designed for Indian education system with expert instructors.',
@@ -41,11 +47,6 @@ const HomePage: React.FC = () => {
       icon: <AnalyticsIcon sx={{ fontSize: 40, color: 'warning.main' }} />,
       title: 'Learning Analytics',
       description: 'Track your progress and get insights to improve your learning efficiency.',
-    },
-    {
-      icon: <SpeedIcon sx={{ fontSize: 40, color: 'error.main' }} />,
-      title: 'Real-time Help',
-      description: 'Get instant help with doubts and questions from our AI tutors.',
     },
   ];
 
@@ -70,6 +71,9 @@ const HomePage: React.FC = () => {
           </Typography>
           <Button variant='outlined' onClick={() => navigate(ROUTES.DASHBOARD)} sx={{ mr: 1 }}>
             Dashboard
+          </Button>
+          <Button variant='outlined' onClick={() => navigate(ROUTES.CURIOSITY)} sx={{ mr: 1 }}>
+            Curiosity Platform
           </Button>
           <Button variant='contained' onClick={() => navigate(ROUTES.AI_TUTOR)}>
             Try AI Tutor
@@ -124,12 +128,27 @@ const HomePage: React.FC = () => {
               Start Learning with AI
             </Button>
             <Button
+              variant='contained'
+              size='large'
+              onClick={() => navigate(ROUTES.CURIOSITY)}
+              sx={{
+                px: 4,
+                py: 1.5,
+                background: 'linear-gradient(135deg, #e91e63 0%, #f06292 100%)',
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #c2185b 0%, #e91e63 100%)',
+                },
+              }}
+            >
+              Explore Curiosity Platform
+            </Button>
+            <Button
               variant='outlined'
               size='large'
               onClick={() => navigate(ROUTES.COURSES)}
               sx={{ px: 4, py: 1.5 }}
             >
-              Explore Courses
+              View Courses
             </Button>
           </Box>
         </Box>
@@ -154,10 +173,16 @@ const HomePage: React.FC = () => {
                     height: '100%',
                     textAlign: 'center',
                     transition: 'transform 0.2s',
+                    cursor: feature.title === 'Curiosity Platform' ? 'pointer' : 'default',
                     '&:hover': {
                       transform: 'translateY(-4px)',
                       boxShadow: theme.shadows[8],
                     },
+                  }}
+                  onClick={() => {
+                    if (feature.title === 'Curiosity Platform') {
+                      navigate(ROUTES.CURIOSITY);
+                    }
                   }}
                 >
                   <CardContent sx={{ p: 3 }}>
@@ -173,6 +198,66 @@ const HomePage: React.FC = () => {
               </Grid>
             ))}
           </Grid>
+        </Box>
+
+        {/* Curiosity Platform Highlight */}
+        <Box
+          sx={{
+            py: 8,
+            px: 4,
+            textAlign: 'center',
+            background: 'linear-gradient(135deg, #e91e63 0%, #f06292 100%)',
+            borderRadius: 4,
+            color: 'white',
+            mb: 8,
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <CuriosityIcon sx={{ fontSize: 60, opacity: 0.9 }} />
+          </Box>
+          <Typography variant='h4' component='h2' gutterBottom sx={{ fontWeight: 600 }}>
+            Discover Your Curiosity
+          </Typography>
+          <Typography variant='h6' sx={{ mb: 4, opacity: 0.9, maxWidth: 600, mx: 'auto' }}>
+            Explore fascinating topics, ask questions, and embark on discovery paths guided by AI.
+            Let your curiosity lead you to new knowledge and insights.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button
+              variant='contained'
+              size='large'
+              onClick={() => navigate(ROUTES.CURIOSITY)}
+              sx={{
+                backgroundColor: 'white',
+                color: 'secondary.main',
+                px: 4,
+                py: 1.5,
+                fontWeight: 600,
+                '&:hover': {
+                  backgroundColor: 'grey.100',
+                },
+              }}
+            >
+              Start Exploring
+            </Button>
+            <Button
+              variant='outlined'
+              size='large'
+              onClick={() => navigate(ROUTES.AI_TUTOR)}
+              sx={{
+                borderColor: 'white',
+                color: 'white',
+                px: 4,
+                py: 1.5,
+                '&:hover': {
+                  borderColor: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Try AI Tutor
+            </Button>
+          </Box>
         </Box>
 
         {/* CTA Section */}

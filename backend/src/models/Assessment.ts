@@ -2,7 +2,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IQuestion {
   id: string;
-  type: 'multiple_choice' | 'single_choice' | 'true_false' | 'fill_blank' | 'short_answer' | 'essay';
+  type:
+    | 'multiple_choice'
+    | 'single_choice'
+    | 'true_false'
+    | 'fill_blank'
+    | 'short_answer'
+    | 'essay';
   question: string;
   options?: string[];
   correctAnswer: string | string[];
@@ -17,7 +23,7 @@ export interface IAssessment extends Document {
   title: string;
   description: string;
   type: 'quiz' | 'test' | 'assignment' | 'practice' | 'mock_exam';
-  
+
   // Association
   courseId?: mongoose.Types.ObjectId;
   lessonId?: mongoose.Types.ObjectId;
@@ -327,26 +333,33 @@ AssessmentSchema.methods.addAttempt = function () {
 
 AssessmentSchema.methods.addCompletion = function (score: number, timeSpent: number) {
   this.analytics.totalCompletions += 1;
-  
+
   // Update average score
   const currentTotal = this.analytics.averageScore * (this.analytics.totalCompletions - 1);
   this.analytics.averageScore = (currentTotal + score) / this.analytics.totalCompletions;
-  
+
   // Update average time
   const currentTimeTotal = this.analytics.averageTime * (this.analytics.totalCompletions - 1);
   this.analytics.averageTime = (currentTimeTotal + timeSpent) / this.analytics.totalCompletions;
-  
+
   // Update pass rate
   const passCount = score >= this.passingScore ? 1 : 0;
   const currentPassTotal = (this.analytics.passRate / 100) * (this.analytics.totalCompletions - 1);
-  this.analytics.passRate = ((currentPassTotal + passCount) / this.analytics.totalCompletions) * 100;
-  
+  this.analytics.passRate =
+    ((currentPassTotal + passCount) / this.analytics.totalCompletions) * 100;
+
   return this.save();
 };
 
-AssessmentSchema.methods.updateQuestionStats = function (questionId: string, isCorrect: boolean, timeSpent: number) {
-  let questionStat = this.analytics.questionStats.find(stat => stat.questionId === questionId);
-  
+AssessmentSchema.methods.updateQuestionStats = function (
+  questionId: string,
+  isCorrect: boolean,
+  timeSpent: number
+) {
+  let questionStat = this.analytics.questionStats.find(
+    (stat: any) => stat.questionId === questionId
+  );
+
   if (!questionStat) {
     questionStat = {
       questionId,
@@ -356,15 +369,15 @@ AssessmentSchema.methods.updateQuestionStats = function (questionId: string, isC
     };
     this.analytics.questionStats.push(questionStat);
   }
-  
+
   questionStat.totalAttempts += 1;
   if (isCorrect) {
     questionStat.correctAttempts += 1;
   }
-  
+
   const currentTimeTotal = questionStat.averageTime * (questionStat.totalAttempts - 1);
   questionStat.averageTime = (currentTimeTotal + timeSpent) / questionStat.totalAttempts;
-  
+
   return this.save();
 };
 
@@ -380,15 +393,15 @@ AssessmentSchema.methods.unpublish = function () {
 
 AssessmentSchema.methods.isAccessible = function (userId?: string) {
   if (!this.settings.isPublished) return false;
-  
+
   const now = new Date();
   if (this.accessControl.startDate && now < this.accessControl.startDate) return false;
   if (this.accessControl.endDate && now > this.accessControl.endDate) return false;
-  
+
   if (this.accessControl.allowedUsers && this.accessControl.allowedUsers.length > 0) {
     return userId && this.accessControl.allowedUsers.includes(new mongoose.Types.ObjectId(userId));
   }
-  
+
   return true;
 };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Grid from '@mui/material/Grid';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   CardMedia,
@@ -58,7 +58,8 @@ const mockCourses: Course[] = [
   {
     id: '1',
     title: 'Complete Mathematics for Class 12',
-    description: 'Comprehensive course covering all topics in Class 12 Mathematics including Calculus, Algebra, and Geometry.',
+    description:
+      'Comprehensive course covering all topics in Class 12 Mathematics including Calculus, Algebra, and Geometry.',
     instructor: 'Dr. Priya Sharma',
     instructorAvatar: '/avatars/instructor1.jpg',
     thumbnail: '/courses/math12.jpg',
@@ -76,7 +77,8 @@ const mockCourses: Course[] = [
   {
     id: '2',
     title: 'Physics Fundamentals - Motion and Force',
-    description: 'Master the basics of Physics with detailed explanations of motion, force, and energy concepts.',
+    description:
+      'Master the basics of Physics with detailed explanations of motion, force, and energy concepts.',
     instructor: 'Prof. Rajesh Kumar',
     instructorAvatar: '/avatars/instructor2.jpg',
     thumbnail: '/courses/physics.jpg',
@@ -92,7 +94,8 @@ const mockCourses: Course[] = [
   {
     id: '3',
     title: 'Organic Chemistry Made Easy',
-    description: 'Simplify organic chemistry with easy-to-understand concepts and practical examples.',
+    description:
+      'Simplify organic chemistry with easy-to-understand concepts and practical examples.',
     instructor: 'Dr. Anita Verma',
     instructorAvatar: '/avatars/instructor3.jpg',
     thumbnail: '/courses/chemistry.jpg',
@@ -109,7 +112,8 @@ const mockCourses: Course[] = [
   {
     id: '4',
     title: 'English Literature & Communication',
-    description: 'Enhance your English skills with literature analysis and communication techniques.',
+    description:
+      'Enhance your English skills with literature analysis and communication techniques.',
     instructor: 'Ms. Sarah Johnson',
     instructorAvatar: '/avatars/instructor4.jpg',
     thumbnail: '/courses/english.jpg',
@@ -150,16 +154,18 @@ const CoursesPage: React.FC = () => {
   };
 
   const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         course.instructor.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const matchesSearch =
+      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.instructor.toLowerCase().includes(searchQuery.toLowerCase());
+
     const matchesSubject = !subjectFilter || course.subject === subjectFilter;
     const matchesLevel = !levelFilter || course.level === levelFilter;
-    
-    const matchesTab = selectedTab === 0 || 
-                      (selectedTab === 1 && course.progress !== undefined) ||
-                      (selectedTab === 2 && course.isBookmarked);
+
+    const matchesTab =
+      selectedTab === 0 ||
+      (selectedTab === 1 && course.progress !== undefined) ||
+      (selectedTab === 2 && course.isBookmarked);
 
     return matchesSearch && matchesSubject && matchesLevel && matchesTab;
   });
@@ -167,22 +173,22 @@ const CoursesPage: React.FC = () => {
   const tabs = ['All Courses', 'My Courses', 'Bookmarked'];
 
   const CourseCard: React.FC<{ course: Course }> = ({ course }) => (
-    <Card 
-      sx={{ 
-        height: '100%', 
-        display: 'flex', 
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
         flexDirection: 'column',
         transition: 'transform 0.2s, box-shadow 0.2s',
         '&:hover': {
           transform: 'translateY(-4px)',
           boxShadow: 4,
-        }
+        },
       }}
     >
       <Box sx={{ position: 'relative' }}>
         <CardMedia
-          component="img"
-          height="200"
+          component='img'
+          height='200'
           image={course.thumbnail}
           alt={course.title}
           sx={{ objectFit: 'cover' }}
@@ -196,9 +202,9 @@ const CoursesPage: React.FC = () => {
           }}
           onClick={() => handleBookmarkToggle(course.id)}
         >
-          {course.isBookmarked ? <BookmarkedIcon color="primary" /> : <BookmarkIcon />}
+          {course.isBookmarked ? <BookmarkedIcon color='primary' /> : <BookmarkIcon />}
         </IconButton>
-        
+
         {course.progress !== undefined && (
           <Box
             sx={{
@@ -212,35 +218,35 @@ const CoursesPage: React.FC = () => {
               py: 0.5,
             }}
           >
-            <Typography variant="caption">Progress: {course.progress}%</Typography>
+            <Typography variant='caption'>Progress: {course.progress}%</Typography>
           </Box>
         )}
       </Box>
 
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" component="h2" gutterBottom>
+        <Typography variant='h6' component='h2' gutterBottom>
           {course.title}
         </Typography>
-        
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2, flexGrow: 1 }}>
+
+        <Typography variant='body2' color='text.secondary' sx={{ mb: 2, flexGrow: 1 }}>
           {course.description}
         </Typography>
 
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <Avatar src={course.instructorAvatar} sx={{ width: 32, height: 32, mr: 1 }} />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             {course.instructor}
           </Typography>
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Rating value={course.rating} readOnly size="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Rating value={course.rating} readOnly size='small' />
+            <Typography variant='body2' color='text.secondary'>
               ({course.rating})
             </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant='body2' color='text.secondary'>
             <StudentsIcon sx={{ fontSize: 16, mr: 0.5 }} />
             {course.studentsEnrolled.toLocaleString()}
           </Typography>
@@ -248,54 +254,35 @@ const CoursesPage: React.FC = () => {
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Chip 
-              icon={<DurationIcon />} 
-              label={course.duration} 
-              size="small" 
-              variant="outlined" 
-            />
-            <Chip 
-              icon={<LevelIcon />} 
-              label={course.level} 
-              size="small" 
-              variant="outlined" 
-            />
+            <Chip icon={<DurationIcon />} label={course.duration} size='small' variant='outlined' />
+            <Chip icon={<LevelIcon />} label={course.level} size='small' variant='outlined' />
           </Box>
         </Box>
 
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
           {course.tags.map((tag, index) => (
-            <Chip 
-              key={index} 
-              label={tag} 
-              size="small" 
-              color="primary" 
-              variant="outlined" 
-            />
+            <Chip key={index} label={tag} size='small' color='primary' variant='outlined' />
           ))}
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
-            <Typography variant="h6" color="primary" component="span">
+            <Typography variant='h6' color='primary' component='span'>
               ₹{course.price.toLocaleString()}
             </Typography>
             {course.originalPrice && (
-              <Typography 
-                variant="body2" 
-                color="text.secondary" 
-                component="span" 
+              <Typography
+                variant='body2'
+                color='text.secondary'
+                component='span'
                 sx={{ textDecoration: 'line-through', ml: 1 }}
               >
                 ₹{course.originalPrice.toLocaleString()}
               </Typography>
             )}
           </Box>
-          
-          <Button 
-            variant="contained" 
-            onClick={() => navigate(`${ROUTES.COURSES}/${course.id}`)}
-          >
+
+          <Button variant='contained' onClick={() => navigate(`${ROUTES.COURSES}/${course.id}`)}>
             {course.progress !== undefined ? 'Continue' : 'Enroll'}
           </Button>
         </Box>
@@ -307,10 +294,10 @@ const CoursesPage: React.FC = () => {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+        <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
           Courses 📚
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant='body1' color='text.secondary'>
           Discover and learn from our comprehensive course library
         </Typography>
       </Box>
@@ -318,32 +305,32 @@ const CoursesPage: React.FC = () => {
       {/* Search and Filters */}
       <Card sx={{ mb: 3 }}>
         <CardContent>
-          <Grid container spacing={2} alignItems="center">
+          <Grid container spacing={2} alignItems='center'>
             <Grid size={{ xs: 12, md: 6 }}>
               <TextField
                 fullWidth
-                placeholder="Search courses, instructors, or topics..."
+                placeholder='Search courses, instructors, or topics...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={e => setSearchQuery(e.target.value)}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position='start'>
                       <SearchIcon />
                     </InputAdornment>
                   ),
                 }}
               />
             </Grid>
-            
+
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <FormControl fullWidth>
                 <InputLabel>Subject</InputLabel>
                 <Select
                   value={subjectFilter}
-                  onChange={(e) => setSubjectFilter(e.target.value)}
-                  label="Subject"
+                  onChange={e => setSubjectFilter(e.target.value)}
+                  label='Subject'
                 >
-                  <MenuItem value="">All Subjects</MenuItem>
+                  <MenuItem value=''>All Subjects</MenuItem>
                   {SUBJECTS.map(subject => (
                     <MenuItem key={subject} value={subject}>
                       {subject}
@@ -352,16 +339,16 @@ const CoursesPage: React.FC = () => {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <FormControl fullWidth>
                 <InputLabel>Level</InputLabel>
                 <Select
                   value={levelFilter}
-                  onChange={(e) => setLevelFilter(e.target.value)}
-                  label="Level"
+                  onChange={e => setLevelFilter(e.target.value)}
+                  label='Level'
                 >
-                  <MenuItem value="">All Levels</MenuItem>
+                  <MenuItem value=''>All Levels</MenuItem>
                   {EDUCATION_LEVELS.map(level => (
                     <MenuItem key={level} value={level}>
                       {level}
@@ -376,11 +363,11 @@ const CoursesPage: React.FC = () => {
 
       {/* Tabs */}
       <Box sx={{ mb: 3 }}>
-        <Tabs 
-          value={selectedTab} 
+        <Tabs
+          value={selectedTab}
           onChange={(_, newValue) => setSelectedTab(newValue)}
-          variant="scrollable"
-          scrollButtons="auto"
+          variant='scrollable'
+          scrollButtons='auto'
         >
           {tabs.map((tab, index) => (
             <Tab key={index} label={tab} />
@@ -391,17 +378,17 @@ const CoursesPage: React.FC = () => {
       {/* Course Grid */}
       {loading ? (
         <Grid container spacing={3}>
-          {[1, 2, 3, 4, 5, 6].map((item) => (
+          {[1, 2, 3, 4, 5, 6].map(item => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
               <Card>
-                <Skeleton variant="rectangular" height={200} />
+                <Skeleton variant='rectangular' height={200} />
                 <CardContent>
-                  <Skeleton variant="text" height={32} />
-                  <Skeleton variant="text" height={20} />
-                  <Skeleton variant="text" height={20} />
+                  <Skeleton variant='text' height={32} />
+                  <Skeleton variant='text' height={20} />
+                  <Skeleton variant='text' height={20} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                    <Skeleton variant="text" width={80} />
-                    <Skeleton variant="rectangular" width={100} height={36} />
+                    <Skeleton variant='text' width={80} />
+                    <Skeleton variant='rectangular' width={100} height={36} />
                   </Box>
                 </CardContent>
               </Card>
@@ -413,27 +400,27 @@ const CoursesPage: React.FC = () => {
           {filteredCourses.length === 0 ? (
             <Card>
               <CardContent sx={{ textAlign: 'center', py: 8 }}>
-                <Typography variant="h6" color="text.secondary" gutterBottom>
+                <Typography variant='h6' color='text.secondary' gutterBottom>
                   No courses found
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Try adjusting your search criteria or filters
                 </Typography>
               </CardContent>
             </Card>
           ) : (
             <Grid container spacing={3}>
-              {filteredCourses.map((course) => (
+              {filteredCourses.map(course => (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={course.id}>
                   <CourseCard course={course} />
                 </Grid>
               ))}
             </Grid>
           )}
-          
+
           {/* Results count */}
           <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant='body2' color='text.secondary'>
               Showing {filteredCourses.length} of {courses.length} courses
             </Typography>
           </Box>

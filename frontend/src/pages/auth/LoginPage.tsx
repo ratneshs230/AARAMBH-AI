@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import Grid from '@mui/material/Grid';
 import {
   Box,
   Card,
@@ -14,7 +15,6 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
-  Grid,
   Avatar,
 } from '@mui/material';
 import {
@@ -52,18 +52,21 @@ const LoginPage: React.FC = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Mock validation
       if (formData.email === 'student@example.com' && formData.password === 'password') {
         // Store auth token (in real app, this would come from API)
         localStorage.setItem('auth_token', 'mock_token_123');
-        localStorage.setItem('user_data', JSON.stringify({
-          id: '1',
-          name: 'Student User',
-          email: formData.email,
-          role: 'student',
-        }));
-        
+        localStorage.setItem(
+          'user_data',
+          JSON.stringify({
+            id: '1',
+            name: 'Student User',
+            email: formData.email,
+            role: 'student',
+          })
+        );
+
         navigate(ROUTES.DASHBOARD);
       } else {
         setError('Invalid email or password');
@@ -99,11 +102,11 @@ const LoginPage: React.FC = () => {
         py: 3,
       }}
     >
-      <Grid container maxWidth="lg" sx={{ height: '100%' }}>
+      <Grid container maxWidth='lg' sx={{ height: '100%' }}>
         {/* Left Side - Branding */}
-        <Grid 
-          size={{ xs: 0, md: 6 }} 
-          sx={{ 
+        <Grid
+          size={{ xs: 0, md: 6 }}
+          sx={{
             display: { xs: 'none', md: 'flex' },
             flexDirection: 'column',
             justifyContent: 'center',
@@ -116,35 +119,35 @@ const LoginPage: React.FC = () => {
           <Avatar sx={{ width: 80, height: 80, bgcolor: 'white', color: 'primary.main', mb: 3 }}>
             <SchoolIcon sx={{ fontSize: 40 }} />
           </Avatar>
-          
-          <Typography variant="h3" component="h1" fontWeight={700} gutterBottom textAlign="center">
+
+          <Typography variant='h3' component='h1' fontWeight={700} gutterBottom textAlign='center'>
             AARAMBH AI
           </Typography>
-          
-          <Typography variant="h6" textAlign="center" sx={{ mb: 4, opacity: 0.9 }}>
+
+          <Typography variant='h6' textAlign='center' sx={{ mb: 4, opacity: 0.9 }}>
             Your Personal AI-Powered Learning Companion
           </Typography>
-          
+
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               🎯 Personalized Learning
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               🤖 AI-Powered Tutoring
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               📊 Smart Analytics
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ opacity: 0.8 }}>
               🏆 Exam Excellence
             </Typography>
           </Box>
         </Grid>
 
         {/* Right Side - Login Form */}
-        <Grid 
-          size={{ xs: 12, md: 6 }} 
-          sx={{ 
+        <Grid
+          size={{ xs: 12, md: 6 }}
+          sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -155,33 +158,28 @@ const LoginPage: React.FC = () => {
             <CardContent sx={{ p: 4 }}>
               {/* Header */}
               <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+                <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
                   Welcome Back
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Sign in to continue your learning journey
                 </Typography>
               </Box>
 
               {/* Demo Login Button */}
-              <Button
-                variant="outlined"
-                fullWidth
-                onClick={handleDemoLogin}
-                sx={{ mb: 2 }}
-              >
+              <Button variant='outlined' fullWidth onClick={handleDemoLogin} sx={{ mb: 2 }}>
                 Use Demo Credentials
               </Button>
 
               <Divider sx={{ my: 2 }}>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant='caption' color='text.secondary'>
                   or
                 </Typography>
               </Divider>
 
               {/* Error Alert */}
               {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
+                <Alert severity='error' sx={{ mb: 3 }}>
                   {error}
                 </Alert>
               )}
@@ -190,31 +188,28 @@ const LoginPage: React.FC = () => {
               <form onSubmit={handleSubmit}>
                 <TextField
                   fullWidth
-                  label="Email Address"
-                  type="email"
+                  label='Email Address'
+                  type='email'
                   value={formData.email}
                   onChange={handleChange('email')}
                   required
                   sx={{ mb: 2 }}
-                  autoComplete="email"
+                  autoComplete='email'
                 />
 
                 <TextField
                   fullWidth
-                  label="Password"
+                  label='Password'
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={handleChange('password')}
                   required
                   sx={{ mb: 2 }}
-                  autoComplete="current-password"
+                  autoComplete='current-password'
                   InputProps={{
                     endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => setShowPassword(!showPassword)}
-                          edge="end"
-                        >
+                      <InputAdornment position='end'>
+                        <IconButton onClick={() => setShowPassword(!showPassword)} edge='end'>
                           {showPassword ? <VisibilityOff /> : <Visibility />}
                         </IconButton>
                       </InputAdornment>
@@ -222,37 +217,44 @@ const LoginPage: React.FC = () => {
                   }}
                 />
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 3,
+                  }}
+                >
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={formData.rememberMe}
                         onChange={handleChange('rememberMe')}
-                        size="small"
+                        size='small'
                       />
                     }
                     label={
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant='body2' color='text.secondary'>
                         Remember me
                       </Typography>
                     }
                   />
-                  
+
                   <Link
                     component={RouterLink}
-                    to="/forgot-password"
-                    variant="body2"
-                    color="primary"
+                    to='/forgot-password'
+                    variant='body2'
+                    color='primary'
                   >
                     Forgot password?
                   </Link>
                 </Box>
 
                 <Button
-                  type="submit"
+                  type='submit'
                   fullWidth
-                  variant="contained"
-                  size="large"
+                  variant='contained'
+                  size='large'
                   disabled={loading}
                   sx={{ mb: 2 }}
                 >
@@ -263,7 +265,7 @@ const LoginPage: React.FC = () => {
               {/* Google Login */}
               <Button
                 fullWidth
-                variant="outlined"
+                variant='outlined'
                 startIcon={<GoogleIcon />}
                 onClick={handleGoogleLogin}
                 sx={{ mb: 3 }}
@@ -275,12 +277,12 @@ const LoginPage: React.FC = () => {
 
               {/* Sign Up Link */}
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Don't have an account?{' '}
                   <Link
                     component={RouterLink}
                     to={ROUTES.REGISTER}
-                    color="primary"
+                    color='primary'
                     fontWeight={600}
                   >
                     Sign up for free
@@ -290,13 +292,17 @@ const LoginPage: React.FC = () => {
 
               {/* Demo Credentials Info */}
               <Box sx={{ mt: 3, p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                <Typography
+                  variant='caption'
+                  color='text.secondary'
+                  sx={{ display: 'block', mb: 1 }}
+                >
                   Demo Credentials:
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                <Typography variant='caption' color='text.secondary' sx={{ display: 'block' }}>
                   Email: student@example.com
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                <Typography variant='caption' color='text.secondary' sx={{ display: 'block' }}>
                   Password: password
                 </Typography>
               </Box>

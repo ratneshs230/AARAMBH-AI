@@ -16,10 +16,10 @@ class DatabaseConfig {
 
   public async connectMongoDB(): Promise<void> {
     try {
-      const connectionString = process.env.COSMOS_DB_CONNECTION_STRING;
+      const connectionString = process.env.MONGODB_URI;
 
       if (!connectionString) {
-        throw new Error('COSMOS_DB_CONNECTION_STRING is not defined');
+        throw new Error('MONGODB_URI is not defined');
       }
 
       await mongoose.connect(connectionString, {

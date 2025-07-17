@@ -22,7 +22,7 @@ export interface ILesson extends Document {
   duration: number; // in minutes
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   order: number; // position in course/chapter
-  
+
   // Learning Objectives
   objectives: string[];
   prerequisites: string[];

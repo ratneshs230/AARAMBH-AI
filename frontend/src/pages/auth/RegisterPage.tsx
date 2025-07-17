@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import Grid from '@mui/material/Grid';
 import {
   Box,
   Card,
@@ -14,7 +15,6 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
-  Grid,
   Avatar,
   MenuItem,
   Stepper,
@@ -38,13 +38,13 @@ interface RegistrationData {
   email: string;
   password: string;
   confirmPassword: string;
-  
+
   // Step 2: Educational Info
   role: string;
   educationLevel: string;
   schoolName: string;
   interests: string[];
-  
+
   // Step 3: Preferences
   learningStyle: string;
   studyGoals: string[];
@@ -77,18 +77,19 @@ const RegisterPage: React.FC = () => {
 
   const steps = ['Account Details', 'Educational Background', 'Learning Preferences'];
 
-  const handleChange = (field: keyof RegistrationData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (error) setError('');
-  };
+  const handleChange =
+    (field: keyof RegistrationData) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+      setFormData(prev => ({ ...prev, [field]: value }));
+      if (error) setError('');
+    };
 
   const handleArrayChange = (field: 'interests' | 'studyGoals', value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: prev[field].includes(value) 
+      [field]: prev[field].includes(value)
         ? prev[field].filter(item => item !== value)
-        : [...prev[field], value]
+        : [...prev[field], value],
     }));
   };
 
@@ -145,16 +146,19 @@ const RegisterPage: React.FC = () => {
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Mock registration success
       localStorage.setItem('auth_token', 'mock_token_123');
-      localStorage.setItem('user_data', JSON.stringify({
-        id: '1',
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        role: formData.role,
-      }));
-      
+      localStorage.setItem(
+        'user_data',
+        JSON.stringify({
+          id: '1',
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          role: formData.role,
+        })
+      );
+
       navigate(ROUTES.DASHBOARD);
     } catch (err) {
       setError('Registration failed. Please try again.');
@@ -168,18 +172,28 @@ const RegisterPage: React.FC = () => {
   };
 
   const interests = [
-    'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Computer Science',
-    'English', 'History', 'Geography', 'Economics', 'Arts'
+    'Mathematics',
+    'Physics',
+    'Chemistry',
+    'Biology',
+    'Computer Science',
+    'English',
+    'History',
+    'Geography',
+    'Economics',
+    'Arts',
   ];
 
   const studyGoals = [
-    'Board Exam Preparation', 'JEE/NEET Preparation', 'Competitive Exams',
-    'Skill Development', 'Career Guidance', 'General Knowledge'
+    'Board Exam Preparation',
+    'JEE/NEET Preparation',
+    'Competitive Exams',
+    'Skill Development',
+    'Career Guidance',
+    'General Knowledge',
   ];
 
-  const learningStyles = [
-    'Visual', 'Auditory', 'Kinesthetic', 'Reading/Writing', 'Mixed'
-  ];
+  const learningStyles = ['Visual', 'Auditory', 'Kinesthetic', 'Reading/Writing', 'Mixed'];
 
   const renderStepContent = (step: number) => {
     switch (step) {
@@ -190,7 +204,7 @@ const RegisterPage: React.FC = () => {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
-                  label="First Name"
+                  label='First Name'
                   value={formData.firstName}
                   onChange={handleChange('firstName')}
                   required
@@ -199,7 +213,7 @@ const RegisterPage: React.FC = () => {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField
                   fullWidth
-                  label="Last Name"
+                  label='Last Name'
                   value={formData.lastName}
                   onChange={handleChange('lastName')}
                   required
@@ -209,32 +223,29 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              label="Email Address"
-              type="email"
+              label='Email Address'
+              type='email'
               value={formData.email}
               onChange={handleChange('email')}
               required
               sx={{ mt: 2 }}
-              autoComplete="email"
+              autoComplete='email'
             />
 
             <TextField
               fullWidth
-              label="Password"
+              label='Password'
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
               onChange={handleChange('password')}
               required
               sx={{ mt: 2 }}
-              autoComplete="new-password"
-              helperText="Minimum 6 characters"
+              autoComplete='new-password'
+              helperText='Minimum 6 characters'
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
+                  <InputAdornment position='end'>
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge='end'>
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
                   </InputAdornment>
@@ -244,19 +255,19 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              label="Confirm Password"
+              label='Confirm Password'
               type={showConfirmPassword ? 'text' : 'password'}
               value={formData.confirmPassword}
               onChange={handleChange('confirmPassword')}
               required
               sx={{ mt: 2 }}
-              autoComplete="new-password"
+              autoComplete='new-password'
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
+                  <InputAdornment position='end'>
                     <IconButton
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      edge="end"
+                      edge='end'
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -273,21 +284,21 @@ const RegisterPage: React.FC = () => {
             <TextField
               fullWidth
               select
-              label="I am a"
+              label='I am a'
               value={formData.role}
               onChange={handleChange('role')}
               required
               sx={{ mb: 2 }}
             >
-              <MenuItem value="student">Student</MenuItem>
-              <MenuItem value="teacher">Teacher</MenuItem>
-              <MenuItem value="parent">Parent</MenuItem>
+              <MenuItem value='student'>Student</MenuItem>
+              <MenuItem value='teacher'>Teacher</MenuItem>
+              <MenuItem value='parent'>Parent</MenuItem>
             </TextField>
 
             <TextField
               fullWidth
               select
-              label="Education Level"
+              label='Education Level'
               value={formData.educationLevel}
               onChange={handleChange('educationLevel')}
               required
@@ -302,13 +313,13 @@ const RegisterPage: React.FC = () => {
 
             <TextField
               fullWidth
-              label="School/Institution Name"
+              label='School/Institution Name'
               value={formData.schoolName}
               onChange={handleChange('schoolName')}
               sx={{ mb: 2 }}
             />
 
-            <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
+            <Typography variant='subtitle2' gutterBottom sx={{ mt: 2 }}>
               Subjects of Interest (select multiple)
             </Typography>
             <Grid container spacing={1}>
@@ -319,10 +330,10 @@ const RegisterPage: React.FC = () => {
                       <Checkbox
                         checked={formData.interests.includes(interest)}
                         onChange={() => handleArrayChange('interests', interest)}
-                        size="small"
+                        size='small'
                       />
                     }
-                    label={<Typography variant="body2">{interest}</Typography>}
+                    label={<Typography variant='body2'>{interest}</Typography>}
                   />
                 </Grid>
               ))}
@@ -336,7 +347,7 @@ const RegisterPage: React.FC = () => {
             <TextField
               fullWidth
               select
-              label="Preferred Learning Style"
+              label='Preferred Learning Style'
               value={formData.learningStyle}
               onChange={handleChange('learningStyle')}
               sx={{ mb: 2 }}
@@ -348,7 +359,7 @@ const RegisterPage: React.FC = () => {
               ))}
             </TextField>
 
-            <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
+            <Typography variant='subtitle2' gutterBottom sx={{ mt: 2 }}>
               Study Goals (select multiple)
             </Typography>
             <Grid container spacing={1}>
@@ -359,10 +370,10 @@ const RegisterPage: React.FC = () => {
                       <Checkbox
                         checked={formData.studyGoals.includes(goal)}
                         onChange={() => handleArrayChange('studyGoals', goal)}
-                        size="small"
+                        size='small'
                       />
                     }
-                    label={<Typography variant="body2">{goal}</Typography>}
+                    label={<Typography variant='body2'>{goal}</Typography>}
                   />
                 </Grid>
               ))}
@@ -378,13 +389,13 @@ const RegisterPage: React.FC = () => {
                   />
                 }
                 label={
-                  <Typography variant="body2">
+                  <Typography variant='body2'>
                     I agree to the{' '}
-                    <Link href="#" color="primary">
+                    <Link href='#' color='primary'>
                       Terms of Service
                     </Link>{' '}
                     and{' '}
-                    <Link href="#" color="primary">
+                    <Link href='#' color='primary'>
                       Privacy Policy
                     </Link>
                   </Typography>
@@ -399,7 +410,7 @@ const RegisterPage: React.FC = () => {
                   />
                 }
                 label={
-                  <Typography variant="body2">
+                  <Typography variant='body2'>
                     Subscribe to newsletter for learning tips and updates
                   </Typography>
                 }
@@ -424,11 +435,11 @@ const RegisterPage: React.FC = () => {
         py: 3,
       }}
     >
-      <Grid container maxWidth="lg" sx={{ height: '100%' }}>
+      <Grid container maxWidth='lg' sx={{ height: '100%' }}>
         {/* Left Side - Branding */}
-        <Grid 
-          size={{ xs: 0, md: 5 }} 
-          sx={{ 
+        <Grid
+          size={{ xs: 0, md: 5 }}
+          sx={{
             display: { xs: 'none', md: 'flex' },
             flexDirection: 'column',
             justifyContent: 'center',
@@ -441,35 +452,35 @@ const RegisterPage: React.FC = () => {
           <Avatar sx={{ width: 80, height: 80, bgcolor: 'white', color: 'primary.main', mb: 3 }}>
             <SchoolIcon sx={{ fontSize: 40 }} />
           </Avatar>
-          
-          <Typography variant="h3" component="h1" fontWeight={700} gutterBottom textAlign="center">
+
+          <Typography variant='h3' component='h1' fontWeight={700} gutterBottom textAlign='center'>
             Join AARAMBH AI
           </Typography>
-          
-          <Typography variant="h6" textAlign="center" sx={{ mb: 4, opacity: 0.9 }}>
+
+          <Typography variant='h6' textAlign='center' sx={{ mb: 4, opacity: 0.9 }}>
             Start Your AI-Powered Learning Journey Today
           </Typography>
-          
+
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               ✨ Personalized Learning Experience
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               🎯 Adaptive Study Plans
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2, opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
               📈 Real-time Progress Tracking
             </Typography>
-            <Typography variant="body1" sx={{ opacity: 0.8 }}>
+            <Typography variant='body1' sx={{ opacity: 0.8 }}>
               🏆 Achieve Your Academic Goals
             </Typography>
           </Box>
         </Grid>
 
         {/* Right Side - Registration Form */}
-        <Grid 
-          size={{ xs: 12, md: 7 }} 
-          sx={{ 
+        <Grid
+          size={{ xs: 12, md: 7 }}
+          sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -480,10 +491,10 @@ const RegisterPage: React.FC = () => {
             <CardContent sx={{ p: 4 }}>
               {/* Header */}
               <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography variant="h4" component="h1" fontWeight={600} gutterBottom>
+                <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
                   Create Account
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Join thousands of students already learning with AI
                 </Typography>
               </Box>
@@ -499,7 +510,7 @@ const RegisterPage: React.FC = () => {
 
               {/* Error Alert */}
               {error && (
-                <Alert severity="error" sx={{ mb: 3 }}>
+                <Alert severity='error' sx={{ mb: 3 }}>
                   {error}
                 </Alert>
               )}
@@ -509,17 +520,13 @@ const RegisterPage: React.FC = () => {
 
               {/* Navigation Buttons */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                <Button
-                  onClick={handleBack}
-                  disabled={activeStep === 0}
-                  startIcon={<BackIcon />}
-                >
+                <Button onClick={handleBack} disabled={activeStep === 0} startIcon={<BackIcon />}>
                   Back
                 </Button>
 
                 {activeStep === steps.length - 1 ? (
                   <Button
-                    variant="contained"
+                    variant='contained'
                     onClick={handleSubmit}
                     disabled={loading}
                     endIcon={!loading && <NextIcon />}
@@ -527,11 +534,7 @@ const RegisterPage: React.FC = () => {
                     {loading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 ) : (
-                  <Button
-                    variant="contained"
-                    onClick={handleNext}
-                    endIcon={<NextIcon />}
-                  >
+                  <Button variant='contained' onClick={handleNext} endIcon={<NextIcon />}>
                     Next
                   </Button>
                 )}
@@ -541,14 +544,14 @@ const RegisterPage: React.FC = () => {
               {activeStep === 0 && (
                 <>
                   <Divider sx={{ my: 3 }}>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant='caption' color='text.secondary'>
                       or
                     </Typography>
                   </Divider>
 
                   <Button
                     fullWidth
-                    variant="outlined"
+                    variant='outlined'
                     startIcon={<GoogleIcon />}
                     onClick={handleGoogleSignup}
                     sx={{ mb: 3 }}
@@ -560,14 +563,9 @@ const RegisterPage: React.FC = () => {
 
               {/* Sign In Link */}
               <Box sx={{ textAlign: 'center', mt: 2 }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant='body2' color='text.secondary'>
                   Already have an account?{' '}
-                  <Link
-                    component={RouterLink}
-                    to={ROUTES.LOGIN}
-                    color="primary"
-                    fontWeight={600}
-                  >
+                  <Link component={RouterLink} to={ROUTES.LOGIN} color='primary' fontWeight={600}>
                     Sign in
                   </Link>
                 </Typography>

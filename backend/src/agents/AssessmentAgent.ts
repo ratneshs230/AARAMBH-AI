@@ -79,7 +79,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         requestsPerHour: 400,
       },
     });
-    
+
     this.initializeAssessmentTemplates();
     this.initializeRubricTemplates();
   }
@@ -140,7 +140,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
     const assessmentType = this.detectRequestedAssessmentType(request.prompt);
     const template = this.assessmentTemplates.get(assessmentType);
     const rubrics = this.rubricTemplates.get(assessmentType);
-    
+
     let prompt = `🎯 ASSESSMENT CREATION REQUEST\n`;
     prompt += `Request: ${request.prompt}\n\n`;
 
@@ -190,7 +190,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
       prompt += `\n📊 RUBRIC CRITERIA:\n`;
       rubrics.forEach((rubric, index) => {
         prompt += `${index + 1}. ${rubric.criteria} (Weight: ${rubric.weightage}%)\n`;
-        rubric.levels.forEach(level => {
+        rubric.levels.forEach((level) => {
           prompt += `   - Score ${level.score}: ${level.description}\n`;
         });
       });
@@ -359,7 +359,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
   // Initialization Methods
   private initializeAssessmentTemplates(): void {
     this.assessmentTemplates = new Map();
-    
+
     this.assessmentTemplates.set('quiz', {
       type: 'quiz',
       structure: [
@@ -371,7 +371,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Short Answer Questions',
         'Answer Key with Explanations',
         'Scoring Rubric',
-        'Time Allocation Guide'
+        'Time Allocation Guide',
       ],
       guidelines: [
         'Keep questions clear and unambiguous',
@@ -379,10 +379,10 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Vary difficulty levels across questions',
         'Ensure cultural appropriateness of examples',
         'Provide immediate feedback when possible',
-        'Include reflection questions'
+        'Include reflection questions',
       ],
       questionTypes: ['Multiple Choice', 'True/False', 'Fill-in-blanks', 'Short Answer'],
-      bloomsLevels: ['Remember', 'Understand', 'Apply']
+      bloomsLevels: ['Remember', 'Understand', 'Apply'],
     });
 
     this.assessmentTemplates.set('test', {
@@ -396,7 +396,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Section D: Problem Solving/Application',
         'Detailed Marking Scheme',
         'Rubrics for Each Section',
-        'Time Management Guidelines'
+        'Time Management Guidelines',
       ],
       guidelines: [
         'Balance different cognitive levels',
@@ -404,10 +404,10 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Provide choice in essay questions',
         'Ensure progressive difficulty',
         'Include scaffolding in complex questions',
-        'Design for authentic assessment'
+        'Design for authentic assessment',
       ],
       questionTypes: ['Multiple Choice', 'Short Answer', 'Essay', 'Problem Solving', 'Case Study'],
-      bloomsLevels: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate']
+      bloomsLevels: ['Remember', 'Understand', 'Apply', 'Analyze', 'Evaluate'],
     });
 
     this.assessmentTemplates.set('assignment', {
@@ -421,7 +421,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Assessment Rubric with Criteria',
         'Peer Review Component',
         'Self-Reflection Questions',
-        'Extension Activities'
+        'Extension Activities',
       ],
       guidelines: [
         'Design for authentic real-world application',
@@ -429,26 +429,35 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
         'Provide scaffolding for complex tasks',
         'Allow for creative expression',
         'Include formative checkpoints',
-        'Design for differentiated outcomes'
+        'Design for differentiated outcomes',
       ],
-      questionTypes: ['Research Project', 'Case Study', 'Portfolio', 'Presentation', 'Creative Work'],
-      bloomsLevels: ['Apply', 'Analyze', 'Evaluate', 'Create']
+      questionTypes: [
+        'Research Project',
+        'Case Study',
+        'Portfolio',
+        'Presentation',
+        'Creative Work',
+      ],
+      bloomsLevels: ['Apply', 'Analyze', 'Evaluate', 'Create'],
     });
   }
 
   private initializeRubricTemplates(): void {
     this.rubricTemplates = new Map();
-    
+
     this.rubricTemplates.set('essay', [
       {
         criteria: 'Content Knowledge and Understanding',
         levels: [
-          { score: 4, description: 'Demonstrates comprehensive understanding with detailed examples' },
+          {
+            score: 4,
+            description: 'Demonstrates comprehensive understanding with detailed examples',
+          },
           { score: 3, description: 'Shows good understanding with relevant examples' },
           { score: 2, description: 'Basic understanding with some gaps' },
-          { score: 1, description: 'Limited understanding with significant gaps' }
+          { score: 1, description: 'Limited understanding with significant gaps' },
         ],
-        weightage: 40
+        weightage: 40,
       },
       {
         criteria: 'Critical Thinking and Analysis',
@@ -456,9 +465,9 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
           { score: 4, description: 'Excellent analysis with original insights' },
           { score: 3, description: 'Good analysis with some original thinking' },
           { score: 2, description: 'Basic analysis with limited depth' },
-          { score: 1, description: 'Minimal analysis or original thought' }
+          { score: 1, description: 'Minimal analysis or original thought' },
         ],
-        weightage: 30
+        weightage: 30,
       },
       {
         criteria: 'Organization and Structure',
@@ -466,9 +475,9 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
           { score: 4, description: 'Clear, logical structure with smooth transitions' },
           { score: 3, description: 'Well-organized with good flow' },
           { score: 2, description: 'Adequate organization with some issues' },
-          { score: 1, description: 'Poor organization, difficult to follow' }
+          { score: 1, description: 'Poor organization, difficult to follow' },
         ],
-        weightage: 20
+        weightage: 20,
       },
       {
         criteria: 'Language and Communication',
@@ -476,90 +485,90 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
           { score: 4, description: 'Excellent language use, clear and engaging' },
           { score: 3, description: 'Good language use with minor errors' },
           { score: 2, description: 'Adequate communication with some errors' },
-          { score: 1, description: 'Poor language use affecting clarity' }
+          { score: 1, description: 'Poor language use affecting clarity' },
         ],
-        weightage: 10
-      }
+        weightage: 10,
+      },
     ]);
   }
 
   // Analysis Methods
   private detectRequestedAssessmentType(prompt: string): string {
     const typeKeywords = {
-      'quiz': /quiz|quick assessment|short test/i,
-      'test': /test|exam|examination/i,
-      'assignment': /assignment|project|task/i,
-      'rubric': /rubric|scoring guide|evaluation criteria/i,
-      'portfolio': /portfolio|collection|showcase/i,
-      'performance': /performance|practical|demonstration/i
+      quiz: /quiz|quick assessment|short test/i,
+      test: /test|exam|examination/i,
+      assignment: /assignment|project|task/i,
+      rubric: /rubric|scoring guide|evaluation criteria/i,
+      portfolio: /portfolio|collection|showcase/i,
+      performance: /performance|practical|demonstration/i,
     };
-    
+
     for (const [type, pattern] of Object.entries(typeKeywords)) {
       if (pattern.test(prompt)) return type;
     }
-    
+
     return 'quiz';
   }
 
   private identifyQuestionTypes(content: string): string[] {
     const types = [];
-    
+
     const typeIndicators = {
       'Multiple Choice': /multiple choice|mcq|choose the best/i,
       'True/False': /true.*false|t\/f|correct.*incorrect/i,
       'Short Answer': /short answer|brief|explain briefly/i,
-      'Essay': /essay|long answer|discuss|elaborate/i,
+      Essay: /essay|long answer|discuss|elaborate/i,
       'Fill-in-blanks': /fill.*blank|complete.*sentence/i,
-      'Matching': /match|pair|connect/i,
+      Matching: /match|pair|connect/i,
       'Problem Solving': /solve|calculate|find|determine/i,
-      'Case Study': /case study|scenario|situation/i
+      'Case Study': /case study|scenario|situation/i,
     };
-    
+
     for (const [type, pattern] of Object.entries(typeIndicators)) {
       if (pattern.test(content)) {
         types.push(type);
       }
     }
-    
+
     return types;
   }
 
   private identifyBloomsLevels(content: string): string[] {
     const levels = [];
-    
+
     const bloomsIndicators = {
-      'Remember': /remember|recall|list|identify|define|describe|state/i,
-      'Understand': /understand|explain|interpret|summarize|classify|compare/i,
-      'Apply': /apply|demonstrate|solve|use|implement|show|calculate/i,
-      'Analyze': /analyze|examine|investigate|categorize|distinguish/i,
-      'Evaluate': /evaluate|assess|judge|critique|defend|justify|argue/i,
-      'Create': /create|design|develop|compose|construct|formulate|plan/i
+      Remember: /remember|recall|list|identify|define|describe|state/i,
+      Understand: /understand|explain|interpret|summarize|classify|compare/i,
+      Apply: /apply|demonstrate|solve|use|implement|show|calculate/i,
+      Analyze: /analyze|examine|investigate|categorize|distinguish/i,
+      Evaluate: /evaluate|assess|judge|critique|defend|justify|argue/i,
+      Create: /create|design|develop|compose|construct|formulate|plan/i,
     };
-    
+
     for (const [level, pattern] of Object.entries(bloomsIndicators)) {
       if (pattern.test(content)) {
         levels.push(level);
       }
     }
-    
+
     return levels;
   }
 
   private assessDifficultyLevel(content: string): string {
     let complexity = 0;
-    
+
     // Simple indicators
     if (/basic|simple|easy|recall|identify/i.test(content)) complexity += 1;
-    
+
     // Moderate indicators
     if (/explain|understand|apply|demonstrate/i.test(content)) complexity += 2;
-    
+
     // Complex indicators
     if (/analyze|evaluate|create|synthesize|critique/i.test(content)) complexity += 3;
-    
+
     // Very complex indicators
     if (/design|formulate|compose|develop.*original/i.test(content)) complexity += 4;
-    
+
     if (complexity <= 2) return 'Easy';
     if (complexity <= 4) return 'Moderate';
     if (complexity <= 6) return 'Challenging';
@@ -568,20 +577,20 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
 
   private assessCulturalSensitivity(content: string): number {
     let score = 0;
-    
+
     const sensitivityIndicators = [
       /indian|india/i,
       /cultural|diverse|inclusive/i,
       /fair|equity|bias/i,
       /accommodat/i,
       /accessible/i,
-      /multilingual/i
+      /multilingual/i,
     ];
-    
-    sensitivityIndicators.forEach(indicator => {
+
+    sensitivityIndicators.forEach((indicator) => {
       if (indicator.test(content)) score += 1;
     });
-    
+
     return Math.min(score / sensitivityIndicators.length, 1.0);
   }
 
@@ -591,7 +600,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
 
   private identifyFormativeElements(content: string): string[] {
     const elements = [];
-    
+
     if (/feedback|comment|suggestion/i.test(content)) {
       elements.push('Feedback');
     }
@@ -607,7 +616,7 @@ Always create fair, valid, reliable, and educationally meaningful assessments.`,
     if (/checkpoint|milestone|progress/i.test(content)) {
       elements.push('Progress Monitoring');
     }
-    
+
     return elements;
   }
 }
