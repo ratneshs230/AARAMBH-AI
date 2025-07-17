@@ -24,6 +24,8 @@ import {
   School as SchoolIcon,
   AutoAwesome as MagicIcon,
 } from '@mui/icons-material';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import { useSaras } from '@/contexts/SarasContext';
 import { SUBJECTS, EDUCATION_LEVELS } from '@/utils/constants';
 import { aiService } from '@/services/ai';
 
@@ -36,12 +38,13 @@ interface ChatMessage {
 }
 
 const AITutorPage: React.FC = () => {
+  const { isOnline } = useSaras();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       type: 'ai',
       content:
-        "Hello! I'm your AI Tutor. I'm here to help you learn and understand any topic. What would you like to explore today?",
+        "Hello! I'm SARAS, your AI Teacher. I'm here to help you learn and understand any topic. What would you like to explore today?",
       timestamp: new Date(),
     },
   ]);
@@ -85,11 +88,15 @@ const AITutorPage: React.FC = () => {
 
         setMessages(prev => [...prev, aiMessage]);
       } else {
-        setError('Failed to get response from AI tutor. Please try again.');
+        setError('Failed to get response from SARAS AI. Please try again.');
       }
     } catch (err) {
-      console.error('AI Tutor error:', err);
-      setError('An error occurred while communicating with the AI tutor.');
+      console.error('SARAS AI Tutor error:', err);
+      setError(
+        isOnline 
+          ? 'An error occurred while communicating with SARAS AI.' 
+          : 'SARAS AI is currently offline. Please try again later.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -115,11 +122,14 @@ const AITutorPage: React.FC = () => {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
-          AI Tutor 🧠
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <Typography variant='h4' component='h1' fontWeight={600}>
+            SARAS AI Teacher 🧠
+          </Typography>
+          <SarasStatusIndicator variant="full" />
+        </Box>
         <Typography variant='body1' color='text.secondary'>
-          Get personalized explanations and step-by-step guidance from your AI tutor
+          Get personalized explanations and step-by-step guidance from SARAS, your AI teacher
         </Typography>
       </Box>
 

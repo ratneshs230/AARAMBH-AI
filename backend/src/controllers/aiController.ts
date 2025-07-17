@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/auth';
 import AIAgentManager from '../agents/AgentManager';
 import AIServiceConfig from '../config/ai-services';
 import { AIRequest, AgentType } from '../types/ai-agent';

@@ -5,6 +5,9 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 // Theme
 import { lightTheme } from '@/utils/theme';
 
+// Context Providers
+import { SarasProvider } from '@/contexts/SarasContext';
+
 // Layout Components
 import Layout from '@/components/layout/Layout';
 
@@ -36,7 +39,8 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
-      <Router>
+      <SarasProvider>
+        <Router>
         <Routes>
           {/* Public Routes */}
           <Route path={ROUTES.HOME} element={<HomePage />} />
@@ -66,7 +70,8 @@ const App: React.FC = () => {
           {/* 404 Route */}
           <Route path='*' element={<div>Page Not Found</div>} />
         </Routes>
-      </Router>
+        </Router>
+      </SarasProvider>
     </ThemeProvider>
   );
 };

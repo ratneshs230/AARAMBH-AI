@@ -37,16 +37,17 @@ export class CuriosityAIService {
         level: userProfile.preferredDifficulty,
       });
 
-      console.log('AI Recommendation Response:', response);
+      console.log('SARAS AI Recommendation Response:', response);
 
       if (response.success && response.data && response.data.content) {
         return this.parseRecommendations(response.data.content, limit);
       }
 
-      // Return fallback recommendations if AI service fails
+      // Return fallback recommendations if SARAS AI service fails
+      console.warn('SARAS AI service unavailable, using fallback recommendations');
       return this.getFallbackRecommendations(limit);
     } catch (error) {
-      console.error('Error generating recommendations:', error);
+      console.error('Error connecting to SARAS AI for recommendations:', error);
       return this.getFallbackRecommendations(limit);
     }
   }
@@ -64,16 +65,17 @@ export class CuriosityAIService {
         level: 'intermediate',
       });
 
-      console.log('AI Insights Response:', response);
+      console.log('SARAS AI Insights Response:', response);
 
       if (response.success && response.data && response.data.content) {
         return this.parseInsights(response.data.content);
       }
 
-      // Return fallback insights if AI service fails
+      // Return fallback insights if SARAS AI service fails
+      console.warn('SARAS AI service unavailable, using fallback insights');
       return this.getFallbackInsights();
     } catch (error) {
-      console.error('Error generating insights:', error);
+      console.error('Error connecting to SARAS AI for insights:', error);
       return this.getFallbackInsights();
     }
   }

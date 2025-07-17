@@ -8,7 +8,9 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import DatabaseConfig from './config/database';
 import FirebaseConfig from './config/firebase';
+import { AIServiceConfig } from './config/ai-services';
 import apiRoutes from './routes/index-simple';
+import aiRoutes from './routes/ai';
 
 dotenv.config();
 
@@ -64,6 +66,8 @@ app.use('/api/', limiter);
 
 // API Routes
 app.use('/api', apiRoutes);
+app.use('/api/ai', aiRoutes);
+
 
 app.get('/health', async (_req, res) => {
   try {
@@ -158,8 +162,22 @@ async function startServer() {
     await dbConfig.connectMongoDB();
     await dbConfig.connectCosmosDB();
 
-    const firebaseConfig = FirebaseConfig.getInstance();
-    await firebaseConfig.initialize();
+    // Initialize Firebase (optional for AI health endpoint)
+    try {
+      const firebaseConfig = FirebaseConfig.getInstance();
+      await firebaseConfig.initialize();
+      console.log('✅ Firebase initialized successfully');
+    } catch (error) {
+      console.log('⚠️  Firebase initialization skipped (optional for AI health endpoint)');
+    }
+
+    // Initialize AI services (optional, will work without them)
+    try {
+      AIServiceConfig.getInstance();
+      console.log('🤖 AI Services available (configure API keys to enable)');
+    } catch (error) {
+      console.log('⚠️  AI Services not configured (optional)');
+    }
 
     server.listen(PORT, () => {
       console.log(`✅ Server is running on port ${PORT}`);

@@ -14,6 +14,7 @@ import {
   Search as SearchIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
 
 const Header: React.FC = () => {
   return (
@@ -47,6 +48,9 @@ const Header: React.FC = () => {
 
         {/* Right Side - Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {/* SARAS AI Status */}
+          <SarasStatusIndicator variant="chip" />
+          
           <Tooltip title='Search'>
             <IconButton color='inherit'>
               <SearchIcon />

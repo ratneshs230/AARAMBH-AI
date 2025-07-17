@@ -26,6 +26,8 @@ import {
 } from '@mui/icons-material';
 import { SUBJECTS, EDUCATION_LEVELS } from '@/utils/constants';
 import { aiService } from '@/services/ai';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import { useSaras } from '@/contexts/SarasContext';
 
 interface DoubtMessage {
   id: string;
@@ -41,7 +43,7 @@ const AIDoubtPage: React.FC = () => {
       id: '1',
       type: 'ai',
       content:
-        "Hi! I'm your AI Doubt Solver. I can help you with any academic questions or problems. What would you like help with today?",
+        "Hi! I'm SARAS, your AI Doubt Solver. I can help you with any academic questions or problems. What would you like help with today?",
       timestamp: new Date(),
     },
   ]);
@@ -86,7 +88,7 @@ const AIDoubtPage: React.FC = () => {
         setError('Failed to get response from AI. Please try again.');
       }
     } catch (err) {
-      console.error('AI Doubt Solver error:', err);
+      console.error('SARAS AI Doubt Solver error:', err);
       setError('An error occurred while solving your doubt.');
     } finally {
       setIsLoading(false);
@@ -114,7 +116,7 @@ const AIDoubtPage: React.FC = () => {
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
-          AI Doubt Solver 💡
+          SARAS AI Doubt Solver 💡
         </Typography>
         <Typography variant='body1' color='text.secondary'>
           Get instant help with your academic doubts and problems

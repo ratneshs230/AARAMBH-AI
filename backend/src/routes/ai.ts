@@ -3,19 +3,21 @@ import aiController from '../controllers/aiController';
 import { body } from 'express-validator';
 import { validationResult } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
+import { AuthRequest } from '../middleware/auth';
 
 const router = Router();
 
 // Validation middleware
-const handleValidationErrors = (req: Request, res: Response, next: NextFunction) => {
+const handleValidationErrors = (req: Request, res: Response, next: NextFunction): void => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       error: 'Validation failed',
       details: errors.array(),
       timestamp: new Date().toISOString(),
     });
+    return;
   }
   next();
 };
@@ -165,10 +167,10 @@ router.post(
       ]),
     handleValidationErrors,
   ],
-  async (req: Request, res: Response) => {
+  async (req: AuthRequest, res: Response) => {
     try {
       const { requests } = req.body;
-      const userId = req.user?.uid || 'anonymous';
+      const userId = req.user?.firebaseUid || 'anonymous';
 
       const responses = await Promise.allSettled(
         requests.map(async (request: any) => {
