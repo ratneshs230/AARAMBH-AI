@@ -26,6 +26,7 @@ import CoursesPage from '@/pages/courses/CoursesPage';
 import CourseDetailPage from '@/pages/courses/CourseDetailPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
+import ProfilePage from '@/pages/profile/ProfilePage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
 import StudyRoomsPage from '@/pages/study-rooms/StudyRoomsPage';
 import AdvancedAnalyticsPage from '@/pages/analytics/AdvancedAnalyticsPage';
@@ -69,6 +70,7 @@ const App: React.FC = () => {
             <Route path={ROUTES.AI_ASSESSMENT} element={<AIAssessmentPage />} />
             <Route path={ROUTES.AI_DOUBT} element={<AIDoubtPage />} />
             <Route path={ROUTES.ANALYTICS} element={<AnalyticsPage />} />
+            <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
             <Route path='/community' element={<CommunityPage />} />
             <Route path='/create-games' element={<CreateGamesPage />} />
             <Route path={ROUTES.STUDY_PLANNER} element={<StudyPlannerPage />} />

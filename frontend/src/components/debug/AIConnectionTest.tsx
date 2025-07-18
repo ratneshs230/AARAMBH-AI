@@ -98,7 +98,7 @@ const AIConnectionTest: React.FC = () => {
       try {
         const response = await aiService.sendRequest({
           prompt: 'Test connection - please respond with "Connection successful"',
-          agentType: 'tutor',
+          agentType: 'teacher',
           metadata: { test: true },
         });
         
@@ -231,21 +231,21 @@ const AIConnectionTest: React.FC = () => {
                       <ListItemText
                         primary={result.test}
                         secondary={
-                          <Box>
-                            <Typography variant="body2" color="text.secondary">
+                          <Box component="div">
+                            <Box component="span" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.875rem' }}>
                               {result.message}
-                            </Typography>
+                            </Box>
                             {result.duration && (
-                              <Typography variant="caption" color="text.secondary">
+                              <Box component="span" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.75rem', mt: 0.5 }}>
                                 Duration: {result.duration}ms
-                              </Typography>
+                              </Box>
                             )}
                             {result.data && (
                               <Box sx={{ mt: 1 }}>
-                                <Typography variant="caption" color="text.secondary">
+                                <Box component="span" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.75rem' }}>
                                   Response: {JSON.stringify(result.data, null, 2).substring(0, 200)}
                                   {JSON.stringify(result.data, null, 2).length > 200 ? '...' : ''}
-                                </Typography>
+                                </Box>
                               </Box>
                             )}
                           </Box>
@@ -266,14 +266,14 @@ const AIConnectionTest: React.FC = () => {
         )}
 
         <Box sx={{ mt: 3 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" gutterBottom>
             Configuration Details:
           </Typography>
-          <Typography variant="caption" color="text.secondary" component="div">
-            • AI API URL: {config.aiApiUrl}<br />
-            • AI Features Enabled: {config.enableAI ? 'Yes' : 'No'}<br />
-            • Environment: {process.env.NODE_ENV || 'development'}
-          </Typography>
+          <Box component="div" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+            <Box component="div">• AI API URL: {config.aiApiUrl}</Box>
+            <Box component="div">• AI Features Enabled: {config.enableAI ? 'Yes' : 'No'}</Box>
+            <Box component="div">• Environment: {process.env.NODE_ENV || 'development'}</Box>
+          </Box>
         </Box>
       </CardContent>
     </Card>

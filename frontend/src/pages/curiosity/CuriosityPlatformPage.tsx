@@ -21,6 +21,10 @@ import {
   Toolbar,
   Badge,
   Tooltip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider,
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -33,10 +37,24 @@ import {
   Settings as SettingsIcon,
   Help as QuestionIcon,
   TrendingUp as TrendingIcon,
+  History as HistoryIcon,
+  School as SchoolIcon,
+  Work as WorkIcon,
+  Psychology as PsychologyIcon,
+  Quiz as QuizIcon,
+  AutoStories as ReadingIcon,
+  TipsAndUpdates as TipsIcon,
+  Visibility as VisibilityIcon,
+  TouchApp as InteractiveIcon,
+  Flag as FlagIcon,
+  Calculate as MathIcon,
+  ScienceOutlined as ExperimentIcon,
+  Warning as WarningIcon,
+  ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 import { geminiCuriosityAI } from '@/services/geminiCuriosityAI';
 import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
-import GeminiStatusIndicator from '@/components/curiosity/GeminiStatusIndicator';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
 import { ROUTES } from '@/utils/constants';
 
 export interface ExplanationResult {
@@ -48,6 +66,22 @@ export interface ExplanationResult {
   difficulty?: string;
   subject?: string;
   connections?: string[];
+  // Enhanced extensive content fields
+  detailedExplanation?: string;
+  practicalApplications?: string[];
+  historicalContext?: string;
+  currentResearch?: string;
+  mathematicalConcepts?: string;
+  experimentalEvidence?: string;
+  misconceptions?: string[];
+  studyTips?: string[];
+  careerConnections?: string[];
+  indianContext?: string;
+  visualizationSuggestions?: string[];
+  interactiveElements?: string[];
+  assessmentQuestions?: string[];
+  furtherReading?: string[];
+  difficulty_explanation?: string;
 }
 
 const CuriosityPlatformPage: React.FC = () => {
@@ -470,7 +504,7 @@ const CuriosityPlatformPage: React.FC = () => {
             </Box>
 
             {/* Real-World Example */}
-            <Box>
+            <Box sx={{ mb: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <BeakerIcon color="success" />
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -496,6 +530,364 @@ const CuriosityPlatformPage: React.FC = () => {
                 </Typography>
               </Paper>
             </Box>
+
+            {/* Detailed Explanation */}
+            {result.detailedExplanation && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <MenuBook color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Detailed Explanation
+                  </Typography>
+                </Box>
+                <Typography 
+                  paragraph 
+                  sx={{ 
+                    lineHeight: 1.7,
+                    fontSize: '1.1rem',
+                    color: 'text.primary',
+                    textAlign: 'justify'
+                  }}
+                >
+                  {result.detailedExplanation}
+                </Typography>
+              </Box>
+            )}
+
+            {/* Practical Applications */}
+            {result.practicalApplications && result.practicalApplications.length > 0 && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <WorkIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Practical Applications
+                  </Typography>
+                </Box>
+                <List>
+                  {result.practicalApplications.map((app, index) => (
+                    <ListItem key={index} sx={{ py: 0.5 }}>
+                      <ListItemIcon sx={{ minWidth: 36 }}>
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: 'primary.main',
+                          }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText 
+                        primary={app}
+                        primaryTypographyProps={{
+                          sx: { lineHeight: 1.5 }
+                        }}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            )}
+
+            {/* Historical Context */}
+            {result.historicalContext && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <HistoryIcon color="secondary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Historical Context
+                  </Typography>
+                </Box>
+                <Paper 
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                    border: '1px solid',
+                    borderColor: 'secondary.light'
+                  }}
+                >
+                  <Typography 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      color: 'text.primary'
+                    }}
+                  >
+                    {result.historicalContext}
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
+
+            {/* Current Research */}
+            {result.currentResearch && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <ExperimentIcon color="info" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Current Research
+                  </Typography>
+                </Box>
+                <Paper 
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    border: '1px solid',
+                    borderColor: 'info.light'
+                  }}
+                >
+                  <Typography 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      color: 'text.primary'
+                    }}
+                  >
+                    {result.currentResearch}
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
+
+            {/* Mathematical Concepts */}
+            {result.mathematicalConcepts && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <MathIcon color="warning" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Mathematical Concepts
+                  </Typography>
+                </Box>
+                <Paper 
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                    border: '1px solid',
+                    borderColor: 'warning.light'
+                  }}
+                >
+                  <Typography 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      color: 'text.primary',
+                      fontFamily: 'monospace'
+                    }}
+                  >
+                    {result.mathematicalConcepts}
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
+
+            {/* Indian Context */}
+            {result.indianContext && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <FlagIcon sx={{ color: '#FF6600' }} />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Indian Context
+                  </Typography>
+                </Box>
+                <Paper 
+                  sx={{ 
+                    p: 3, 
+                    backgroundColor: 'rgba(255, 102, 0, 0.1)',
+                    border: '2px solid',
+                    borderColor: '#FF6600'
+                  }}
+                >
+                  <Typography 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      color: 'text.primary'
+                    }}
+                  >
+                    {result.indianContext}
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
+
+
+            {/* Learning & Development Section */}
+            <Divider sx={{ my: 4 }} />
+            
+            <Accordion defaultExpanded sx={{ mb: 2, boxShadow: 2 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <SchoolIcon color="primary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Learning & Career Development
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Career Connections */}
+                {result.careerConnections && result.careerConnections.length > 0 && (
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Career Connections
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      {result.careerConnections.map((career, index) => (
+                        <Chip
+                          key={index}
+                          label={career}
+                          variant="outlined"
+                          color="primary"
+                          sx={{ mb: 1 }}
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+
+                {/* Study Tips */}
+                {result.studyTips && result.studyTips.length > 0 && (
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Study Tips
+                    </Typography>
+                    <List dense>
+                      {result.studyTips.map((tip, index) => (
+                        <ListItem key={index} sx={{ py: 0.25 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <TipsIcon color="success" sx={{ fontSize: 16 }} />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={tip}
+                            primaryTypographyProps={{
+                              sx: { lineHeight: 1.5, fontWeight: 500 }
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+
+                {/* Common Misconceptions */}
+                {result.misconceptions && result.misconceptions.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Common Misconceptions to Avoid
+                    </Typography>
+                    <List dense>
+                      {result.misconceptions.map((misconception, index) => (
+                        <ListItem key={index} sx={{ py: 0.25 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <WarningIcon color="error" sx={{ fontSize: 16 }} />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={misconception}
+                            primaryTypographyProps={{
+                              sx: { lineHeight: 1.5 }
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
+
+            {/* Interactive Learning Section */}
+            <Accordion sx={{ mb: 2, boxShadow: 2 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <InteractiveIcon color="info" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Interactive Learning
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Interactive Elements */}
+                {result.interactiveElements && result.interactiveElements.length > 0 && (
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Try These Activities
+                    </Typography>
+                    <List dense>
+                      {result.interactiveElements.map((element, index) => (
+                        <ListItem key={index} sx={{ py: 0.25 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <InteractiveIcon color="info" sx={{ fontSize: 16 }} />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={element}
+                            primaryTypographyProps={{
+                              sx: { lineHeight: 1.5 }
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+
+                {/* Assessment Questions */}
+                {result.assessmentQuestions && result.assessmentQuestions.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Self-Assessment Questions
+                    </Typography>
+                    <List dense>
+                      {result.assessmentQuestions.map((question, index) => (
+                        <ListItem key={index} sx={{ py: 0.25 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'secondary.main' }}>
+                              {index + 1}.
+                            </Typography>
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={question}
+                            primaryTypographyProps={{
+                              sx: { lineHeight: 1.5, fontStyle: 'italic' }
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
+
+            {/* Additional Resources Section */}
+            <Accordion sx={{ mb: 4, boxShadow: 2 }}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <ReadingIcon color="info" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Additional Resources
+                  </Typography>
+                </Box>
+              </AccordionSummary>
+              <AccordionDetails>
+                {/* Further Reading */}
+                {result.furtherReading && result.furtherReading.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Recommended Reading
+                    </Typography>
+                    <List dense>
+                      {result.furtherReading.map((reading, index) => (
+                        <ListItem key={index} sx={{ py: 0.25 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <ReadingIcon color="info" sx={{ fontSize: 16 }} />
+                          </ListItemIcon>
+                          <ListItemText 
+                            primary={reading}
+                            primaryTypographyProps={{
+                              sx: { lineHeight: 1.5 }
+                            }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
 
             {/* Follow-up Questions */}
             {followUpQuestions.length > 0 && (

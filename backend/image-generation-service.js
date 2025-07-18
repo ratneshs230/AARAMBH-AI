@@ -141,9 +141,74 @@ class ImageGenerationService {
     }
   }
 
+  // Enhanced prompt generation for better quality educational images
+  enhanceEducationalPrompt(prompt, style = 'educational', metadata = {}) {
+    const { title = '', description = '', subject = '' } = metadata;
+    
+    const baseEnhancement = {
+      educational: `Professional educational illustration: ${prompt}. 
+        High-quality scientific diagram style, clean vector art aesthetic, 
+        bright educational colors (blue, green, orange), clear labels and annotations, 
+        suitable for textbooks and learning materials, detailed and informative, 
+        professional graphic design, crisp lines, scientific accuracy, 
+        educational infographic style, modern clean design, 4K resolution`,
+        
+      scientific: `Highly detailed scientific diagram: ${prompt}. 
+        Academic research quality, technical precision, detailed annotations, 
+        scientific journal style, professional medical/scientific illustration, 
+        precise anatomical or technical details, neutral academic colors, 
+        publication-ready quality, ultra-detailed, scientifically accurate, 
+        research-grade visualization, 8K resolution`,
+        
+      infographic: `Modern educational infographic: ${prompt}. 
+        Data visualization style, clean modern layout, professional typography, 
+        colorful charts and graphs, icon-based design elements, 
+        corporate presentation style, information design, 
+        contemporary color palette, engaging visual hierarchy, 
+        business presentation quality, 4K resolution`,
+        
+      interactive: `Interactive educational visualization: ${prompt}. 
+        Game-like educational art style, engaging and colorful, 
+        student-friendly design, approachable illustrations, 
+        cartoon-educational hybrid style, vibrant colors, 
+        interactive media design, engaging learning materials, 
+        high-quality digital art, appealing to students, 4K resolution`,
+        
+      detailed: `Comprehensive detailed illustration: ${prompt}. 
+        Multiple perspectives and views, cross-sectional diagrams, 
+        step-by-step process visualization, extensive labeling, 
+        educational poster style, museum display quality, 
+        comprehensive educational resource, detailed explanatory graphics, 
+        professional educational publisher quality, ultra-high detail, 8K resolution`
+    };
+    
+    let enhancedPrompt = baseEnhancement[style] || baseEnhancement.educational;
+    
+    // Add subject-specific enhancements
+    if (subject) {
+      const subjectEnhancements = {
+        physics: ', physics laboratory style, scientific equipment, mathematical formulas visible, electromagnetic field visualizations',
+        chemistry: ', molecular structure diagrams, chemical reaction pathways, laboratory glassware, periodic table elements',
+        biology: ', anatomical accuracy, biological processes, cellular structures, organism diagrams, life science illustrations',
+        mathematics: ', geometric precision, mathematical graphs and charts, equation visualizations, mathematical proofs layout',
+        history: ', historical timeline style, period-appropriate imagery, documentary illustration style, archival quality',
+        geography: ', cartographic style, topographical details, satellite imagery aesthetic, geographic information systems style'
+      };
+      
+      if (subjectEnhancements[subject.toLowerCase()]) {
+        enhancedPrompt += subjectEnhancements[subject.toLowerCase()];
+      }
+    }
+    
+    // Add quality and format specifications
+    enhancedPrompt += ', no text overlays, no watermarks, clean background, educational use, professional quality, publication ready';
+    
+    return enhancedPrompt;
+  }
+
   // Generate educational image using Replicate (SDXL)
-  async generateWithReplicate(prompt, style = 'educational') {
-    const enhancedPrompt = this.enhanceEducationalPrompt(prompt, style);
+  async generateWithReplicate(prompt, style = 'educational', metadata = {}) {
+    const enhancedPrompt = this.enhanceEducationalPrompt(prompt, style, metadata);
     
     try {
       const response = await fetch('https://api.replicate.com/v1/predictions', {
@@ -153,16 +218,19 @@ class ImageGenerationService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          version: "39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b", // SDXL
+          version: "7762fd07cf82c948538e41f63f77d685e02b063e37e496e96eefd46c929f9bdc", // Latest SDXL model for high quality
           input: {
             prompt: enhancedPrompt,
-            negative_prompt: "blurry, low quality, distorted, inappropriate, violent, dark, scary, photographic, realistic photo",
-            width: 1024,
+            negative_prompt: "blurry, low quality, distorted, inappropriate, violent, dark, scary, photographic, realistic photo, watermark, signature, text overlay, poor anatomy, deformed, ugly, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed face, bad anatomy, bad proportions, duplicate, cropped, low-res, worst quality, jpeg artifacts, text, logo, watermark, blurred, out of focus",
+            width: 1344,
             height: 768,
             num_outputs: 1,
-            scheduler: "K_EULER",
-            guidance_scale: 7.5,
-            num_inference_steps: 25
+            scheduler: "DPMSolverMultistep",
+            guidance_scale: 12,
+            num_inference_steps: 50,
+            refine: "expert_ensemble_refiner",
+            high_noise_frac: 0.8,
+            apply_watermark: false
           }
         })
       });
@@ -190,8 +258,8 @@ class ImageGenerationService {
   }
 
   // Generate image using OpenAI DALL-E
-  async generateWithOpenAI(prompt, style = 'educational') {
-    const enhancedPrompt = this.enhanceEducationalPrompt(prompt, style);
+  async generateWithOpenAI(prompt, style = 'educational', metadata = {}) {
+    const enhancedPrompt = this.enhanceEducationalPrompt(prompt, style, metadata);
     
     try {
       const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -202,11 +270,11 @@ class ImageGenerationService {
         },
         body: JSON.stringify({
           model: "dall-e-3",
-          prompt: enhancedPrompt,
+          prompt: enhancedPrompt.slice(0, 4000), // DALL-E 3 has a 4000 character limit
           n: 1,
-          size: "1024x1024",
-          quality: "standard",
-          style: "natural"
+          size: "1792x1024", // Higher resolution for better quality
+          quality: "hd", // HD quality for crisp educational images
+          style: "natural" // More realistic and detailed style
         })
       });
 

@@ -1,0 +1,484 @@
+name: AARAMBH AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '18'
+  BACKEND_PATH: './backend'
+  FRONTEND_PATH: './frontend'
+  MOBILE_PATH: './mobile/AarambhAIMobile'
+
+jobs:
+  # =============================================================================
+  # CODE QUALITY & SECURITY CHECKS
+  # =============================================================================
+  code-quality:
+    name: Code Quality & Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm ci
+
+      - name: Install Frontend Dependencies
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm ci
+
+      - name: Run ESLint (Backend)
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run lint
+
+      - name: Run ESLint (Frontend)
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run lint
+
+      - name: Run TypeScript Check (Backend)
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run type-check
+
+      - name: Run TypeScript Check (Frontend)
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run type-check
+
+      - name: Security Audit (Backend)
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm audit --audit-level=moderate
+
+      - name: Security Audit (Frontend)
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm audit --audit-level=moderate
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  # =============================================================================
+  # BACKEND TESTING
+  # =============================================================================
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+    
+    services:
+      mongodb:
+        image: mongo:6.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: testuser
+          MONGO_INITDB_ROOT_PASSWORD: testpass
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand(\"ping\").ok' | mongosh --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Backend Dependencies
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm ci
+
+      - name: Setup Test Environment
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: |
+          cp .env.example .env.test
+          echo "MONGODB_URI=mongodb://testuser:testpass@localhost:27017/aarambh_ai_test?authSource=admin" >> .env.test
+          echo "REDIS_HOST=localhost" >> .env.test
+          echo "REDIS_PORT=6379" >> .env.test
+
+      - name: Run Unit Tests
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run test:unit
+
+      - name: Run Integration Tests
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run test:integration
+
+      - name: Run API Tests
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run test:api
+
+      - name: Generate Coverage Report
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run test:coverage
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ${{ env.BACKEND_PATH }}/coverage/lcov.info
+          flags: backend
+          name: backend-coverage
+
+  # =============================================================================
+  # FRONTEND TESTING
+  # =============================================================================
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    needs: code-quality
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm ci
+
+      - name: Setup Test Environment
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: |
+          cp .env.example .env.test
+          echo "VITE_API_URL=http://localhost:5000" >> .env.test
+          echo "VITE_ENABLE_AI_FEATURES=true" >> .env.test
+
+      - name: Run Unit Tests
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run test:unit
+
+      - name: Run Component Tests
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run test:components
+
+      - name: Run E2E Tests
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run test:e2e
+
+      - name: Generate Coverage Report
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run test:coverage
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ${{ env.FRONTEND_PATH }}/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage
+
+  # =============================================================================
+  # BUILD APPLICATIONS
+  # =============================================================================
+  build-backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    needs: backend-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm ci
+
+      - name: Build Backend
+        working-directory: ${{ env.BACKEND_PATH }}
+        run: npm run build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build
+          path: ${{ env.BACKEND_PATH }}/dist/
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: frontend-tests
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: ${{ env.FRONTEND_PATH }}/dist/
+
+  # =============================================================================
+  # DOCKER BUILD & PUSH
+  # =============================================================================
+  docker-build:
+    name: Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.CONTAINER_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Download Backend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: ${{ env.BACKEND_PATH }}/dist/
+
+      - name: Download Frontend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: ${{ env.FRONTEND_PATH }}/dist/
+
+      - name: Build and Push Backend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.BACKEND_PATH }}
+          file: ${{ env.BACKEND_PATH }}/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-backend:latest
+            ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and Push Frontend Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.FRONTEND_PATH }}
+          file: ${{ env.FRONTEND_PATH }}/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-frontend:latest
+            ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # =============================================================================
+  # DEPLOY TO STAGING
+  # =============================================================================
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+
+    steps:
+      - name: Deploy to Azure Web App (Backend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_BACKEND_STAGING }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND_STAGING }}
+          images: ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-backend:${{ github.sha }}
+
+      - name: Deploy to Azure Web App (Frontend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_FRONTEND_STAGING }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND_STAGING }}
+          images: ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-frontend:${{ github.sha }}
+
+      - name: Run Database Migrations
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --name ${{ secrets.AZURE_WEBAPP_NAME_BACKEND_STAGING }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --settings RUN_MIGRATIONS=true
+
+      - name: Health Check
+        run: |
+          sleep 30
+          curl -f ${{ secrets.STAGING_BACKEND_URL }}/health || exit 1
+          curl -f ${{ secrets.STAGING_FRONTEND_URL }} || exit 1
+
+  # =============================================================================
+  # DEPLOY TO PRODUCTION
+  # =============================================================================
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: docker-build
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Deploy to Azure Web App (Backend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_BACKEND_PROD }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BACKEND_PROD }}
+          images: ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-backend:${{ github.sha }}
+
+      - name: Deploy to Azure Web App (Frontend)
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_FRONTEND_PROD }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONTEND_PROD }}
+          images: ${{ secrets.CONTAINER_REGISTRY }}/aarambh-ai-frontend:${{ github.sha }}
+
+      - name: Run Database Migrations
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az webapp config appsettings set \
+              --name ${{ secrets.AZURE_WEBAPP_NAME_BACKEND_PROD }} \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --settings RUN_MIGRATIONS=true
+
+      - name: Health Check
+        run: |
+          sleep 30
+          curl -f ${{ secrets.PROD_BACKEND_URL }}/health || exit 1
+          curl -f ${{ secrets.PROD_FRONTEND_URL }} || exit 1
+
+      - name: Notify Deployment Success
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          channel: '#deployments'
+          text: 'AARAMBH AI Production Deployment Successful! 🚀'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # =============================================================================
+  # POST-DEPLOYMENT TESTS
+  # =============================================================================
+  post-deployment-tests:
+    name: Post-Deployment Tests
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Smoke Tests (Staging)
+        if: github.ref == 'refs/heads/develop'
+        run: npm run test:smoke
+        env:
+          TEST_URL: ${{ secrets.STAGING_FRONTEND_URL }}
+          API_URL: ${{ secrets.STAGING_BACKEND_URL }}
+
+      - name: Run Smoke Tests (Production)
+        if: github.ref == 'refs/heads/main'
+        run: npm run test:smoke
+        env:
+          TEST_URL: ${{ secrets.PROD_FRONTEND_URL }}
+          API_URL: ${{ secrets.PROD_BACKEND_URL }}
+
+      - name: Performance Tests
+        if: github.ref == 'refs/heads/main'
+        run: npm run test:performance
+        env:
+          TEST_URL: ${{ secrets.PROD_FRONTEND_URL }}
+
+      - name: Security Tests
+        if: github.ref == 'refs/heads/main'
+        run: npm run test:security
+        env:
+          TEST_URL: ${{ secrets.PROD_FRONTEND_URL }}
+          API_URL: ${{ secrets.PROD_BACKEND_URL }}
+
+  # =============================================================================
+  # CLEANUP
+  # =============================================================================
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [post-deployment-tests]
+    if: always()
+
+    steps:
+      - name: Clean up Docker Images
+        run: |
+          docker system prune -af
+          docker volume prune -f
+
+      - name: Clean up Artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: |
+            backend-build
+            frontend-build

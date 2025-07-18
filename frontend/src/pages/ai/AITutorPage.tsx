@@ -25,6 +25,7 @@ import {
   AutoAwesome as MagicIcon,
 } from '@mui/icons-material';
 import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
 import { useSaras } from '@/contexts/SarasContext';
 import { SUBJECTS, EDUCATION_LEVELS } from '@/utils/constants';
 import { aiService } from '@/services/ai';
@@ -126,7 +127,10 @@ const AITutorPage: React.FC = () => {
           <Typography variant='h4' component='h1' fontWeight={600}>
             SARAS AI Teacher 🧠
           </Typography>
-          <SarasStatusIndicator variant="full" />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <SarasStatusIndicator variant="full" />
+            <GeminiStatusIndicator variant="full" showDetails={false} />
+          </Box>
         </Box>
         <Typography variant='body1' color='text.secondary'>
           Get personalized explanations and step-by-step guidance from SARAS, your AI teacher

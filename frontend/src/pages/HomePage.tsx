@@ -31,6 +31,8 @@ import {
   PlayArrow as PlayIcon,
   Book as BookIcon,
 } from '@mui/icons-material';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
 import { ROUTES } from '@/utils/constants';
 
 const HomePage: React.FC = () => {
@@ -88,12 +90,12 @@ const HomePage: React.FC = () => {
 
   const handleLogin = () => {
     // This would handle actual login logic
-    navigate('/login'); // You might need to add this route
+    navigate(ROUTES.LOGIN);
   };
 
   const handleSignup = () => {
     // This would handle actual signup logic
-    navigate('/signup'); // You might need to add this route
+    navigate(ROUTES.REGISTER);
   };
 
   const features = [
@@ -197,10 +199,10 @@ const HomePage: React.FC = () => {
                 <MenuItem onClick={() => { handleProfileMenuClose(); navigate(ROUTES.DASHBOARD); }}>
                   Dashboard
                 </MenuItem>
-                <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/profile'); }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(ROUTES.PROFILE); }}>
                   My Profile
                 </MenuItem>
-                <MenuItem onClick={() => { handleProfileMenuClose(); navigate('/settings'); }}>
+                <MenuItem onClick={() => { handleProfileMenuClose(); navigate(ROUTES.SETTINGS); }}>
                   Settings
                 </MenuItem>
                 <MenuItem onClick={() => { handleProfileMenuClose(); setIsLoggedIn(false); }}>
@@ -243,11 +245,17 @@ const HomePage: React.FC = () => {
             variant='h5'
             component='p'
             color='text.secondary'
-            sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}
+            sx={{ mb: 3, maxWidth: 600, mx: 'auto' }}
           >
             Personalized AI tutoring, smart content creation, and comprehensive analytics designed
             specifically for Indian students.
           </Typography>
+
+          {/* AI Status Indicators */}
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mb: 4, flexWrap: 'wrap' }}>
+            <GeminiStatusIndicator variant="chip" showLabel={true} size="medium" />
+            <SarasStatusIndicator variant="chip" />
+          </Box>
 
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
             {/* Start Learning Button - Dropdown for enrolled courses */}
@@ -314,8 +322,8 @@ const HomePage: React.FC = () => {
                     <ListItemText
                       primary={course.title}
                       secondary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                          <Typography variant='caption' color='text.secondary'>
+                        <Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                          <Typography variant='caption' color='text.secondary' component="span">
                             {course.subject}
                           </Typography>
                           <Chip

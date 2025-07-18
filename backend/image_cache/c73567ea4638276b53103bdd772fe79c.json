@@ -1,0 +1,9 @@
+{
+  "provider": "OpenAI DALL-E 3",
+  "prompt": "Educational illustration for \"How Vaccines Protect Us from Diseases\": Create an educational illustration that explains How do vaccines protect us?. Context: Vaccines work by training our immune system to recognize and fight off harmful germs like viruses and bacteria.  They introduce a weakened or inactive form of the germ, teaching our bodies to create antibodies that provide long-lasting protection without causing illness., educational illustration, clean design, bright colors, clear labels, suitable for students, scientific diagram style, informative, high quality, professional, digital art, vector style",
+  "style": "educational",
+  "originalPrompt": "Educational illustration for \"How Vaccines Protect Us from Diseases\": Create an educational illustration that explains How do vaccines protect us?. Context: Vaccines work by training our immune system to recognize and fight off harmful germs like viruses and bacteria.  They introduce a weakened or inactive form of the germ, teaching our bodies to create antibodies that provide long-lasting protection without causing illness.",
+  "imagePath": "/media/ratnesh/0054F20D54F204E6/AARAMBH AI/AARAMBH-AI/backend/image_cache/c73567ea4638276b53103bdd772fe79c.png",
+  "timestamp": 1752827833402,
+  "cacheKey": "c73567ea4638276b53103bdd772fe79c"
+}

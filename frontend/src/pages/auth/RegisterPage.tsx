@@ -20,6 +20,9 @@ import {
   Stepper,
   Step,
   StepLabel,
+  AppBar,
+  Toolbar,
+  useTheme,
 } from '@mui/material';
 import {
   Visibility,
@@ -30,6 +33,8 @@ import {
   ArrowBack as BackIcon,
 } from '@mui/icons-material';
 import { ROUTES, EDUCATION_LEVELS, USER_ROLES } from '@/utils/constants';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
+import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
 
 interface RegistrationData {
   // Step 1: Basic Info
@@ -54,6 +59,7 @@ interface RegistrationData {
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState<RegistrationData>({
     firstName: '',
@@ -425,155 +431,191 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
-        py: 3,
-      }}
-    >
-      <Grid container maxWidth='lg' sx={{ height: '100%' }}>
-        {/* Left Side - Branding */}
-        <Grid
-          size={{ xs: 0, md: 5 }}
-          sx={{
-            display: { xs: 'none', md: 'flex' },
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            bgcolor: 'primary.main',
-            color: 'primary.contrastText',
-            p: 4,
-          }}
-        >
-          <Avatar sx={{ width: 80, height: 80, bgcolor: 'white', color: 'primary.main', mb: 3 }}>
-            <SchoolIcon sx={{ fontSize: 40 }} />
-          </Avatar>
-
-          <Typography variant='h3' component='h1' fontWeight={700} gutterBottom textAlign='center'>
-            Join AARAMBH AI
+    <Box>
+      {/* Header */}
+      <AppBar position='static' elevation={0} sx={{ backgroundColor: 'transparent' }}>
+        <Toolbar>
+          <Typography
+            variant='h6'
+            component='h1'
+            onClick={() => navigate(ROUTES.HOME)}
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              flexGrow: 1,
+              cursor: 'pointer',
+              '&:hover': {
+                opacity: 0.8,
+                transform: 'scale(1.02)',
+                transition: 'all 0.2s ease-in-out',
+              },
+            }}
+          >
+            AARAMBH AI
           </Typography>
-
-          <Typography variant='h6' textAlign='center' sx={{ mb: 4, opacity: 0.9 }}>
-            Start Your AI-Powered Learning Journey Today
-          </Typography>
-
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
-              ✨ Personalized Learning Experience
-            </Typography>
-            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
-              🎯 Adaptive Study Plans
-            </Typography>
-            <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
-              📈 Real-time Progress Tracking
-            </Typography>
-            <Typography variant='body1' sx={{ opacity: 0.8 }}>
-              🏆 Achieve Your Academic Goals
-            </Typography>
+          
+          {/* AI Status Indicators */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <GeminiStatusIndicator variant="chip" size="small" />
+            <SarasStatusIndicator variant="chip" />
           </Box>
-        </Grid>
+        </Toolbar>
+      </AppBar>
 
-        {/* Right Side - Registration Form */}
-        <Grid
-          size={{ xs: 12, md: 7 }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            p: 4,
-          }}
-        >
-          <Card sx={{ width: '100%', maxWidth: 500 }}>
-            <CardContent sx={{ p: 4 }}>
-              {/* Header */}
-              <Box sx={{ textAlign: 'center', mb: 4 }}>
-                <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
-                  Create Account
-                </Typography>
-                <Typography variant='body2' color='text.secondary'>
-                  Join thousands of students already learning with AI
-                </Typography>
-              </Box>
+      {/* Main Content */}
+      <Box
+        sx={{
+          minHeight: 'calc(100vh - 64px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: 'background.default',
+          py: 3,
+        }}
+      >
+        <Grid container maxWidth='lg' sx={{ height: '100%' }}>
+          {/* Left Side - Branding */}
+          <Grid
+            size={{ xs: 0, md: 5 }}
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+              p: 4,
+            }}
+          >
+            <Avatar sx={{ width: 80, height: 80, bgcolor: 'white', color: 'primary.main', mb: 3 }}>
+              <SchoolIcon sx={{ fontSize: 40 }} />
+            </Avatar>
 
-              {/* Stepper */}
-              <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-                {steps.map(label => (
-                  <Step key={label}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
+            <Typography variant='h3' component='h1' fontWeight={700} gutterBottom textAlign='center'>
+              Join AARAMBH AI
+            </Typography>
 
-              {/* Error Alert */}
-              {error && (
-                <Alert severity='error' sx={{ mb: 3 }}>
-                  {error}
-                </Alert>
-              )}
+            <Typography variant='h6' textAlign='center' sx={{ mb: 4, opacity: 0.9 }}>
+              Start Your AI-Powered Learning Journey Today
+            </Typography>
 
-              {/* Form Content */}
-              {renderStepContent(activeStep)}
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
+                ✨ Personalized Learning Experience
+              </Typography>
+              <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
+                🎯 Adaptive Study Plans
+              </Typography>
+              <Typography variant='body1' sx={{ mb: 2, opacity: 0.8 }}>
+                📈 Real-time Progress Tracking
+              </Typography>
+              <Typography variant='body1' sx={{ opacity: 0.8 }}>
+                🏆 Achieve Your Academic Goals
+              </Typography>
+            </Box>
+          </Grid>
 
-              {/* Navigation Buttons */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-                <Button onClick={handleBack} disabled={activeStep === 0} startIcon={<BackIcon />}>
-                  Back
-                </Button>
+          {/* Right Side - Registration Form */}
+          <Grid
+            size={{ xs: 12, md: 7 }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              p: 4,
+            }}
+          >
+            <Card sx={{ width: '100%', maxWidth: 500 }}>
+              <CardContent sx={{ p: 4 }}>
+                {/* Header */}
+                <Box sx={{ textAlign: 'center', mb: 4 }}>
+                  <Typography variant='h4' component='h1' fontWeight={600} gutterBottom>
+                    Create Account
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary'>
+                    Join thousands of students already learning with AI
+                  </Typography>
+                </Box>
 
-                {activeStep === steps.length - 1 ? (
-                  <Button
-                    variant='contained'
-                    onClick={handleSubmit}
-                    disabled={loading}
-                    endIcon={!loading && <NextIcon />}
-                  >
-                    {loading ? 'Creating Account...' : 'Create Account'}
-                  </Button>
-                ) : (
-                  <Button variant='contained' onClick={handleNext} endIcon={<NextIcon />}>
-                    Next
-                  </Button>
+                {/* Stepper */}
+                <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+                  {steps.map(label => (
+                    <Step key={label}>
+                      <StepLabel>{label}</StepLabel>
+                    </Step>
+                  ))}
+                </Stepper>
+
+                {/* Error Alert */}
+                {error && (
+                  <Alert severity='error' sx={{ mb: 3 }}>
+                    {error}
+                  </Alert>
                 )}
-              </Box>
 
-              {/* Alternative Registration */}
-              {activeStep === 0 && (
-                <>
-                  <Divider sx={{ my: 3 }}>
-                    <Typography variant='caption' color='text.secondary'>
-                      or
-                    </Typography>
-                  </Divider>
+                {/* Form Content */}
+                {renderStepContent(activeStep)}
 
-                  <Button
-                    fullWidth
-                    variant='outlined'
-                    startIcon={<GoogleIcon />}
-                    onClick={handleGoogleSignup}
-                    sx={{ mb: 3 }}
-                  >
-                    Sign up with Google
+                {/* Navigation Buttons */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+                  <Button onClick={handleBack} disabled={activeStep === 0} startIcon={<BackIcon />}>
+                    Back
                   </Button>
-                </>
-              )}
 
-              {/* Sign In Link */}
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
-                <Typography variant='body2' color='text.secondary'>
-                  Already have an account?{' '}
-                  <Link component={RouterLink} to={ROUTES.LOGIN} color='primary' fontWeight={600}>
-                    Sign in
-                  </Link>
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
+                  {activeStep === steps.length - 1 ? (
+                    <Button
+                      variant='contained'
+                      onClick={handleSubmit}
+                      disabled={loading}
+                      endIcon={!loading && <NextIcon />}
+                    >
+                      {loading ? 'Creating Account...' : 'Create Account'}
+                    </Button>
+                  ) : (
+                    <Button variant='contained' onClick={handleNext} endIcon={<NextIcon />}>
+                      Next
+                    </Button>
+                  )}
+                </Box>
+
+                {/* Alternative Registration */}
+                {activeStep === 0 && (
+                  <>
+                    <Divider sx={{ my: 3 }}>
+                      <Typography variant='caption' color='text.secondary'>
+                        or
+                      </Typography>
+                    </Divider>
+
+                    <Button
+                      fullWidth
+                      variant='outlined'
+                      startIcon={<GoogleIcon />}
+                      onClick={handleGoogleSignup}
+                      sx={{ mb: 3 }}
+                    >
+                      Sign up with Google
+                    </Button>
+                  </>
+                )}
+
+                {/* Sign In Link */}
+                <Box sx={{ textAlign: 'center', mt: 2 }}>
+                  <Typography variant='body2' color='text.secondary'>
+                    Already have an account?{' '}
+                    <Link component={RouterLink} to={ROUTES.LOGIN} color='primary' fontWeight={600}>
+                      Sign in
+                    </Link>
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 };

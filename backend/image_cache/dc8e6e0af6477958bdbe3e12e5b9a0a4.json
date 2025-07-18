@@ -1,0 +1,9 @@
+{
+  "provider": "OpenAI DALL-E 3",
+  "prompt": "Educational illustration for \"CRISPR-Cas9: Gene Editing Technology\": Create an educational illustration that explains crispr. Context: CRISPR-Cas9 is a revolutionary gene-editing tool that allows scientists to precisely change DNA sequences.  Think of it as molecular scissors that can cut and paste genes, offering potential cures for genetic diseases and improvements in agriculture., educational illustration, clean design, bright colors, clear labels, suitable for students, scientific diagram style, informative, high quality, professional, digital art, vector style",
+  "style": "educational",
+  "originalPrompt": "Educational illustration for \"CRISPR-Cas9: Gene Editing Technology\": Create an educational illustration that explains crispr. Context: CRISPR-Cas9 is a revolutionary gene-editing tool that allows scientists to precisely change DNA sequences.  Think of it as molecular scissors that can cut and paste genes, offering potential cures for genetic diseases and improvements in agriculture.",
+  "imagePath": "/media/ratnesh/0054F20D54F204E6/AARAMBH AI/AARAMBH-AI/backend/image_cache/dc8e6e0af6477958bdbe3e12e5b9a0a4.png",
+  "timestamp": 1752816632780,
+  "cacheKey": "dc8e6e0af6477958bdbe3e12e5b9a0a4"
+}

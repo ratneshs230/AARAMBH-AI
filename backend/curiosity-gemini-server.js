@@ -36,8 +36,8 @@ async function callGeminiAPI(prompt, isJSONMode = false) {
     throw new Error('Gemini API key not configured');
   }
 
-  // Enhanced prompt for educational content
-  const enhancedPrompt = `You are SARAS, an advanced AI tutor for Indian students. You specialize in creating clear, engaging educational explanations.
+  // Enhanced prompt for extensive educational content
+  const enhancedPrompt = `You are SARAS, an advanced AI tutor for Indian students. You specialize in creating comprehensive, engaging educational explanations with extensive detail and depth.
 
 User Query: "${prompt}"
 
@@ -45,30 +45,55 @@ ${isJSONMode ? `
 IMPORTANT: Respond with ONLY a valid JSON object in this exact format:
 {
   "title": "A clear, descriptive title for the topic",
-  "summary": "A comprehensive 2-3 sentence explanation that's easy to understand",
-  "keyPoints": ["4-5 important bullet points that highlight the key concepts"],
-  "realWorldExample": "A practical, relatable example from daily life in India that demonstrates this concept",
+  "summary": "A comprehensive 4-5 sentence explanation that provides deep understanding",
+  "keyPoints": ["6-8 detailed bullet points that thoroughly explain the key concepts with specifics"],
+  "realWorldExample": "A detailed, practical example from daily life in India that demonstrates this concept with specific scenarios",
   "difficulty": "beginner|intermediate|advanced",
   "subject": "relevant subject area",
-  "connections": ["2-3 related topics the student might want to explore next"]
+  "connections": ["4-5 related topics the student might want to explore next"],
+  "detailedExplanation": "A comprehensive 200-300 word detailed explanation covering mechanisms, processes, and scientific principles",
+  "practicalApplications": ["5-6 specific real-world applications with Indian context"],
+  "historicalContext": "Brief history or discovery background of this concept",
+  "currentResearch": "Latest developments or ongoing research in this field",
+  "mathematicalConcepts": "Any mathematical principles or formulas involved (if applicable)",
+  "experimentalEvidence": "Key experiments or evidence that supports this concept",
+  "misconceptions": ["2-3 common misconceptions about this topic"],
+  "studyTips": ["3-4 effective ways to remember and understand this concept"],
+  "careerConnections": ["3-4 career fields where this knowledge is applied"],
+  "indianContext": "How this concept specifically relates to Indian context, culture, or examples",
+  "visualizationSuggestions": ["3-4 specific suggestions for visual representations or diagrams"],
+  "interactiveElements": ["2-3 hands-on activities or experiments students can try"],
+  "assessmentQuestions": ["3-4 thought-provoking questions to test understanding"],
+  "furtherReading": ["2-3 recommended resources for deeper learning"],
+  "difficulty_explanation": "Why this topic is classified at this difficulty level"
 }
 
 Make sure the content is:
-- Accurate and scientifically correct
+- Extensively detailed and comprehensive
+- Scientifically accurate with latest information
 - Appropriate for Indian educational context
-- Engaging and easy to understand
-- Uses examples relevant to Indian culture and daily life
-- Encourages further learning
+- Uses multiple examples relevant to Indian culture and daily life
+- Includes practical applications and career connections
+- Provides study strategies and learning tips
+- Addresses common misconceptions
+- Encourages hands-on learning and experimentation
 
 Do not include any text before or after the JSON object.` : `
-Provide a comprehensive explanation that includes:
-1. A clear introduction to the concept
-2. The main principles or mechanisms involved
-3. Real-world applications, especially relevant to India
-4. Interesting facts or recent developments
-5. How this connects to other scientific concepts
+Provide an extensively comprehensive explanation that includes:
+1. A detailed introduction to the concept with background
+2. The complete mechanisms, principles, and processes involved
+3. Multiple real-world applications, especially relevant to India
+4. Historical context and discovery background
+5. Current research and recent developments
+6. Mathematical or scientific principles involved
+7. Common misconceptions and how to avoid them
+8. Practical study tips and memory techniques
+9. Career applications and professional relevance
+10. Interactive experiments or activities
+11. Visual representation suggestions
+12. Assessment questions for self-testing
 
-Make your explanation engaging, accurate, and appropriate for curious learners.`}`;
+Make your explanation extensively detailed, scientifically accurate, and educationally comprehensive for serious learners.`}`;
 
   const requestBody = {
     contents: [{
@@ -77,10 +102,11 @@ Make your explanation engaging, accurate, and appropriate for curious learners.`
       }]
     }],
     generationConfig: {
-      temperature: 0.7,
-      topK: 40,
+      temperature: 0.8,
+      topK: 50,
       topP: 0.95,
-      maxOutputTokens: 2048,
+      maxOutputTokens: 4096,
+      candidateCount: 1,
     },
     safetySettings: [
       {

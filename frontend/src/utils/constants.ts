@@ -117,7 +117,7 @@ export const API_ENDPOINTS = {
     REFRESH: '/auth/refresh',
   },
   AI: {
-    TUTOR: '/tutor/ask',
+    TUTOR: '/tutor',
     CONTENT: '/content/create',
     ASSESSMENT: '/assessment/create',
     DOUBT: '/doubt/solve',

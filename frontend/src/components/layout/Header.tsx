@@ -16,6 +16,7 @@ import {
   Settings as SettingsIcon,
 } from '@mui/icons-material';
 import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
 import { ROUTES } from '@/utils/constants';
 
 const Header: React.FC = () => {
@@ -59,7 +60,8 @@ const Header: React.FC = () => {
 
         {/* Right Side - Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {/* SARAS AI Status */}
+          {/* AI Status Indicators */}
+          <GeminiStatusIndicator variant="chip" size="small" />
           <SarasStatusIndicator variant="chip" />
           
           <Tooltip title='Search'>
@@ -83,7 +85,7 @@ const Header: React.FC = () => {
           </Tooltip>
 
           <Tooltip title='Profile'>
-            <IconButton sx={{ ml: 1 }}>
+            <IconButton sx={{ ml: 1 }} onClick={() => navigate(ROUTES.PROFILE)}>
               <Avatar
                 sx={{
                   width: 32,

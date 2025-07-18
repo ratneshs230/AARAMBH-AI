@@ -46,6 +46,9 @@ import {
   Assignment as AssignmentIcon,
 } from '@mui/icons-material';
 import { ROUTES } from '@/utils/constants';
+import ContinueLearningCard from '@/components/dashboard/ContinueLearningCard';
+import GeminiStatusIndicator from '@/components/common/GeminiStatusIndicator';
+import { learningProgressService } from '@/services/learningProgressService';
 
 interface Course {
   id: string;
@@ -545,7 +548,25 @@ const UnifiedDashboardPage: React.FC = () => {
                   color="secondary"
                   startIcon={<PlayIcon />}
                   sx={{ mt: 1 }}
-                  onClick={() => selectedCourse && navigate(`/courses/${selectedCourse.id}/lessons/${selectedCourse.currentLesson.id}`)}
+                  onClick={() => {
+                    if (selectedCourse) {
+                      // Create learning session for course
+                      learningProgressService.createSession(
+                        'user_1', // TODO: Get actual user ID
+                        selectedCourse.id,
+                        selectedCourse.currentLesson.id,
+                        selectedCourse.currentLesson.title,
+                        `${selectedCourse.name} - ${selectedCourse.currentLesson.title}`,
+                        selectedCourse.currentLesson.type,
+                        'course',
+                        'intermediate',
+                        45
+                      );
+                      
+                      // Navigate to lesson
+                      navigate(`/courses/${selectedCourse.id}/lessons/${selectedCourse.currentLesson.id}`);
+                    }
+                  }}
                 >
                   Continue Learning
                 </Button>
@@ -557,7 +578,7 @@ const UnifiedDashboardPage: React.FC = () => {
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography variant="h4" color="primary" fontWeight={600}>
@@ -569,7 +590,7 @@ const UnifiedDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <StreakIcon sx={{ color: 'orange', fontSize: 32, mb: 1 }} />
@@ -582,7 +603,7 @@ const UnifiedDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <TimeIcon sx={{ color: 'green', fontSize: 32, mb: 1 }} />
@@ -595,9 +616,32 @@ const UnifiedDashboardPage: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
+                🤖 AI Status
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
+                <GeminiStatusIndicator variant="chip" showLabel={true} size="small" />
+                <GeminiStatusIndicator variant="full" showDetails={false} />
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
 
       <Grid container spacing={3}>
+        {/* Continue Learning Section */}
+        <Grid size={{ xs: 12 }}>
+          <ContinueLearningCard 
+            userId="user_1" // TODO: Get actual user ID from auth context
+            maxItems={3}
+            showStreak={true}
+            compact={false}
+          />
+        </Grid>
+        
         {/* Today's Plan */}
         <Grid size={{ xs: 12, lg: 8 }}>
           <Card>
@@ -765,11 +809,11 @@ const UnifiedDashboardPage: React.FC = () => {
                       <ListItemText
                         primary={activity.title}
                         secondary={
-                          <Box>
-                            <Typography variant="body2" color="text.secondary">
+                          <Box component="div">
+                            <Typography variant="body2" color="text.secondary" component="span" display="block">
                               {activity.description}
                             </Typography>
-                            <Typography variant="caption" color="text.secondary">
+                            <Typography variant="caption" color="text.secondary" component="span" display="block">
                               {activity.timestamp}
                             </Typography>
                           </Box>

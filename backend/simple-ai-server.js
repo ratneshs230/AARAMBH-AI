@@ -125,7 +125,7 @@ const server = http.createServer((req, res) => {
     return;
   }
   
-  if (pathname === '/api/ai/tutor' && req.method === 'POST') {
+  if ((pathname === '/api/ai/tutor' || pathname === '/api/ai/tutor/ask') && req.method === 'POST') {
     parseBody().then(body => {
       console.log('📚 AI Tutor request:', body);
       
