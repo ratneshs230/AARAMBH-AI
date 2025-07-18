@@ -1,0 +1,9 @@
+{
+  "provider": "OpenAI DALL-E 3",
+  "prompt": "Educational illustration for \"Photosynthesis\": Simple educational diagram showing photosynthesis, educational illustration, clean design, bright colors, clear labels, suitable for students, scientific diagram style, informative, high quality, professional, digital art, vector style",
+  "style": "educational",
+  "originalPrompt": "Educational illustration for \"Photosynthesis\": Simple educational diagram showing photosynthesis",
+  "imagePath": "/media/ratnesh/0054F20D54F204E6/AARAMBH AI/AARAMBH-AI/backend/image_cache/3a3abd7382f31fbc9b7966d4f4cb285b.png",
+  "timestamp": 1752803357639,
+  "cacheKey": "3a3abd7382f31fbc9b7966d4f4cb285b"
+}

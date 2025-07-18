@@ -1,17 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
 import Header from './Header';
-import Sidebar from './Sidebar';
+import Sidebar, { drawerWidth, collapsedWidth } from './Sidebar';
 
 const Layout: React.FC = () => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  const handleSidebarToggle = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar isCollapsed={isSidebarCollapsed} onToggle={handleSidebarToggle} />
 
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+      <Box 
+        sx={{ 
+          flexGrow: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          marginLeft: 0, // Remove fixed margin since drawer is permanent
+          transition: 'margin-left 0.3s ease-in-out',
+        }}
+      >
         {/* Header */}
         <Header />
 

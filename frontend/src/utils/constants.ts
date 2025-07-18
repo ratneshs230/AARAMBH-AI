@@ -17,6 +17,12 @@ export const ROUTES = {
   SETTINGS: '/settings',
   ANALYTICS: '/analytics',
   CURIOSITY: '/curiosity',
+  COMMUNITY: '/community',
+  GAMES: '/create-games',
+  PRACTICE: '/practice',
+  WORKSPACE: '/workspace',
+  CONTENT: '/content',
+  LESSONS: '/lessons',
 } as const;
 
 export const AGENT_TYPES = {

@@ -4,7 +4,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { lightTheme } from './utils/theme';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
-import DashboardPage from './pages/dashboard/DashboardPage';
+import UnifiedDashboardPage from './pages/dashboard/UnifiedDashboardPage';
 import AITutorPage from './pages/ai/AITutorPage';
 
 const App: React.FC = () => {
@@ -15,7 +15,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route element={<Layout />}>
-            <Route path='/dashboard' element={<DashboardPage />} />
+            <Route path='/dashboard/:id' element={<UnifiedDashboardPage />} />
             <Route path='/ai/tutor' element={<AITutorPage />} />
           </Route>
           <Route path='*' element={<div>Page Not Found</div>} />

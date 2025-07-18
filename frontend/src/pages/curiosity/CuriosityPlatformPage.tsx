@@ -31,17 +31,23 @@ import {
   Refresh as RefreshIcon,
   Notifications as NotificationsIcon,
   Settings as SettingsIcon,
+  Help as QuestionIcon,
+  TrendingUp as TrendingIcon,
 } from '@mui/icons-material';
-import { curiosityAIService } from '@/services/curiosityAI';
+import { geminiCuriosityAI } from '@/services/geminiCuriosityAI';
 import SarasStatusIndicator from '@/components/common/SarasStatusIndicator';
+import GeminiStatusIndicator from '@/components/curiosity/GeminiStatusIndicator';
 import { ROUTES } from '@/utils/constants';
 
-interface ExplanationResult {
+export interface ExplanationResult {
   title: string;
   summary: string;
   keyPoints: string[];
   realWorldExample: string;
   imageUrl?: string;
+  difficulty?: string;
+  subject?: string;
+  connections?: string[];
 }
 
 const CuriosityPlatformPage: React.FC = () => {
@@ -50,6 +56,8 @@ const CuriosityPlatformPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ExplanationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [followUpQuestions, setFollowUpQuestions] = useState<string[]>([]);
+  const [relatedTopics, setRelatedTopics] = useState<string[]>([]);
 
   // Example prompts to guide users
   const examplePrompts = [
@@ -67,147 +75,73 @@ const CuriosityPlatformPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setResult(null);
+    setFollowUpQuestions([]);
+    setRelatedTopics([]);
 
     try {
-      // Step 1: Generate text explanation
-      const textResponse = await generateTextExplanation(searchQuery);
+      console.log('🔍 Searching for:', searchQuery);
       
-      // Step 2: Generate image (optional)
+      // Generate comprehensive explanation using Gemini-powered Teacher Agent
+      const explanation = await geminiCuriosityAI.generateStructuredExplanation(searchQuery, {
+        level: 'intermediate',
+        subject: 'general',
+        jsonMode: true
+      });
+      
+      console.log('✅ Explanation received:', explanation);
+      
+      // Generate educational image
       let imageUrl: string | undefined;
       try {
-        imageUrl = await generateImage(textResponse.title, textResponse.summary);
+        console.log('🎨 Generating educational illustration...');
+        const imageResult = await geminiCuriosityAI.generateEducationalImage(
+          `Create an educational illustration that explains ${searchQuery}`,
+          explanation.title,
+          explanation.summary,
+          'educational'
+        );
+        
+        if (imageResult.success && imageResult.imageUrl) {
+          imageUrl = imageResult.imageUrl;
+          console.log('✅ Image generated with:', imageResult.provider);
+          if (imageResult.cached) {
+            console.log('📦 Used cached image');
+          }
+        } else {
+          console.warn('⚠️ Image generation failed:', imageResult.error);
+        }
       } catch (imageError) {
-        console.warn('Image generation failed:', imageError);
-        // Continue without image - this is acceptable
+        console.warn('⚠️ Image generation error:', imageError);
       }
 
       setResult({
-        ...textResponse,
+        ...explanation,
         imageUrl,
       });
+      
+      // Generate follow-up questions and related topics in parallel
+      const [questions, topics] = await Promise.allSettled([
+        geminiCuriosityAI.generateFollowUpQuestions(searchQuery, 3),
+        geminiCuriosityAI.generateRelatedTopics(searchQuery, 5)
+      ]);
+
+      if (questions.status === 'fulfilled') {
+        setFollowUpQuestions(questions.value);
+      }
+
+      if (topics.status === 'fulfilled') {
+        setRelatedTopics(topics.value);
+      }
+      
+      console.log('🎯 Search completed successfully');
     } catch (err) {
-      console.error('Search error:', err);
-      setError('Sorry, I encountered an issue while generating the explanation. Please try again.');
+      console.error('❌ Search error:', err);
+      setError('Sorry, I encountered an issue while generating the explanation. Please try again or check if the AI service is running.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const generateTextExplanation = async (query: string): Promise<Omit<ExplanationResult, 'imageUrl'>> => {
-    // This would call the Gemini API with a structured prompt
-    const prompt = `You are a friendly and knowledgeable tutor for a student in India. Please explain "${query}" in a clear, engaging way.
-
-Return your response as a JSON object with this exact structure:
-{
-  "title": "A clear, descriptive title for the topic",
-  "summary": "A concise 2-3 sentence explanation of the main concept",
-  "keyPoints": ["3-5 bullet points highlighting the most important aspects"],
-  "realWorldExample": "A practical, relatable example that demonstrates the concept in action"
-}`;
-
-    // For now, using the existing curiosityAI service as a placeholder
-    // In production, this would use Gemini with the structured responseSchema
-    try {
-      const response = await curiosityAIService.generateCuriosityInsights(
-        {
-          id: 'user',
-          interests: [query],
-          learningStyle: 'visual',
-          preferredDifficulty: 'intermediate',
-          completedTopics: [],
-          bookmarkedTopics: [],
-          searchHistory: [query],
-          timeSpent: {},
-          ratings: {},
-        },
-        {
-          recentlyViewed: [],
-          sessionDuration: 0,
-          todayActivity: [],
-          activeQuestions: [query],
-        }
-      );
-
-      // Mock structured response based on query
-      return generateMockResponse(query);
-    } catch (error) {
-      // Fallback to mock response
-      return generateMockResponse(query);
-    }
-  };
-
-  const generateImage = async (title: string, summary: string): Promise<string> => {
-    // This would call the Imagen API
-    const imagePrompt = `Create an educational illustration for "${title}". ${summary}. Make it clear, colorful, and suitable for learning. Style: educational diagram, scientific illustration.`;
-    
-    // For now, return a placeholder
-    // In production: const imageUrl = await imagenAPI.generateImage(imagePrompt);
-    throw new Error('Image generation not implemented yet');
-  };
-
-  const generateMockResponse = (query: string): Omit<ExplanationResult, 'imageUrl'> => {
-    // Generate contextual mock responses based on the query
-    const queryLower = query.toLowerCase();
-    
-    if (queryLower.includes('quantum') || queryLower.includes('entanglement')) {
-      return {
-        title: "Quantum Entanglement",
-        summary: "Quantum entanglement is a physical phenomenon where two or more particles become connected in such a way that the quantum state of each particle cannot be described independently. When particles are entangled, measuring one instantly affects the other, regardless of the distance between them.",
-        keyPoints: [
-          "Particles become 'entangled' and share a quantum state",
-          "Measuring one particle instantly affects its entangled partner",
-          "This connection persists even across vast distances",
-          "Einstein called it 'spooky action at a distance'",
-          "It's fundamental to quantum computing and quantum communication"
-        ],
-        realWorldExample: "Imagine you have two magic coins that are quantum entangled. No matter how far apart you take them, when you flip one and it lands heads, the other will instantly land tails. Scientists use this principle in quantum computers to process information in revolutionary ways, and it may one day enable ultra-secure quantum internet."
-      };
-    }
-    
-    if (queryLower.includes('black hole')) {
-      return {
-        title: "Black Holes: Cosmic Vacuum Cleaners",
-        summary: "A black hole is a region in space where gravity is so strong that nothing, not even light, can escape once it crosses the event horizon. They form when massive stars collapse at the end of their lives, creating a point of infinite density called a singularity.",
-        keyPoints: [
-          "Gravity is so strong that even light cannot escape",
-          "Formed from collapsed massive stars (at least 25 times our Sun's mass)",
-          "Have an 'event horizon' - the point of no return",
-          "Time slows down dramatically near black holes",
-          "They can grow by consuming matter and merging with other black holes"
-        ],
-        realWorldExample: "Think of a black hole like a cosmic drain in a bathtub. Just as water spirals down a drain and disappears, matter spirals into a black hole and vanishes from our observable universe. The closest black hole to Earth is about 1,000 light-years away - far enough that we're completely safe, but close enough for scientists to study!"
-      };
-    }
-
-    if (queryLower.includes('dream')) {
-      return {
-        title: "Why Do We Dream?",
-        summary: "Dreams occur during REM (Rapid Eye Movement) sleep when our brain is highly active. Scientists believe dreams help process memories, emotions, and experiences from our waking hours, essentially helping our brain organize and make sense of information.",
-        keyPoints: [
-          "Dreams mainly occur during REM sleep (about 25% of our sleep)",
-          "Brain activity during dreams is similar to when we're awake",
-          "Dreams help process and consolidate memories",
-          "They may help us work through emotions and problems",
-          "Everyone dreams, but not everyone remembers their dreams"
-        ],
-        realWorldExample: "Think of your brain as a computer that needs to organize its files at night. During dreams, your brain sorts through the day's experiences - like filing important memories in long-term storage and deleting unnecessary information. This is why you might dream about studying for an exam or have strange combinations of people and places from your day mixed together."
-      };
-    }
-
-    // Default response for any other query
-    return {
-      title: `Understanding: ${query}`,
-      summary: `This is a fascinating topic that deserves exploration! While I'm generating a detailed explanation about ${query}, I'll provide you with key insights and practical examples to help you understand this concept better.`,
-      keyPoints: [
-        `${query} is an important concept worth understanding`,
-        "It connects to many other areas of knowledge",
-        "Real-world applications make it relevant to daily life",
-        "Understanding this topic opens doors to deeper learning",
-        "There are always new discoveries being made in this field"
-      ],
-      realWorldExample: `To better understand ${query}, think about how it might appear in your everyday life. Many complex concepts become clearer when we connect them to familiar experiences and practical applications that we can observe around us.`
-    };
-  };
 
   const handleExamplePrompt = (prompt: string) => {
     setSearchQuery(prompt);
@@ -264,7 +198,8 @@ Return your response as a JSON object with this exact structure:
 
           {/* Right Side - Actions */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {/* SARAS AI Status */}
+            {/* AI Status Indicators */}
+            <GeminiStatusIndicator variant="chip" />
             <SarasStatusIndicator variant="chip" />
             
             <Tooltip title='Notifications'>
@@ -393,7 +328,7 @@ Return your response as a JSON object with this exact structure:
             Generating explanation & illustration...
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Please wait while SARAS creates a comprehensive explanation for you
+            AI is creating a comprehensive explanation with educational visuals
           </Typography>
         </Box>
       )}
@@ -468,107 +403,170 @@ Return your response as a JSON object with this exact structure:
                 </Box>
                 
                 {result.imageUrl ? (
-                  <Box
-                    component="img"
-                    src={result.imageUrl}
-                    alt={result.title}
-                    sx={{
-                      width: '100%',
-                      maxHeight: 400,
-                      objectFit: 'contain',
-                      borderRadius: 2,
-                      boxShadow: 2,
-                    }}
-                  />
-                ) : (
-                  <Paper 
-                    sx={{ 
-                      p: 4, 
-                      textAlign: 'center', 
-                      backgroundColor: 'grey.50',
-                      border: '2px dashed',
-                      borderColor: 'grey.300'
-                    }}
-                  >
-                    <PhotoIcon sx={{ fontSize: 60, color: 'grey.400', mb: 2 }} />
-                    <Typography color="text.secondary">
-                      Visual illustration will be generated here
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                      AI-generated images are being prepared to enhance your understanding
-                    </Typography>
-                  </Paper>
-                )}
-              </Box>
-
-              {/* Key Points */}
-              <Box sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <LightBulbIcon color="warning" />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Key Points
-                  </Typography>
-                </Box>
-                
-                <List>
-                  {result.keyPoints.map((point, index) => (
-                    <ListItem key={index} sx={{ py: 0.5 }}>
-                      <ListItemIcon sx={{ minWidth: 36 }}>
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            backgroundColor: 'primary.main',
-                          }}
-                        />
-                      </ListItemIcon>
-                      <ListItemText 
-                        primary={point}
-                        primaryTypographyProps={{
-                          sx: { lineHeight: 1.5 }
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-
-              {/* Real-World Example */}
-              <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <BeakerIcon color="success" />
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                    Real-World Example
-                  </Typography>
-                </Box>
-                
+                <Box
+                  component="img"
+                  src={result.imageUrl}
+                  alt={result.title}
+                  sx={{
+                    width: '100%',
+                    maxHeight: 400,
+                    objectFit: 'contain',
+                    borderRadius: 2,
+                    boxShadow: 2,
+                  }}
+                />
+              ) : (
                 <Paper 
                   sx={{ 
-                    p: 3, 
-                    backgroundColor: 'success.light',
-                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                    border: '1px solid',
-                    borderColor: 'success.light'
+                    p: 4, 
+                    textAlign: 'center', 
+                    backgroundColor: 'grey.50',
+                    border: '2px dashed',
+                    borderColor: 'grey.300'
                   }}
                 >
-                  <Typography 
-                    sx={{ 
-                      lineHeight: 1.6,
-                      color: 'text.primary'
-                    }}
-                  >
-                    {result.realWorldExample}
+                  <PhotoIcon sx={{ fontSize: 60, color: 'grey.400', mb: 2 }} />
+                  <Typography color="text.secondary">
+                    Visual illustration will be generated here
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                    AI-generated images are being prepared to enhance your understanding
                   </Typography>
                 </Paper>
+              )}
+            </Box>
+
+            {/* Key Points */}
+            <Box sx={{ mb: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <LightBulbIcon color="warning" />
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  Key Points
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Fade>
-      )}
-      </Container>
-    </Box>
-  );
+              
+              <List>
+                {result.keyPoints.map((point, index) => (
+                  <ListItem key={index} sx={{ py: 0.5 }}>
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor: 'primary.main',
+                        }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary={point}
+                      primaryTypographyProps={{
+                        sx: { lineHeight: 1.5 }
+                      }}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+
+            {/* Real-World Example */}
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <BeakerIcon color="success" />
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  Real-World Example
+                </Typography>
+              </Box>
+              
+              <Paper 
+                sx={{ 
+                  p: 3, 
+                  backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                  border: '1px solid',
+                  borderColor: 'success.light'
+                }}
+              >
+                <Typography 
+                  sx={{ 
+                    lineHeight: 1.6,
+                    color: 'text.primary'
+                  }}
+                >
+                  {result.realWorldExample}
+                </Typography>
+              </Paper>
+            </Box>
+
+            {/* Follow-up Questions */}
+            {followUpQuestions.length > 0 && (
+              <Box sx={{ mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <QuestionIcon color="info" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Explore Further
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {followUpQuestions.map((question, index) => (
+                    <Chip
+                      key={index}
+                      label={question}
+                      onClick={() => handleExamplePrompt(question)}
+                      clickable
+                      variant="outlined"
+                      color="info"
+                      sx={{
+                        mb: 1,
+                        '&:hover': {
+                          backgroundColor: 'info.light',
+                          color: 'white',
+                        }
+                      }}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            {/* Related Topics */}
+            {relatedTopics.length > 0 && (
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                  <TrendingIcon color="secondary" />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    Related Topics
+                  </Typography>
+                </Box>
+                
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  {relatedTopics.map((topic, index) => (
+                    <Chip
+                      key={index}
+                      label={topic}
+                      onClick={() => handleExamplePrompt(topic)}
+                      clickable
+                      variant="outlined"
+                      color="secondary"
+                      sx={{
+                        mb: 1,
+                        '&:hover': {
+                          backgroundColor: 'secondary.light',
+                          color: 'white',
+                        }
+                      }}
+                    />
+                  ))}
+                </Box>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Fade>
+    )}
+    </Container>
+  </Box>
+);
 };
 
 export default CuriosityPlatformPage;

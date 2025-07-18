@@ -22,6 +22,8 @@ export interface CuriosityContext {
   todayActivity: string[];
 }
 
+import type { ExplanationResult } from '@/pages/curiosity/CuriosityPlatformPage';
+
 export class CuriosityAIService {
   // Generate personalized topic recommendations using AI
   async generatePersonalizedRecommendations(
@@ -77,6 +79,72 @@ export class CuriosityAIService {
     } catch (error) {
       console.error('Error connecting to SARAS AI for insights:', error);
       return this.getFallbackInsights();
+    }
+  }
+
+  // New method to generate structured explanations for CuriosityPlatformPage
+  async generateStructuredExplanation(query: string): Promise<ExplanationResult> {
+    const prompt = `You are a friendly and knowledgeable tutor for a student in India. Please explain "${query}" in a clear, engaging way.
+
+IMPORTANT: You must respond with ONLY a valid JSON object in this exact format:
+{
+  "title": "A clear, descriptive title for the topic",
+  "summary": "A concise 2-3 sentence explanation of the main concept",
+  "keyPoints": ["3-5 bullet points highlighting the most important aspects"],
+  "realWorldExample": "A practical, relatable example that demonstrates the concept in action"
+}
+
+Do not include any other text before or after the JSON. Only return the JSON object.`;
+
+    try {
+      const response = await aiService.askTutor(prompt, {
+        subject: 'general',
+        level: 'intermediate',
+        jsonMode: true,
+      });
+
+      console.log('SARAS AI Structured Explanation Response:', response);
+
+      if (response.success && response.data && response.data.content) {
+        try {
+          // Clean the response content to handle potential non-JSON text
+          let content = response.data.content.trim();
+          
+          // Try to extract JSON from the response if it's wrapped in other text
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            content = jsonMatch[0];
+          }
+
+          const parsedContent = JSON.parse(content);
+          
+          // Validate the parsed content against ExplanationResult interface
+          if (
+            typeof parsedContent.title === 'string' &&
+            typeof parsedContent.summary === 'string' &&
+            Array.isArray(parsedContent.keyPoints) &&
+            parsedContent.keyPoints.every((kp: any) => typeof kp === 'string') &&
+            typeof parsedContent.realWorldExample === 'string'
+          ) {
+            return parsedContent as ExplanationResult;
+          } else {
+            console.warn('AI response did not match expected ExplanationResult structure, using text parsing fallback.');
+            return this.parseTextResponseToStructured(response.data.content, query);
+          }
+        } catch (jsonError) {
+          console.error('Failed to parse AI response as JSON:', jsonError);
+          console.log('Raw content:', response.data.content);
+          
+          // Try to parse as text response instead
+          return this.parseTextResponseToStructured(response.data.content, query);
+        }
+      }
+
+      console.warn('SARAS AI service unavailable for structured explanation, using fallback.');
+      return this.getFallbackExplanation(query);
+    } catch (error) {
+      console.error('Error connecting to SARAS AI for structured explanation:', error);
+      return this.getFallbackExplanation(query);
     }
   }
 
@@ -599,6 +667,146 @@ export class CuriosityAIService {
         isNew: true,
       },
     ];
+  }
+
+  // Helper method to parse text responses into structured format
+  private parseTextResponseToStructured(content: string, query: string): ExplanationResult {
+    try {
+      // Clean up the content
+      const cleanContent = content.trim();
+      
+      // Try to extract key information from the text response
+      const lines = cleanContent.split('\n').filter(line => line.trim());
+      
+      // Extract title (usually the first line or something that looks like a title)
+      let title = query;
+      if (lines.length > 0) {
+        const firstLine = lines[0].trim();
+        // Look for title patterns
+        if (firstLine.length < 100 && !firstLine.endsWith('.')) {
+          title = firstLine.replace(/^(title|explanation|understanding):?\s*/i, '');
+        }
+      }
+      
+      // Extract summary (first paragraph or first few sentences)
+      let summary = '';
+      let keyPoints: string[] = [];
+      let realWorldExample = '';
+      
+      let currentSection = '';
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) continue;
+        
+        // Check for section headers
+        if (trimmedLine.toLowerCase().includes('summary') || 
+            trimmedLine.toLowerCase().includes('explanation')) {
+          currentSection = 'summary';
+          continue;
+        } else if (trimmedLine.toLowerCase().includes('key') || 
+                   trimmedLine.toLowerCase().includes('point') ||
+                   trimmedLine.toLowerCase().includes('important')) {
+          currentSection = 'keyPoints';
+          continue;
+        } else if (trimmedLine.toLowerCase().includes('example') || 
+                   trimmedLine.toLowerCase().includes('real world')) {
+          currentSection = 'example';
+          continue;
+        }
+        
+        // Look for bullet points or numbered lists
+        if (trimmedLine.match(/^[-•*]\s/) || trimmedLine.match(/^\d+\.\s/)) {
+          keyPoints.push(trimmedLine.replace(/^[-•*]\s/, '').replace(/^\d+\.\s/, ''));
+        } else if (currentSection === 'keyPoints') {
+          keyPoints.push(trimmedLine);
+        } else if (currentSection === 'example') {
+          realWorldExample += (realWorldExample ? ' ' : '') + trimmedLine;
+        } else if (currentSection === 'summary' || !summary) {
+          summary += (summary ? ' ' : '') + trimmedLine;
+        }
+      }
+      
+      // Fallback: if we couldn't parse properly, create a basic structure
+      if (!summary) {
+        summary = cleanContent.substring(0, 200) + (cleanContent.length > 200 ? '...' : '');
+      }
+      
+      if (keyPoints.length === 0) {
+        // Extract sentences as key points
+        const sentences = cleanContent.split(/[.!?]+/).filter(s => s.trim().length > 10);
+        keyPoints = sentences.slice(0, 4).map(s => s.trim());
+      }
+      
+      if (!realWorldExample) {
+        realWorldExample = `Think of ${query.toLowerCase()} as something you might encounter in everyday life - it's more common than you might think!`;
+      }
+      
+      return {
+        title: title || `Understanding ${query}`,
+        summary: summary || `Here's what you need to know about ${query}.`,
+        keyPoints: keyPoints.length > 0 ? keyPoints : [`${query} is an important concept to understand`],
+        realWorldExample: realWorldExample
+      };
+      
+    } catch (error) {
+      console.error('Error parsing text response:', error);
+      return this.getFallbackExplanation(query);
+    }
+  }
+
+  private getFallbackExplanation(query: string): ExplanationResult {
+    const queryLower = query.toLowerCase();
+
+    if (queryLower.includes('quantum') || queryLower.includes('entanglement')) {
+      return {
+        title: "Quantum Entanglement (Fallback)",
+        summary: "This is a fallback explanation for Quantum Entanglement. It's a phenomenon where particles become linked and influence each other instantly, regardless of distance.",
+        keyPoints: [
+          "Particles are linked",
+          "Instant influence over distance",
+          "Basis for quantum computing"
+        ],
+        realWorldExample: "Imagine two coins, if one is heads, the other is instantly tails, even if miles apart."
+      };
+    }
+
+    if (queryLower.includes('black hole')) {
+      return {
+        title: "Black Holes (Fallback)",
+        summary: "This is a fallback explanation for Black Holes. They are regions in space where gravity is so strong that nothing, not even light, can escape.",
+        keyPoints: [
+          "Extremely strong gravity",
+          "Light cannot escape",
+          "Formed from collapsed stars"
+        ],
+        realWorldExample: "Think of a cosmic vacuum cleaner that sucks everything in."
+      };
+    }
+
+    if (queryLower.includes('dream')) {
+      return {
+        title: "Why We Dream (Fallback)",
+        summary: "This is a fallback explanation for Dreams. Dreams are stories and images our minds create while we sleep, often helping us process emotions and memories.",
+        keyPoints: [
+          "Occur during sleep",
+          "Brain processes emotions",
+          "Helps consolidate memories"
+        ],
+        realWorldExample: "Your brain tidying up its files from the day while you rest."
+      };
+    }
+
+    return {
+      title: `Understanding: ${query} (Fallback)`,
+      summary: `This is a fallback explanation for "${query}". We are currently unable to provide a detailed AI-generated response.`,
+      keyPoints: [
+        "Information about this topic is being prepared.",
+        "Please try a different query or check back later.",
+        "We are constantly improving our AI capabilities."
+      ],
+      realWorldExample: "Sometimes, even the smartest systems need a moment to think. Just like you might need to look up an answer in a book if you don't know it immediately."
+    };
   }
 }
 

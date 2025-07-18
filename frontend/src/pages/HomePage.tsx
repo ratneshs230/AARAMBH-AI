@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
 
   const handleCourseSelect = (courseId: number) => {
     handleCoursesMenuClose();
-    navigate(`/courses/${courseId}/dashboard`); // Navigate to course dashboard
+    navigate(`/dashboard/${courseId}`); // Navigate to unified dashboard with course
   };
 
   const handleLogin = () => {

@@ -1,3 +1,4 @@
+import OpenAI from 'openai'; // Import OpenAI for type definitions
 import {
   BaseAIAgent,
   AIRequest,
@@ -40,17 +41,27 @@ Always be encouraging, patient, and culturally sensitive.`,
       const aiService = AIServiceConfig.getInstance();
       const openai = aiService.getOpenAI();
 
-      const prompt = this.buildPrompt(request, context);
+      // Determine if JSON output is required based on request metadata
+      const jsonMode = request.metadata?.jsonMode === true;
 
-      const response = await openai.chat.completions.create({
+      const prompt = this.buildPrompt(request, context, jsonMode);
+
+      const chatCompletionOptions: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming = {
         model: this.config.model,
         messages: [
           { role: 'system', content: this.config.systemPrompt! },
           { role: 'user', content: prompt },
         ],
-        temperature: this.config.temperature,
-        max_tokens: this.config.maxTokens,
-      });
+        temperature: this.config.temperature ?? null, // Explicitly set to null if undefined
+        max_tokens: this.config.maxTokens ?? null, // Explicitly set to null if undefined
+        stream: false, // Explicitly set to false for non-streaming response
+      };
+
+      if (jsonMode) {
+        chatCompletionOptions.response_format = { type: "json_object" };
+      }
+
+      const response: OpenAI.Chat.ChatCompletion = await openai.chat.completions.create(chatCompletionOptions);
 
       const content = response.choices[0]?.message?.content || '';
       const usage = response.usage;
@@ -68,9 +79,9 @@ Always be encouraging, patient, and culturally sensitive.`,
           learning_approach: this.detectLearningApproach(content),
         },
         usage: {
-          inputTokens: usage?.prompt_tokens,
-          outputTokens: usage?.completion_tokens,
-          totalTokens: usage?.total_tokens,
+          inputTokens: usage?.prompt_tokens ?? 0, // Provide default 0 for undefined
+          outputTokens: usage?.completion_tokens ?? 0, // Provide default 0 for undefined
+          totalTokens: usage?.total_tokens ?? 0, // Provide default 0 for undefined
           cost: this.calculateCost(usage?.total_tokens || 0),
         },
         timestamp: new Date(),
@@ -82,7 +93,7 @@ Always be encouraging, patient, and culturally sensitive.`,
     }
   }
 
-  protected buildPrompt(request: AIRequest, context?: ConversationContext): string {
+  protected buildPrompt(request: AIRequest, context?: ConversationContext, jsonMode: boolean = false): string {
     let prompt = `Student Question: ${request.prompt}\n\n`;
 
     if (request.metadata?.subject) {
@@ -108,7 +119,11 @@ Always be encouraging, patient, and culturally sensitive.`,
       });
     }
 
-    prompt += `\nPlease provide a clear, step-by-step explanation that helps the student understand the concept. Use examples relevant to Indian context when applicable.`;
+    if (jsonMode) {
+      prompt += `\nYour response MUST be a valid JSON object matching the structure requested by the user. Do NOT include any conversational text or markdown outside the JSON.`;
+    } else {
+      prompt += `\nPlease provide a clear, step-by-step explanation that helps the student understand the concept. Use examples relevant to Indian context when applicable.`;
+    }
 
     return prompt;
   }
@@ -161,7 +176,8 @@ Always be encouraging, patient, and culturally sensitive.`,
       const gemini = aiService.getGemini();
       const model = gemini.getGenerativeModel({ model: 'gemini-pro' });
 
-      const prompt = this.buildPrompt(request, context);
+      // Pass jsonMode as false for fallback, as Gemini might not support response_format directly
+      const prompt = this.buildPrompt(request, context, false);
       const result = await model.generateContent(prompt);
       const content = result.response.text();
 

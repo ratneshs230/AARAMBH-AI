@@ -54,13 +54,13 @@ export class AIController {
 
   public async getTutorResponse(req: Request, res: Response): Promise<void> {
     try {
-      const { prompt, subject, level, language } = req.body;
+      const { prompt, subject, level, language, jsonMode } = req.body; // Destructure jsonMode
       const userId = req.user?.uid || 'anonymous';
 
       const aiRequest: AIRequest = {
         userId,
         prompt,
-        metadata: { subject, level, language },
+        metadata: { subject, level, language, jsonMode }, // Pass jsonMode in metadata
         context: { agentType: AgentType.TUTOR },
       };
 

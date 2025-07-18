@@ -77,7 +77,7 @@ const Header: React.FC = () => {
           </Tooltip>
 
           <Tooltip title='Settings'>
-            <IconButton color='inherit'>
+            <IconButton color='inherit' onClick={() => navigate(ROUTES.SETTINGS)}>
               <SettingsIcon />
             </IconButton>
           </Tooltip>

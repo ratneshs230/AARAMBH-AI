@@ -25,6 +25,7 @@ export class AIService {
       subject?: string;
       level?: string;
       language?: string;
+      jsonMode?: boolean; // Added jsonMode option
     }
   ): Promise<{ success: boolean; data: AIResponse }> {
     return apiService.aiRequest(API_ENDPOINTS.AI.TUTOR, {
@@ -32,6 +33,7 @@ export class AIService {
       subject: options?.subject,
       level: options?.level,
       language: options?.language,
+      jsonMode: options?.jsonMode, // Pass jsonMode
     });
   }
 

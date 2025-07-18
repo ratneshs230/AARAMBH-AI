@@ -1,0 +1,9 @@
+{
+  "provider": "OpenAI DALL-E 3",
+  "prompt": "Educational illustration for \"Quantum Entanglement: Spooky Action at a Distance!\": Create an educational illustration that explains What is Quantum Entanglement?. Context: Quantum entanglement is a bizarre phenomenon where two tiny particles become linked, sharing the same fate regardless of the distance separating them.  Even if they're light-years apart, measuring the property of one instantly reveals the corresponding property of the other – like two magically connected coins., educational illustration, clean design, bright colors, clear labels, suitable for students, scientific diagram style, informative, high quality, professional, digital art, vector style",
+  "style": "educational",
+  "originalPrompt": "Educational illustration for \"Quantum Entanglement: Spooky Action at a Distance!\": Create an educational illustration that explains What is Quantum Entanglement?. Context: Quantum entanglement is a bizarre phenomenon where two tiny particles become linked, sharing the same fate regardless of the distance separating them.  Even if they're light-years apart, measuring the property of one instantly reveals the corresponding property of the other – like two magically connected coins.",
+  "imagePath": "/media/ratnesh/0054F20D54F204E6/AARAMBH AI/AARAMBH-AI/backend/image_cache/d24e8072755917fe98c4699075a37883.png",
+  "timestamp": 1752803487882,
+  "cacheKey": "d24e8072755917fe98c4699075a37883"
+}

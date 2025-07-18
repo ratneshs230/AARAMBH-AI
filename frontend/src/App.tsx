@@ -13,14 +13,17 @@ import Layout from '@/components/layout/Layout';
 
 // Page Components
 import HomePage from '@/pages/HomePage';
-import DashboardPage from '@/pages/dashboard/DashboardPage';
+import UnifiedDashboardPage from '@/pages/dashboard/UnifiedDashboardPage';
+import CourseSelectionPage from '@/pages/dashboard/CourseSelectionPage';
+import AITestPage from '@/pages/debug/AITestPage';
+import SettingsPage from '@/pages/settings/SettingsPage';
+import AboutPage from '@/pages/settings/AboutPage';
 import AITutorPage from '@/pages/ai/AITutorPage';
 import AIContentPage from '@/pages/ai/AIContentPage';
 import AIAssessmentPage from '@/pages/ai/AIAssessmentPage';
 import AIDoubtPage from '@/pages/ai/AIDoubtPage';
 import CoursesPage from '@/pages/courses/CoursesPage';
 import CourseDetailPage from '@/pages/courses/CourseDetailPage';
-import CourseDashboardPage from '@/pages/courses/CourseDashboardPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import AnalyticsPage from '@/pages/dashboard/AnalyticsPage';
@@ -32,6 +35,10 @@ import ARVRLearningPage from '@/pages/immersive/ARVRLearningPage';
 import AICodeEditorPage from '@/pages/coding/AICodeEditorPage';
 import NeuralNetworkVisualizationPage from '@/pages/neural-networks/NeuralNetworkVisualizationPage';
 import CuriosityPlatformPage from '@/pages/curiosity/CuriosityPlatformPage';
+import CommunityPage from '@/pages/community/CommunityPage';
+import CreateGamesPage from '@/pages/games/CreateGamesPage';
+import StudyPlannerPage from '@/pages/study-planner/StudyPlannerPage';
+import AssessmentsPage from '@/pages/assessments/AssessmentsPage';
 
 // Constants
 import { ROUTES } from '@/utils/constants';
@@ -53,15 +60,19 @@ const App: React.FC = () => {
 
           {/* App Routes with Layout */}
           <Route element={<Layout />}>
-            <Route path={ROUTES.DASHBOARD} element={<DashboardPage />} />
+            <Route path={ROUTES.DASHBOARD} element={<CourseSelectionPage />} />
+            <Route path="/dashboard/:id" element={<UnifiedDashboardPage />} />
             <Route path={ROUTES.COURSES} element={<CoursesPage />} />
             <Route path={ROUTES.COURSE_DETAIL} element={<CourseDetailPage />} />
-            <Route path="/courses/:id/dashboard" element={<CourseDashboardPage />} />
             <Route path={ROUTES.AI_TUTOR} element={<AITutorPage />} />
             <Route path={ROUTES.AI_CONTENT} element={<AIContentPage />} />
             <Route path={ROUTES.AI_ASSESSMENT} element={<AIAssessmentPage />} />
             <Route path={ROUTES.AI_DOUBT} element={<AIDoubtPage />} />
             <Route path={ROUTES.ANALYTICS} element={<AnalyticsPage />} />
+            <Route path='/community' element={<CommunityPage />} />
+            <Route path='/create-games' element={<CreateGamesPage />} />
+            <Route path={ROUTES.STUDY_PLANNER} element={<StudyPlannerPage />} />
+            <Route path={ROUTES.ASSESSMENTS} element={<AssessmentsPage />} />
             <Route path='/study-rooms' element={<StudyRoomsPage />} />
             <Route path='/advanced-analytics' element={<AdvancedAnalyticsPage />} />
             <Route path='/learning-paths' element={<AdaptiveLearningPathPage />} />
@@ -69,6 +80,9 @@ const App: React.FC = () => {
             <Route path='/ar-vr-learning' element={<ARVRLearningPage />} />
             <Route path='/code-editor' element={<AICodeEditorPage />} />
             <Route path='/neural-networks' element={<NeuralNetworkVisualizationPage />} />
+            <Route path='/debug/ai-test' element={<AITestPage />} />
+            <Route path={ROUTES.SETTINGS} element={<SettingsPage />} />
+            <Route path='/settings/about' element={<AboutPage />} />
           </Route>
 
           {/* 404 Route */}

@@ -19,12 +19,7 @@ export interface AIRequest {
   sessionId?: string;
   context?: Record<string, any>;
   prompt: string;
-  metadata?: {
-    subject?: string;
-    level?: string;
-    language?: string;
-    preference?: string;
-  };
+  metadata?: Record<string, any>; // Made more generic to accommodate various agent metadata
 }
 
 export interface AIResponse {
@@ -84,7 +79,7 @@ export abstract class BaseAIAgent {
 
   abstract processRequest(request: AIRequest, context?: ConversationContext): Promise<AIResponse>;
 
-  protected abstract buildPrompt(request: AIRequest, context?: ConversationContext): string;
+  protected abstract buildPrompt(request: AIRequest, context?: ConversationContext, jsonMode?: boolean): string;
 
   protected generateResponseId(): string {
     return `${this.agentType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
